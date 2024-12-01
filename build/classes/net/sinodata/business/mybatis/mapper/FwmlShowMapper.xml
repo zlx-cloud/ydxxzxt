@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.business.dao.FwmlShowDao">
+	<select id="getListByPage" resultType="map" parameterType="map">
+		select * from (
+			select k.*, rownum rnum from (
+				select a.fwcyf_yyxtmc as yymc,b.fwmc,t.ffbs,t.ffmc,
+					c.jgmc,t.wlfl,t.czfl,d.jzlbmc from fwzyffzcb t
+				left join fwcyfzcb a on t.fwtgz_yyxtbh=a.fwcyf_yyxtbh
+				left join fwzyzcb b on t.fwbs=b.fwbs
+				left join jgdmb c on substr(a.fwcyf_ssfj,1,6)||'000000'=c.jgbs
+				left join jzlbdmb d on t.jzfl=d.jzlbdm
+				where 1=1
+				<if test="yymc!=null and yymc!=''"> 
+        			and a.fwcyf_yyxtmc like '%'||#{yymc,jdbcType=VARCHAR}||'%'
+        		</if>
+        		<if test="fwmc!=null and fwmc!=''"> 
+        			and b.fwmc like '%'||#{fwmc,jdbcType=VARCHAR}||'%'
+        		</if>
+	        	<if test="ffbs!=null and ffbs!=''"> 
+	        		and t.ffbs like '%'||#{ffbs,jdbcType=VARCHAR}||'%'
+	        	</if>
+	        	<if test="ffmc!=null and ffmc!=''"> 
+	        		and t.ffmc like '%'||#{ffmc,jdbcType=VARCHAR}||'%'
+	        	</if>
+	        	<if test="jgmc!=null and jgmc!=''"> 
+	        		and c.jgmc like '%'||#{jgmc,jdbcType=VARCHAR}||'%'
+	        	</if>
+	        	<if test="wlfl!=null and wlfl!=''"> 
+	        		and t.wlfl = #{wlfl,jdbcType=VARCHAR}
+	        	</if>
+	        	<if test="czfl!=null and czfl!=''"> 
+	        		and t.czfl = #{czfl,jdbcType=VARCHAR}
+	        	</if>
+	        	<if test="jzlbmc!=null and jzlbmc!=''"> 
+	        		and t.jzfl = #{jzlbmc,jdbcType=VARCHAR}
+	        	</if>
+	        	order by t.fwtgz_yyxtbh,t.fwbs,t.ffbs
+        	) k where rownum &lt;= #{end}
+		) where rnum &gt; #{start}
+	</select>
+ 	<select id="getCountByPage" resultType="int" parameterType="map">
+ 		select count(1) from fwzyffzcb t
+		left join fwcyfzcb a on t.fwtgz_yyxtbh=a.fwcyf_yyxtbh
+		left join fwzyzcb b on t.fwbs=b.fwbs
+		left join jgdmb c on substr(a.fwcyf_ssfj,1,6)||'000000'=c.jgbs
+		left join jzlbdmb d on t.jzfl=d.jzlbdm
+		where 1=1
+		<if test="yymc!=null and yymc!=''"> 
+        	and a.fwcyf_yyxtmc like '%'||#{yymc,jdbcType=VARCHAR}||'%'
+        </if>
+        <if test="fwmc!=null and fwmc!=''"> 
+        	and b.fwmc like '%'||#{fwmc,jdbcType=VARCHAR}||'%'
+        </if>
+	    <if test="ffbs!=null and ffbs!=''"> 
+	       	and t.ffbs like '%'||#{ffbs,jdbcType=VARCHAR}||'%'
+	    </if>
+	    <if test="ffmc!=null and ffmc!=''"> 
+	        and t.ffmc like '%'||#{ffmc,jdbcType=VARCHAR}||'%'
+	    </if>
+	    <if test="jgmc!=null and jgmc!=''"> 
+	       	and c.jgmc like '%'||#{jgmc,jdbcType=VARCHAR}||'%'
+	    </if>
+	    <if test="wlfl!=null and wlfl!=''"> 
+	        and t.wlfl = #{wlfl,jdbcType=VARCHAR}
+	    </if>
+	    <if test="czfl!=null and czfl!=''"> 
+	        and t.czfl = #{czfl,jdbcType=VARCHAR}
+	    </if>
+	    <if test="jzlbmc!=null and jzlbmc!=''"> 
+	        and t.jzfl = #{jzlbmc,jdbcType=VARCHAR}
+	    </if>
+	</select>
+	
+	<select id="listJzInfo" resultType="map">
+		select t.jzlbdm,t.jzlbmc from jzlbdmb t order by t.jzlbdm
+	</select>
+	
+</mapper>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.esb.dao.EsbMfInformationDao" >
+
+  <resultMap id="BaseResultMap" type="net.sinodata.esb.entity.EsbMfInformation" >
+  	<result column="I_ID" property="id" jdbcType="VARCHAR" />
+  	<result column="P_ID" property="pid" jdbcType="VARCHAR" />
+  	<result column="P_NAME" property="pname" jdbcType="VARCHAR" />
+  	<result column="P_NODE_LIST" property="pnodeList" jdbcType="VARCHAR" />
+  	<result column="START_TIME" property="startTime" jdbcType="VARCHAR" />
+  	<result column="END_TIME" property="endTime" jdbcType="VARCHAR"/>
+  	<result column="RUN_TIME" property="runTime" jdbcType="VARCHAR"/>
+  	<result column="STATE" property="state" jdbcType="VARCHAR"/>
+  	<result column="RUNTIME_EXCEPTION" property="runtimeException" jdbcType="VARCHAR"/>
+  	<result column="EXCEPTION_DATA" property="exceptionData" jdbcType="VARCHAR"/>
+  	<result column="EXCEPTION_NODE_ALIAS" property="exceptionNodeAlias" jdbcType="VARCHAR"/>
+  </resultMap>
+
+	<select id="queryCountAllByPid" resultType="int">
+		select count(*) from esb_mf_information where p_id=#{pId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="queryCountEndedByPid" resultType="int">
+		select count(*) from esb_mf_information where p_id=#{pId,jdbcType=VARCHAR} and state='ended'
+	</select>
+	
+	<select id="queryCountExceptionByPid" resultType="int">
+		select count(*) from esb_mf_information where p_id=#{pId,jdbcType=VARCHAR} and state='exception'
+	</select>
+	
+	<select id="queryList" resultMap="BaseResultMap" parameterType="Map">
+		select I_ID,P_ID,P_NAME,P_NODE_LIST,to_char(START_TIME,'yyyy-mm-dd hh24:mi:ss,ff') START_TIME,
+		to_char(END_TIME,'yyyy-mm-dd hh24:mi:ss,ff') END_TIME,STATE,RUNTIME_EXCEPTION,EXCEPTION_DATA,EXCEPTION_NODE_ALIAS ,
+		((extract(day from RUN_TIME) * 24 * 60 * 60 + extract(hour from RUN_TIME) * 60 * 60 + extract(minute from RUN_TIME) * 60 + extract(second from RUN_TIME)) * 1000) RUN_TIME
+		from (select x.*,(end_time-start_time) RUN_TIME,rownum rnum from (
+			select t.* from esb_mf_information t where 1=1
+			<if test="p_id!=null and p_id!=''">
+				and p_id=#{p_id,jdbcType=VARCHAR}
+			</if>
+			<if test="state!=null and state!=''">
+				and state=#{state,jdbcType=VARCHAR}
+			</if>
+			order by START_TIME desc
+			) x
+			where rownum &lt;=#{end}
+		) where rnum &gt; #{start}
+	</select>
+	
+	<select id="queryListCount" resultType="int" parameterType="Map">
+		select count(*) from esb_mf_information where 1=1
+		<if test="p_id!=null and p_id!=''">
+			and p_id=#{p_id,jdbcType=VARCHAR}
+		</if>
+		<if test="state!=null and state!=''">
+			and state=#{state,jdbcType=VARCHAR}
+		</if>
+	</select>
+</mapper>

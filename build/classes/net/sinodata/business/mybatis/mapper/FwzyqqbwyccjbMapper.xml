@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.business.dao.FwzyqqbwyccjbDao" >
+  <resultMap id="BaseResultMap" type="net.sinodata.business.entity.Fwzyqqbwyccjb" >
+    <id column="QQBWBS" property="qqbwbs" jdbcType="VARCHAR" />
+    <result column="FWQQ_IP" property="fwqqIp" jdbcType="VARCHAR" />
+    <result column="FWQQ_DK" property="fwqqDk" jdbcType="VARCHAR" />
+    <result column="FWQQZ_ZCXX" property="fwqqzZcxx" jdbcType="VARCHAR" />
+    <result column="FWBS" property="fwbs" jdbcType="VARCHAR" />
+    <result column="FFBS" property="ffbs" jdbcType="VARCHAR" />
+    <result column="FWQQ_RQSJ" property="fwqqRqsj" jdbcType="VARCHAR" />
+    <result column="FWQQ_NR" property="fwqqNr" jdbcType="VARCHAR" />
+    <result column="XXCZRY_XM" property="xxczryXm" jdbcType="VARCHAR" />
+    <result column="XXCZRY_GMSFHM" property="xxczryGmsfhm" jdbcType="VARCHAR" />
+    <result column="XXCZRY_GAJGJGDM" property="xxczryGajgjgdm" jdbcType="VARCHAR" />
+    <result column="FWQQSB_BH" property="fwqqsbBh" jdbcType="VARCHAR" />
+    <result column="FWQQ_SJSJLX" property="fwqqSjsjlx" jdbcType="VARCHAR" />
+    <result column="START_TIME" property="startTime" jdbcType="VARCHAR" />
+    <result column="QQQW" property="qqqw" jdbcType="VARCHAR" />
+    <result column="EXCEPTION_COLS" property="exceptionCols" jdbcType="VARCHAR" />
+    <result column="EXCEPTION_COLNAMES" property="exceptionColnames" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="YcLogMap" type="net.sinodata.business.entity.FwzyqqbwyccjbDownload" >
+    <result column="QQBWBS" property="qqbwbs" jdbcType="VARCHAR" />
+    <result column="FWBS" property="fwbs" jdbcType="VARCHAR" />
+    <result column="FWQQZ_ZCXX" property="fwqqzZcxx" jdbcType="VARCHAR" />
+    <result column="FFBS" property="ffbs" jdbcType="VARCHAR" />
+    <result column="START_TIME" property="startTime" jdbcType="VARCHAR" />
+    <result column="EXCEPTION_COLS" property="exceptionCols" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="qyertList" resultMap="BaseResultMap" parameterType="Map">
+  	select QQBWBS,FWQQ_IP,FWQQ_DK,(select FWCYF_YYXTMC from fwcyfzcb where FWCYF_YYXTBH=tab.FWQQZ_ZCXX and rownum=1) FWQQZ_ZCXX,
+  	(select FWMC from fwzyzcb where FWBS=tab.FWBS and rownum=1) FWBS,
+  	(select FFMS from fwzyffzcb where FWBS=tab.FWBS and FFBS=tab.FFBS and rownum=1) FFBS,
+  	FWQQ_RQSJ,XXCZRY_XM,XXCZRY_GMSFHM,(select wm_concat(jgmc) from jgdmb t start with jgbs=tab.XXCZRY_GAJGJGDM connect by jgbs = prior sssjjg) XXCZRY_GAJGJGDM,
+  	FWQQSB_BH,FWQQ_SJSJLX,FWQQ_NR,START_TIME,QQQW,
+  	(select wm_concat(distinct EXCEPTION_COLS) from fwzyqqbwyccjb_cols where tab.qqbwbs=qqbwbs) EXCEPTION_COLS,
+  	(select wm_concat(distinct ZDMS) from fwzyqqbwyccjb_cols yc,fwqqzdb zd where yc.EXCEPTION_COLS=zd.ZDM and tab.qqbwbs=yc.qqbwbs) EXCEPTION_COLNAMES
+  	from (select x.*,rownum rnum from (select * from fwzyqqbwyccjb qq where 1=1
+  	<if test="qqbwbs!=null">
+  		and qq.QQBWBS = #{qqbwbs,jdbcType=VARCHAR}
+  	</if>
+  	
+  	<if test="fwbs!=null">
+  		and qq.FWBS = #{fwbs,jdbcType=VARCHAR}
+  	</if>
+  	
+  	<if test="fwqqzZcxx!=null">
+  		and qq.FWQQZ_ZCXX = #{fwqqzZcxx,jdbcType=VARCHAR}
+  	</if>
+  	<if test="startTime!=null">
+  		and START_TIME &gt;= #{startTime,jdbcType=VARCHAR}
+  	</if>
+  	<if test="endTime!=null">
+  		and START_TIME &lt;= #{endTime,jdbcType=VARCHAR}
+  	</if>
+  	order by START_TIME desc) x where rownum &lt;=#{end}
+  	) tab where rnum &gt; #{start}
+  </select>
+  
+  <select id="qyertListCount" resultType="int" parameterType="Map">
+  	select count(*) from fwzyqqbwyccjb qq where 1=1
+  	<if test="qqbwbs!=null">
+  		and qq.QQBWBS = #{qqbwbs,jdbcType=VARCHAR}
+  	</if>
+  	
+  	<if test="fwbs!=null">
+  		and qq.FWBS = #{fwbs,jdbcType=VARCHAR}
+  	</if>
+  	
+  	<if test="fwqqzZcxx!=null">
+  		and qq.FWQQZ_ZCXX = #{fwqqzZcxx,jdbcType=VARCHAR}
+  	</if>
+  	<if test="startTime!=null">
+  		and START_TIME &gt;= #{startTime,jdbcType=VARCHAR}
+  	</if>
+  	<if test="endTime!=null">
+  		and START_TIME &lt;= #{endTime,jdbcType=VARCHAR}
+  	</if>
+  </select>
+  
+  <select id="getYcList" resultMap="YcLogMap" parameterType="Map">
+  	select QQBWBS,FWQQ_IP,FWQQ_DK,(select FWCYF_YYXTMC from fwcyfzcb where FWCYF_YYXTBH=tab.FWQQZ_ZCXX and rownum=1) FWQQZ_ZCXX,
+  	(select FWMC from fwzyzcb where FWBS=tab.FWBS and rownum=1) FWBS,
+  	(select FFMS from fwzyffzcb where FWBS=tab.FWBS and FFBS=tab.FFBS and rownum=1) FFBS,
+  	FWQQ_RQSJ,XXCZRY_XM,XXCZRY_GMSFHM,(select wm_concat(jgmc) from jgdmb t start with jgbs=tab.XXCZRY_GAJGJGDM connect by jgbs = prior sssjjg) XXCZRY_GAJGJGDM,
+  	FWQQSB_BH,FWQQ_SJSJLX,FWQQ_NR,START_TIME,QQQW,
+  	(select wm_concat(distinct EXCEPTION_COLS) from fwzyqqbwyccjb_cols where tab.qqbwbs=qqbwbs) EXCEPTION_COLS,
+  	(select wm_concat(distinct ZDMS) from fwzyqqbwyccjb_cols yc,fwqqzdb zd where yc.EXCEPTION_COLS=zd.ZDM and tab.qqbwbs=yc.qqbwbs) EXCEPTION_COLNAMES
+  	from (select x.*,rownum rnum from (select * from fwzyqqbwyccjb qq where 1=1
+  	<if test="qqbwbs!=null">
+  		and qq.QQBWBS = #{qqbwbs,jdbcType=VARCHAR}
+  	</if>
+  	
+  	<if test="fwbs!=null">
+  		and qq.FWBS = #{fwbs,jdbcType=VARCHAR}
+  	</if>
+  	
+  	<if test="fwqqzZcxx!=null">
+  		and qq.FWQQZ_ZCXX = #{fwqqzZcxx,jdbcType=VARCHAR}
+  	</if>
+  	<if test="startTime!=null">
+  		and START_TIME &gt;= #{startTime,jdbcType=VARCHAR}
+  	</if>
+  	<if test="endTime!=null">
+  		and START_TIME &lt;= #{endTime,jdbcType=VARCHAR}
+  	</if>
+  	order by START_TIME desc) x where rownum &lt;=#{end}
+  	) tab where rnum &gt; #{start}
+  </select>
+  
+ </mapper>

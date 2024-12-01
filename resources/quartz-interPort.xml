@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:batch="http://www.springframework.org/schema/batch" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  
+http://www.springframework.org/schema/tx 
+http://www.springframework.org/schema/tx/spring-tx-3.2.xsd  
+http://www.springframework.org/schema/aop 
+http://www.springframework.org/schema/aop/spring-aop-3.2.xsd  
+http://www.springframework.org/schema/context 
+http://www.springframework.org/schema/context/spring-context-3.2.xsd
+http://www.springframework.org/schema/batch 
+http://www.springframework.org/schema/batch/spring-batch-3.0.xsd">
+<context:property-placeholder
+			ignore-unresolvable="true" location="classpath*:/application.properties" />
+
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+			
+ 			    <ref bean="testTrigger" />
+			 	<ref bean="writeRequestLogTrigger" />
+			 	<ref bean="writeResponseLogTrigger" />
+			 	<ref bean="writeExceptionLogTrigger" />
+				<!-- <ref bean="fwBwWriteTrigger" /> -->
+<!-- 			 	<ref bean="probeInterfaceTrigger" /> -->
+<!-- 				<ref bean="requestLimitTrigger" /> -->
+				
+			</list>
+		</property>
+	</bean>
+
+    <bean id="Job" class="net.sinodata.business.rest.InterFacePortJK"/>
+    <bean id="testJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">   
+        <property name="targetObject" ref="Job"/>  
+        <property name="targetMethod" value="execute"/>  
+        <property name="concurrent" value="false"/>
+    </bean>
+    <bean id="testTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="testJobDetail" /> 
+		<property name="cronExpression" value= "0 0/10 * * * ?"  /> 
+	</bean>
+    
+    <!-- 日志定时写库
+    <bean id="writeLogTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="writeLogBean" />
+		<property name="cronExpression" value= "0 0/1 * * * ?"  />
+	</bean>
+	<bean id="writeLogBean" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">   
+        <property name="targetObject" ref="LogWrite"/>
+        <property name="targetMethod" value="writeLog"/>  
+        <property name="concurrent" value="false"/>
+    </bean>
+	<bean id="LogWrite" class="net.sinodata.business.util.LogWrite"/>  
+	 -->
+	 <!-- 请求日志定时写库 -->
+	<bean id="requestLogWrite" class="net.sinodata.business.util.eventLogWrite.RequestLogWrite"/>
+	 <bean id="writeRequestLogBean" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">   
+        <property name="targetObject" ref="requestLogWrite"/>
+        <property name="targetMethod" value="autoWriteLog"/>  
+        <property name="concurrent" value="false"/>
+    </bean>
+    <bean id="writeRequestLogTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="writeRequestLogBean" />
+		<property name="cronExpression" value= "0 0/1 * * * ?"  />
+	</bean>
+	
+    <!-- 探测接口写库 -->
+	<bean id="probeInterface" class="net.sinodata.business.util.ProbeInterface"/>
+	 <bean id="writeProbeFailBean" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">   
+        <property name="targetObject" ref="probeInterface"/>
+        <property name="targetMethod" value="autoProbe"/>  
+        <property name="concurrent" value="false"/>
+    </bean>
+    <bean id="probeInterfaceTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="writeProbeFailBean" />
+		<property name="cronExpression" value= "0 0/10 * * * ?"  />
+	</bean>
+	
+    <!-- 请求数量限制禁用 -->
+	<bean id="requestLimit" class="net.sinodata.business.util.RequestLimit"/>
+	 <bean id="limitBean" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">   
+        <property name="targetObject" ref="requestLimit"/>
+        <property name="targetMethod" value="autoLimit"/>  
+        <property name="concurrent" value="false"/>
+    </bean>	
+	<bean id="requestLimitTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="limitBean" />
+		<property name="cronExpression" value= "0 0/1 * * * ?"  />
+	</bean>
+	
+	
+    
+	 <!-- 响应日志定时写库 -->
+	<bean id="responseLogWrite" class="net.sinodata.business.util.eventLogWrite.ResponseLogWrite"/>
+	 <bean id="writeResponseLogBean" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">   
+        <property name="targetObject" ref="responseLogWrite"/>
+        <property name="targetMethod" value="autoWriteLog"/>  
+        <property name="concurrent" value="false"/>
+    </bean>
+    <bean id="writeResponseLogTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="writeResponseLogBean" />
+		<property name="cronExpression" value= "0 0/1 * * * ?"  />
+	</bean>
+    
+	 <!-- 异常日志定时写库 -->
+	<bean id="exceptionLogWrite" class="net.sinodata.business.util.eventLogWrite.ExceptionLogWrite"/>
+	 <bean id="writeExceptionLogBean" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">   
+        <property name="targetObject" ref="exceptionLogWrite"/>
+        <property name="targetMethod" value="autoWriteLog"/>  
+        <property name="concurrent" value="false"/>
+    </bean>
+	<bean id="writeExceptionLogTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="writeExceptionLogBean" />
+		<property name="cronExpression" value= "0 0/2 * * * ?"  />
+	</bean>
+
+	<!-- 异常日志定时写库 -->
+	<!--  
+	<bean id="fwBwWrite" class="net.sinodata.business.util.elasticsearch.FwBwWriteThread"/>
+	<bean id="fwBwWriteBean" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="fwBwWrite"/>
+		<property name="targetMethod" value="autoWriteFwBw"/>
+		<property name="concurrent" value="false"/>
+	</bean>
+	<bean id="fwBwWriteTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="fwBwWriteBean" />
+		<property name="cronExpression" value= "0 0/1 * * * ?"  />
+	</bean>
+	-->
+	
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+	    <property name="basePackage" value="net.sinodata.business.dao.quartzJob" />
+		<property name="sqlSessionFactoryBeanName" value="jobSqlSessionFactory" />
+	</bean>
+
+<!-- mybatis -->
+<bean id="jobSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="jobDataSource" />
+		<property name="configLocation" value="classpath:myBatisConfig.xml"/>
+		<property name="mapperLocations">
+			<list>
+			<!--  -->
+				<value>classpath:net/sinodata/business/mybatis/mapper/job/SSJKMapper.xml</value>
+			
+				
+			</list>
+		</property>
+	</bean>
+
+
+
+	
+<!-- JDBC事务管理 -->
+	<bean id="jobTransactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="jobDataSource" />
+		<qualifier value="job"/> 
+	</bean>
+
+
+	<!-- 使用annotation定义事务 -->
+	<tx:annotation-driven transaction-manager="jobTransactionManager"
+		proxy-target-class="true" />
+		<!-- 数据源配置, 使用Tomcat JDBC连接池 -->
+		<bean id="jobDataSource" class="com.jolbox.bonecp.BoneCPDataSource"
+			destroy-method="close">
+		    <property name="driverClass" value="${jdbc.driver}" />
+			<property name="jdbcUrl" value="${jdbc.url}" />
+			<property name="username" value="${jdbc.username}" />
+			<property name="password" value="${jdbc.password}" />
+			<!-- 检查数据库连接池中空闲连接的间隔时间，单位是分 -->
+			<property name="idleConnectionTestPeriod" value="60" />
+			<!-- 连接池中未使用的链接最大存活时间，单位是分 -->
+			<property name="idleMaxAge" value="240" />
+			<!-- 设置每个分区含有connection最大个数 -->
+			<property name="maxConnectionsPerPartition" value="30" />
+			<!-- 设置每个分区含有connection最小个数 -->
+			<property name="minConnectionsPerPartition" value="10" />
+			<!-- 分区数 ，默认值2，最小1，推荐3-4，视应用而定 -->
+			<property name="partitionCount" value="3" />
+			<!-- 设置分区中的connection增长数量 -->
+			<property name="acquireIncrement" value="5" />
+			<!-- 缓存prepared statements的大小，默认值：0 -->
+			<property name="statementsCacheSize" value="100" />
+			<!-- 每个分区释放链接助理进程的数量，默认值：3，除非你的一个数据库连接的时间内做了很多工作，不然过多的助理进程会影响你的性能 -->
+			<property name="releaseHelperThreads" value="3" />
+		</bean>
+
+	
+</beans>

@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.business.dao.FwcyfzcbRegDao" >
+  <resultMap id="BaseResultMap" type="net.sinodata.business.entity.FwcyfzcbReg" >
+    <result column="FWCYF_YYXTBH" property="fwcyfYyxtbh" jdbcType="VARCHAR" />
+    <result column="FWCYF_YYXTMC" property="fwcyfYyxtmc" jdbcType="VARCHAR" />
+    <result column="FWCYF_DLMM" property="fwcyfDlmm" jdbcType="VARCHAR" />
+    <result column="FWCYF_MS" property="fwcyfMs" jdbcType="VARCHAR" />
+    <result column="FWCYF_RQSJ" property="fwcyfRqsj" jdbcType="TIMESTAMP" />
+    <result column="FWCYF_SSFJ" property="fwcyfSsfj" jdbcType="VARCHAR" />
+    <result column="FWCYF_LXFS" property="fwcyfLxfs" jdbcType="VARCHAR" />
+    <result column="LXR_SM" property="lxrSm" jdbcType="VARCHAR" />
+    <result column="LXR_XM" property="lxrXm" jdbcType="VARCHAR" />
+    <result column="LXDH" property="lxdh" jdbcType="VARCHAR" />
+    <result column="DZXX" property="dzxx" jdbcType="VARCHAR" />
+    <result column="TXDZ" property="txdz" jdbcType="VARCHAR" />
+    <result column="APP_ID" property="appId" jdbcType="VARCHAR" />
+    <result column="ROLEID" property="roleid" jdbcType="VARCHAR" />
+    <result column="FWCYF_KYF" property="fwcyfKyf" jdbcType="VARCHAR" />
+    <result column="FWCYF_BM" property="fwcyfBm" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+      <result column="ROLENAME" property="rolename"
+			jdbcType="VARCHAR" />
+	<result column="jgmc" property="jgmc"
+			jdbcType="VARCHAR" />
+  </resultMap>
+   <sql id="Base_Column_List" >
+    FWCYF_YYXTBH, FWCYF_YYXTMC, FWCYF_DLMM, FWCYF_MS, FWCYF_RQSJ, FWCYF_SSFJ, FWCYF_LXFS, 
+    LXR_SM, LXR_XM, LXDH, DZXX, TXDZ,APP_ID, ROLEID,FWCYF_KYF,FWCYF_BM,STATUS
+  </sql>
+  
+   
+    <select id="getUserListByPage" resultMap="BaseResultMap"
+		parameterType="map">
+   select <include refid="Base_Column_List" />,ROLENAME,jgmc from (
+		select k.*, rownum rnum from
+		(select u.*,r.rolename,j.jgmc　 from FWCYFZCB_REG u left join t_role r on u.roleid=r.roleid left join jgdmb j on j.jgbs=u.FWCYF_SSFJ  where 1=1
+  		<if test="username!=null"> and u.FWCYF_YYXTMC like '%${username}%'</if>
+		<if test="roleid!=null"> and u.ROLEID = #{roleid,jdbcType=VARCHAR}</if>
+		<if test="status!=null"> and u.STATUS = #{status,jdbcType=VARCHAR}</if>
+  		order by u.fwcyf_rqsj desc,u.fwcyf_yyxtbh) k
+		where rownum &lt;= #{end}
+		)
+		where rnum &gt; #{start}
+
+	</select>
+	<select id="getUserCountByPage" resultType="int" parameterType="map">
+select count(1) 　 from FWCYFZCB_REG u left join t_role r on u.roleid=r.roleid left join jgdmb j on j.jgbs=u.FWCYF_SSFJ where 1=1
+	
+		<if test="username!=null"> and u.FWCYF_YYXTMC like '%${username}%'</if>
+		<if test="roleid!=null"> and u.ROLEID = #{roleid,jdbcType=VARCHAR}</if>
+		<if test="status!=null"> and u.STATUS = #{status,jdbcType=VARCHAR}</if>
+	</select>
+  
+	
+	  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />,jgmc
+    from FWCYFZCB_REG u  left join jgdmb j on j.jgbs=u.FWCYF_SSFJ
+    where FWCYF_YYXTBH = #{fwcyfYyxtbh,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from FWCYFZCB_REG
+    where FWCYF_YYXTBH = #{fwcyfYyxtbh,jdbcType=VARCHAR}
+  </delete>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+  <insert id="insert" parameterType="net.sinodata.business.entity.FwcyfzcbReg" >
+    insert into FWCYFZCB_REG (FWCYF_YYXTBH, FWCYF_YYXTMC, FWCYF_DLMM, 
+      FWCYF_MS, FWCYF_RQSJ, FWCYF_SSFJ, 
+      FWCYF_LXFS, LXR_SM, LXR_XM, 
+      LXDH, DZXX, TXDZ, APP_ID,ROLEID, 
+      FWCYF_KYF, FWCYF_BM, STATUS
+      )
+    values (#{fwcyfYyxtbh,jdbcType=VARCHAR}, #{fwcyfYyxtmc,jdbcType=VARCHAR}, #{fwcyfDlmm,jdbcType=VARCHAR}, 
+      #{fwcyfMs,jdbcType=VARCHAR}, #{fwcyfRqsj,jdbcType=TIMESTAMP}, #{fwcyfSsfj,jdbcType=VARCHAR}, 
+      #{fwcyfLxfs,jdbcType=VARCHAR}, #{lxrSm,jdbcType=VARCHAR}, #{lxrXm,jdbcType=VARCHAR}, 
+      #{lxdh,jdbcType=VARCHAR}, #{dzxx,jdbcType=VARCHAR}, #{txdz,jdbcType=VARCHAR}, #{appId,jdbcType=VARCHAR}, 
+      #{roleid,jdbcType=VARCHAR}, #{fwcyfKyf,jdbcType=VARCHAR}, #{fwcyfBm,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="net.sinodata.business.entity.FwcyfzcbReg" >
+    insert into FWCYFZCB_REG
+    <selectKey keyProperty="fwcyfYyxtbh" resultType="java.lang.String" order="BEFORE">  
+        select   FUN_FWCYFBS( #{fwcyfSsfj,jdbcType=VARCHAR}) from dual
+    </selectKey>
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+       <if test="fwcyfYyxtbh != null" > 
+      <!-- <if test="fwcyfSsfj != null" > -->
+        FWCYF_YYXTBH,
+      </if>
+      <if test="fwcyfYyxtmc != null" >
+        FWCYF_YYXTMC,
+      </if>
+      <if test="fwcyfDlmm != null" >
+        FWCYF_DLMM,
+      </if>
+      <if test="fwcyfMs != null" >
+        FWCYF_MS,
+      </if>
+      <if test="fwcyfRqsj != null" >
+        FWCYF_RQSJ,
+      </if>
+      <if test="fwcyfSsfj != null" >
+        FWCYF_SSFJ,
+      </if>
+      <if test="fwcyfLxfs != null" >
+        FWCYF_LXFS,
+      </if>
+      <if test="lxrSm != null" >
+        LXR_SM,
+      </if>
+      <if test="lxrXm != null" >
+        LXR_XM,
+      </if>
+      <if test="lxdh != null" >
+        LXDH,
+      </if>
+      <if test="dzxx != null" >
+        DZXX,
+      </if>
+      <if test="txdz != null" >
+        TXDZ,
+      </if>
+      <if test="appId != null" >
+        APP_ID,
+      </if>
+      <if test="roleid != null" >
+        ROLEID,
+      </if>
+      <if test="fwcyfKyf != null" >
+        FWCYF_KYF,
+      </if>
+      <if test="fwcyfBm != null" >
+        FWCYF_BM,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+       
+       <if test="fwcyfYyxtbh != null" >
+        #{fwcyfYyxtbh,jdbcType=VARCHAR},
+      </if> 
+      <if test="fwcyfYyxtmc != null" >
+        #{fwcyfYyxtmc,jdbcType=VARCHAR},
+      </if>
+      <if test="fwcyfDlmm != null" >
+        #{fwcyfDlmm,jdbcType=VARCHAR},
+      </if>
+      <if test="fwcyfMs != null" >
+        #{fwcyfMs,jdbcType=VARCHAR},
+      </if>
+      <if test="fwcyfRqsj != null" >
+        #{fwcyfRqsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fwcyfSsfj != null" >
+        #{fwcyfSsfj,jdbcType=VARCHAR},
+      </if>
+      <if test="fwcyfLxfs != null" >
+        #{fwcyfLxfs,jdbcType=VARCHAR},
+      </if>
+      <if test="lxrSm != null" >
+        #{lxrSm,jdbcType=VARCHAR},
+      </if>
+      <if test="lxrXm != null" >
+        #{lxrXm,jdbcType=VARCHAR},
+      </if>
+      <if test="lxdh != null" >
+        #{lxdh,jdbcType=VARCHAR},
+      </if>
+      <if test="dzxx != null" >
+        #{dzxx,jdbcType=VARCHAR},
+      </if>
+      <if test="txdz != null" >
+        #{txdz,jdbcType=VARCHAR},
+      </if>
+      <if test="appId != null" >
+        #{appId,jdbcType=VARCHAR},
+      </if>
+      <if test="roleid != null" >
+        #{roleid,jdbcType=VARCHAR},
+      </if>
+      <if test="fwcyfKyf != null" >
+        #{fwcyfKyf,jdbcType=VARCHAR},
+      </if>
+      <if test="fwcyfBm != null" >
+        #{fwcyfBm,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

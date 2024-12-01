@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.business.dao.FwEventLogDao" >
+  <resultMap id="BaseResultMap" type="net.sinodata.business.entity.FwEventLog" >
+  	<result column="SRC_SYS_NAME" property="src_sys_name" jdbcType="VARCHAR" />
+	<result column="SRC_SYS_ID" property="src_sys_id" jdbcType="VARCHAR" />
+	<result column="SRC_BIZ_USER_ID" property="src_biz_user_id" jdbcType="VARCHAR" />
+	<result column="SRC_DEVICE_IMEI" property="src_device_imei" jdbcType="VARCHAR" />
+	<result column="DEST_SYS_NAME" property="dest_sys_name" jdbcType="VARCHAR" />
+	<result column="DEST_SYS_ID" property="dest_sys_id" jdbcType="VARCHAR" />
+	<result column="DEST_SYS_INTERFACE" property="dest_sys_interface" jdbcType="VARCHAR" />
+	<result column="DEST_SYS_INTERFACE_DESC" property="dest_sys_interface_desc" jdbcType="VARCHAR" />
+	<result column="DEST_DEVICE_ADDR" property="dest_device_addr" jdbcType="VARCHAR" />
+	<result column="DEST_DEVICE_PORT" property="dest_device_port" jdbcType="VARCHAR" />
+	<result column="EVENT_TRACING_ID" property="event_tracing_id" jdbcType="VARCHAR" />
+	<result column="EVENT_TYPE" property="event_type" jdbcType="VARCHAR" />
+	<result column="EVENT_RESULT" property="event_result" jdbcType="VARCHAR" />
+	<result column="EVENT_RESULT_DESC" property="event_result_desc" jdbcType="VARCHAR" />
+	<result column="EVENT_MESSAGE" property="event_message" jdbcType="VARCHAR" />
+	<result column="EVENT_START_TIME" property="event_start_time" jdbcType="VARCHAR" />
+	<result column="EVENT_END_TIME" property="event_end_time" jdbcType="VARCHAR" />
+	<result column="REQUEST_CONTENT" property="request_content" jdbcType="VARCHAR" />
+	<result column="RESPONSE_CONTENT" property="response_content" jdbcType="VARCHAR" />
+	<result column="EXCEPTION_CONTENT" property="exception_content" jdbcType="VARCHAR" />
+	<result column="ID" property="id" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="queryLogList" resultMap="BaseResultMap" parameterType="Map">
+  	select src_sys_name,src_sys_id,src_biz_user_id,src_device_imei,dest_sys_name,dest_sys_id,dest_sys_interface,dest_sys_interface_desc,
+	  	dest_device_addr,dest_device_port,event_tracing_id,event_type,event_result,event_result_desc,event_message,event_start_time,
+	  	event_end_time,request_content,response_content,exception_content,id 
+  	from (select x.*,rownum rnum from (select * from fw_event_log where 1=1
+  	<if test="startTime!=null and startTime!=''">
+  		and event_start_time >= #{startTime,jdbcType=VARCHAR}
+  	</if>
+  	<if test="endTime!=null and endTime!=''">
+  		and event_start_time &lt;= #{endTime,jdbcType=VARCHAR}
+  	</if>
+  	order by event_start_time desc) x
+  	where rownum &lt;=#{end})
+  	where rnum &gt; #{start}
+  </select>
+  
+  <select id="queryLogListCount" resultType="int" parameterType="Map">
+  	select count(*) from fw_event_log where 1=1 
+  	<if test="startTime!=null and startTime!=''">
+  		and event_start_time >= #{startTime,jdbcType=VARCHAR}
+  	</if>
+  	<if test="endTime!=null and endTime!=''">
+  		and event_start_time &lt;= #{endTime,jdbcType=VARCHAR}
+  	</if>
+  </select>
+  
+  <select id="selectLogByPkid" resultType="int" parameterType="String">
+  	select * from fw_event_log where id=#{id,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="sqlAreaList" resultType="map" parameterType="Map">
+  	select * from (
+  		select x.*,rownum rnum from (
+  			select t.SQL_ID,t.PARSING_SCHEMA_NAME,t.MODULE,
+  				to_char(t.LAST_ACTIVE_TIME,'yyyy-MM-dd HH24:mi:ss') as LAST_ACTIVE_TIME
+  			from v$sqlarea t where 1 = 1
+  			<if test="dayTime!=null and dayTime!=''">
+  				and substr(to_char(t.LAST_ACTIVE_TIME,'yyyy-MM-dd HH24:mi:ss'),1,10) = #{dayTime,jdbcType=VARCHAR}
+  			</if>
+  			order by t.LAST_ACTIVE_TIME desc,t.SQL_ID
+  		) x where rownum &lt;=#{end}
+  	) where rnum &gt; #{start}
+  </select>
+  
+  <select id="sqlAreaCount" resultType="int" parameterType="Map">
+  	select count(1) from v$sqlarea t where 1 = 1
+  	<if test="dayTime!=null and dayTime!=''">
+  		and substr(to_char(t.LAST_ACTIVE_TIME,'yyyy-MM-dd HH24:mi:ss'),1,10) = #{dayTime,jdbcType=VARCHAR}
+  	</if>
+  </select>
+  
+  <select id="lookSql" parameterType="string" resultType="string">
+  	select t.SQL_FULLTEXT from v$sqlarea t where t.SQL_ID = #{sqlId,jdbcType=VARCHAR}
+  </select>
+  
+</mapper>

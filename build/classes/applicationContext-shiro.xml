@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd"
+	default-lazy-init="true">
+
+	<description>Shiro安全配置</description>
+
+	<!-- Shiro's main business-tier object for web-enabled applications -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realm" ref="shiroDbRealm" />
+		<property name="cacheManager" ref="shiroEhcacheManager" />
+		<property name="sessionManager" ref="shiroSessionManager"></property>
+	</bean>
+
+	<bean id="shiroSessionManager"
+		class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+		<property name="sessionDAO" ref="enterpriseCacheSessionDAO"></property>
+		<property name="globalSessionTimeout" value="7200000"></property>
+	</bean>
+	<bean id="enterpriseCacheSessionDAO"
+		class="org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO">
+	</bean>
+	<!-- 項目自定义的Realm, 所有accountService依赖的dao都需要用depends-on声明 -->
+	<bean id="shiroDbRealm" class="net.sinodata.security.util.ShiroDbRealm">
+	<!-- 
+		<property name="accountService" ref="accountService" />
+	 -->
+	</bean>
+	<bean id="otpLoginFilter" class="net.sinodata.security.filter.LoginFilter"></bean>
+	<bean id="otpLogoutFilter" class="net.sinodata.security.filter.LoginoutFilter"></bean>
+	<bean id="otpAccessFilter" class="net.sinodata.security.filter.AccessFilter"></bean>
+	 
+	<!-- 項目自定义的Realm, 所有accountService依赖的dao都需要用depends-on声明 -->
+	<!-- Shiro Filter -->
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager" />
+				<property name="loginUrl" value="/login" />
+		<property name="successUrl" value="/" />
+		<property name="unauthorizedUrl" value="/login" />
+		<property name="filters">
+			<map>
+				<entry key="otpLoginFilter" value-ref="otpLoginFilter"></entry>
+				<entry key="otpLogoutFilter" value-ref="otpLogoutFilter"></entry>
+				<entry key="otpAccessFilter" value-ref="otpAccessFilter"></entry>
+			</map>
+		</property>
+		<property name="filterChainDefinitions">
+			<value>
+				 /InterfaceManage/** = anon  <!-- 对外接口-->
+			     /register/**=anon
+			     /service/**=anon
+				/login = otpLoginFilter
+				/logout = otpLogoutFilter
+				/static/** = anon
+				/** = otpAccessFilter
+			</value>
+		</property>
+	</bean>
+
+	<!-- 用户授权信息Cache, 采用EhCache -->
+	<bean id="shiroEhcacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+		<property name="cacheManagerConfigFile" value="classpath:ehcache/ehcache-shiro.xml" />
+	</bean>
+
+	<!-- 保证实现了Shiro内部lifecycle函数的bean执行 
+	-->
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+</beans>

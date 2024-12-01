@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.business.dao.LoginLogDao">
+
+	<insert id="addLoginLog" parameterType="java.lang.String">
+		insert into login_log(USERNAME,STATUE,LOGINTIME)
+		values
+		(#{userName,jdbcType=VARCHAR},#{statue,jdbcType=VARCHAR},
+		#{loginTime,jdbcType=TIMESTAMP})
+	</insert>
+
+</mapper>

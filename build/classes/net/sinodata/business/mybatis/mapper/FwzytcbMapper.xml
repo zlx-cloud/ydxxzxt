@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.business.dao.FwzytcbDao" >
+  <resultMap id="BaseResultMap" type="net.sinodata.business.entity.Fwzytcb" >
+    <id column="FWBS" property="fwbs" jdbcType="VARCHAR" />
+    <id column="FWMC" property="fwmc" jdbcType="VARCHAR" />
+    <id column="FFBS" property="ffbs" jdbcType="VARCHAR" />
+    <id column="FFMC" property="ffmc" jdbcType="VARCHAR" />
+    <id column="FFMS" property="ffms" jdbcType="VARCHAR" />
+    <id column="FWQQCS" property="fwqqcs" jdbcType="VARCHAR" />
+    <id column="FWKG" property="fwkg" jdbcType="VARCHAR" />
+    <id column="FWCYF_YYXTBH" property="fwcyfYyxtbh" jdbcType="VARCHAR" />
+    <id column="FWCYF_YYXTMC" property="fwcyfYyxtmc" jdbcType="VARCHAR" />
+    <id column="FWNR_BZ" property="fwnrBz" jdbcType="VARCHAR" />
+  </resultMap>
+  
+	<select id="queryTcList" resultMap="BaseResultMap" parameterType="map">
+		select a.*,s.fwcyf_yyxtmc from (select t.fwbs,f.fwmc,f.fwtgz_yyxtbh,f.fwnr_bz,rownum as rid from FWZYTCB t ,
+ 		FWZYZCB f where t.fwbs = f.fwbs ) a,FWCYFZCB s where a.fwtgz_yyxtbh = s.fwcyf_yyxtbh
+		 and  rid&lt;= #{end}  and rid &gt; #{start}
+	</select>
+	
+	<select id="getFwzytcbCountByPage" resultType="int" parameterType="map">
+		select count(1) from (select a.*,s.fwcyf_yyxtmc from (select t.fwbs,f.fwmc,f.fwtgz_yyxtbh,f.fwnr_bz,rownum as rid 
+		from FWZYTCB t , FWZYZCB f where t.fwbs = f.fwbs ) a,FWCYFZCB s where a.fwtgz_yyxtbh = s.fwcyf_yyxtbh
+	)
+	</select>
+	
+	
+	<update id="updateByPrimaryKeySelective"
+		parameterType="net.sinodata.business.entity.Fwzytcb">
+		update FWZYTCB
+		<set>
+			<if test="fwmc != null">
+				FWMC = #{fwmc,jdbcType=VARCHAR},
+			</if>
+			<if test="ffbs != null">
+				FFBS = #{ffbs,jdbcType=VARCHAR},
+			</if>
+			<if test="ffmc != null">
+				FFMC = #{ffmc,jdbcType=VARCHAR},
+			</if>
+			<if test="ffms != null">
+				FFMS = #{ffms,jdbcType=VARCHAR},
+			</if>
+			<if test="fwqqcs != null">
+				FWQQCS = #{fwqqcs,jdbcType=VARCHAR},
+			</if>
+			<if test="fwkg != null">
+				FWKG = #{fwkg,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where FWBS = #{fwbs,jdbcType=VARCHAR}
+	</update>
+	
+	
+	
+	
+	<insert id="insertSelective"
+		parameterType="net.sinodata.business.entity.Fwzytcb">
+		insert into FWZYTCB
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="fwbs != null">
+				FWBS,
+			</if>
+			<if test="fwmc != null">
+				FWMC,
+			</if>
+			<if test="ffbs != null">
+				FFBS,
+			</if>
+			<if test="ffmc != null">
+				FFMC,
+			</if>
+			<if test="ffms != null">
+				FFMS,
+			</if>
+			<if test="fwqqcs != null">
+				FWQQCS,
+			</if>
+			<if test="fwkg != null">
+				FWKG,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="fwbs != null">
+				#{fwbs,jdbcType=VARCHAR},
+			</if>
+			<if test="fwmc != null">
+				#{fwmc,jdbcType=VARCHAR},
+			</if>
+			<if test="ffbs != null">
+				#{ffbs,jdbcType=VARCHAR},
+			</if>
+			<if test="ffmc != null">
+				#{ffmc,jdbcType=VARCHAR},
+			</if>
+			<if test="ffms != null">
+				#{ffms,jdbcType=VARCHAR},
+			</if>
+			<if test="fwqqcs != null">
+				#{fwqqcs,jdbcType=VARCHAR},
+			</if>
+			<if test="fwkg != null">
+				#{fwkg,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+</mapper>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.business.dao.JgdmbDao" >
+  <resultMap id="BaseResultMap" type="net.sinodata.business.entity.Jgdmb" >
+    <id column="JGBS" property="jgbs" jdbcType="VARCHAR" />
+    <result column="JGMC" property="jgmc" jdbcType="VARCHAR" />
+    <result column="JGYWMC" property="jgywmc" jdbcType="VARCHAR" />
+    <result column="SSSJJG" property="sssjjg" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    JGBS, JGMC, JGYWMC, SSSJJG
+  </sql>
+
+<select id="queryByJgbsAndsssjjg" resultMap="BaseResultMap">
+select <include refid="Base_Column_List" /> from JGDMB   where 1=1
+     
+   <if test="sssjjg != null and sssjjg != ''" >
+      and sssjjg= #{sssjjg,jdbcType=VARCHAR}
+     </if>
+      <if test="jgmc != null and jgmc != ''" >
+     <!--  and jgmc= #{jgmc,jdbcType=VARCHAR} -->
+   and jgmc like '%${jgmc}%'
+     </if>
+      <if test="jgbs != null and jgbs != ''" >
+      and jgbs= #{jgbs,jdbcType=VARCHAR}
+     </if>
+    <if test="sssjjg == null" >
+      and sssjjg is null
+     </if>
+
+
+</select>
+ 
+
+
+
+   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from JGDMB
+    where JGBS = #{jgbs,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from JGDMB
+    where JGBS = #{jgbs,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="net.sinodata.business.entity.Jgdmb" >
+    insert into JGDMB (JGBS, JGMC, JGYWMC, 
+      SSSJJG)
+    values (#{jgbs,jdbcType=VARCHAR}, #{jgmc,jdbcType=VARCHAR}, #{jgywmc,jdbcType=VARCHAR}, 
+      #{sssjjg,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="net.sinodata.business.entity.Jgdmb" >
+    insert into JGDMB
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="jgbs != null" >
+        JGBS,
+      </if>
+      <if test="jgmc != null" >
+        JGMC,
+      </if>
+      <if test="jgywmc != null" >
+        JGYWMC,
+      </if>
+      <if test="sssjjg != null" >
+        SSSJJG,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="jgbs != null" >
+        #{jgbs,jdbcType=VARCHAR},
+      </if>
+      <if test="jgmc != null" >
+        #{jgmc,jdbcType=VARCHAR},
+      </if>
+      <if test="jgywmc != null" >
+        #{jgywmc,jdbcType=VARCHAR},
+      </if>
+      <if test="sssjjg != null" >
+        #{sssjjg,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="net.sinodata.business.entity.Jgdmb" >
+    update JGDMB
+    <set >
+      <if test="jgmc != null" >
+        JGMC = #{jgmc,jdbcType=VARCHAR},
+      </if>
+      <if test="jgywmc != null" >
+        JGYWMC = #{jgywmc,jdbcType=VARCHAR},
+      </if>
+      <if test="sssjjg != null" >
+        SSSJJG = #{sssjjg,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where JGBS = #{jgbs,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="net.sinodata.business.entity.Jgdmb" >
+    update JGDMB
+    set JGMC = #{jgmc,jdbcType=VARCHAR},
+      JGYWMC = #{jgywmc,jdbcType=VARCHAR},
+      SSSJJG = #{sssjjg,jdbcType=VARCHAR}
+    where JGBS = #{jgbs,jdbcType=VARCHAR}
+  </update>
+</mapper>

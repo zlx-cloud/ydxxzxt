@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.business.dao.AuthAplDao" >
+	<select id="getListByPage" resultType="map" parameterType="map">
+		select * from (
+			select k.*, rownum rnum from (
+				select t.id,t.yybs,c.fwcyf_yyxtmc as yymc,t.fwbs,b.fwmc,
+					t.ffbs,a.ffmc,t.sqyy,t.sysj,t.filename,t.sqsj,t.sqzt
+				from fwzysqgl t
+				left join fwzyffzcb a on t.fwbs=a.fwbs and t.ffbs=a.ffbs
+				left join fwzyzcb b on a.fwbs=b.fwbs
+				left join fwcyfzcb c on t.yybs=c.fwcyf_yyxtbh
+				where 1=1
+				<if test="yybs!=null and yybs!=''"> 
+        			and t.yybs = #{yybs,jdbcType=VARCHAR}
+        		</if>
+				<if test="fwbs!=null and fwbs!=''"> 
+        			and t.fwbs like '%'||#{fwbs,jdbcType=VARCHAR}||'%'
+        		</if>
+        		<if test="fwmc!=null and fwmc!=''"> 
+        			and b.fwmc like '%'||#{fwmc,jdbcType=VARCHAR}||'%'
+        		</if>
+	        	<if test="ffbs!=null and ffbs!=''"> 
+	        		and t.ffbs like '%'||#{ffbs,jdbcType=VARCHAR}||'%'
+	        	</if>
+	        	<if test="ffmc!=null and ffmc!=''"> 
+	        		and a.ffmc like '%'||#{ffmc,jdbcType=VARCHAR}||'%'
+	        	</if>
+	        	order by t.sqsj desc,t.yybs,t.fwbs,t.ffbs
+        	) k where rownum &lt;= #{end}
+		) where rnum &gt; #{start}
+	</select>
+ 	<select id="getCountByPage" resultType="int" parameterType="map">
+ 		select count(1) from fwzysqgl t
+		left join fwzyffzcb a on t.fwbs=a.fwbs and t.ffbs=a.ffbs
+		left join fwzyzcb b on a.fwbs=b.fwbs
+		left join fwcyfzcb c on t.yybs=c.fwcyf_yyxtbh
+		where 1=1
+		<if test="yybs!=null and yybs!=''"> 
+        	and t.yybs = #{yybs,jdbcType=VARCHAR}
+        </if>
+		<if test="fwbs!=null and fwbs!=''"> 
+        	and t.fwbs like '%'||#{fwbs,jdbcType=VARCHAR}||'%'
+        </if>
+        <if test="fwmc!=null and fwmc!=''"> 
+        	and b.fwmc like '%'||#{fwmc,jdbcType=VARCHAR}||'%'
+        </if>
+	    <if test="ffbs!=null and ffbs!=''"> 
+	        and t.ffbs like '%'||#{ffbs,jdbcType=VARCHAR}||'%'
+	    </if>
+	    <if test="ffmc!=null and ffmc!=''"> 
+	        and a.ffmc like '%'||#{ffmc,jdbcType=VARCHAR}||'%'
+	    </if>
+	</select>
+	
+	<select id="getFwFfListByPage" resultType="map" parameterType="map">
+		select k.*, rownum rnum from (
+			select t.fwbs,a.fwmc,t.ffbs,t.ffmc from fwzyffzcb t
+      		left join fwzyzcb a on t.fwbs=a.fwbs
+      		left join (select * from fwzysqb q where q.fwcyf_yyxtbh = #{yybs,jdbcType=VARCHAR}) w
+      		on t.fwbs=w.fwbs and t.ffbs=w.ffbs
+      		left join (select * from fwzysqgl e where e.yybs = #{yybs,jdbcType=VARCHAR} and e.sqzt='0') e
+      		on t.fwbs=e.fwbs and t.ffbs=e.ffbs
+      		where w.fwcyf_yyxtbh is null and e.sqzt is null
+      		<if test="s_fwbs!=null and s_fwbs!=''"> 
+        		and t.fwbs like '%'||#{s_fwbs,jdbcType=VARCHAR}||'%'
+       		</if>
+        	<if test="s_fwmc!=null and s_fwmc!=''"> 
+        		and a.fwmc like '%'||#{s_fwmc,jdbcType=VARCHAR}||'%'
+        	</if>
+	    	<if test="s_ffbs!=null and s_ffbs!=''"> 
+	        	and t.ffbs like '%'||#{s_ffbs,jdbcType=VARCHAR}||'%'
+	    	</if>
+	    	<if test="s_ffmc!=null and s_ffmc!=''"> 
+	        	and t.ffmc like '%'||#{s_ffmc,jdbcType=VARCHAR}||'%'
+	    	</if>
+	    	order by t.fwbs,t.ffbs
+	    ) k
+	    <if test="count!=null and count!=''"> 
+	        where rownum &lt;= #{count}
+	    </if>
+	</select>
+	<select id="getFwFfCountByPage" resultType="int" parameterType="map">
+		select count(1) from fwzyffzcb t
+      	left join fwzyzcb a on t.fwbs=a.fwbs
+      	left join (select * from fwzysqb q where q.fwcyf_yyxtbh = #{yybs,jdbcType=VARCHAR}) w
+      	on t.fwbs=w.fwbs and t.ffbs=w.ffbs
+      	left join (select * from fwzysqgl e where e.yybs = #{yybs,jdbcType=VARCHAR} and e.sqzt='0') e
+      	on t.fwbs=e.fwbs and t.ffbs=e.ffbs
+      	where w.fwcyf_yyxtbh is null and e.sqzt is null
+      	<if test="s_fwbs!=null and s_fwbs!=''"> 
+        	and t.fwbs like '%'||#{s_fwbs,jdbcType=VARCHAR}||'%'
+        </if>
+        <if test="s_fwmc!=null and s_fwmc!=''"> 
+        	and a.fwmc like '%'||#{s_fwmc,jdbcType=VARCHAR}||'%'
+        </if>
+	    <if test="s_ffbs!=null and s_ffbs!=''"> 
+	        and t.ffbs like '%'||#{s_ffbs,jdbcType=VARCHAR}||'%'
+	    </if>
+	    <if test="s_ffmc!=null and s_ffmc!=''"> 
+	        and t.ffmc like '%'||#{s_ffmc,jdbcType=VARCHAR}||'%'
+	    </if>
+	</select>
+	
+	<insert id="addAuthApl">
+		insert into FWZYSQGL(ID,YYBS,FWBS,FFBS,SQYY,SYSJ,
+			FILENAME,FILECONTENT,SQZT,SQSJ)
+		values
+		(#{id,jdbcType=VARCHAR}, #{yybs,jdbcType=VARCHAR},
+		#{fwbs,jdbcType=VARCHAR}, #{ffbs,jdbcType=VARCHAR},
+		#{sqyy,jdbcType=VARCHAR}, #{sysj,jdbcType=VARCHAR},
+		#{fileName,jdbcType=VARCHAR}, #{fileContent,jdbcType=BLOB},
+		#{sqzt,jdbcType=VARCHAR}, #{sqsj,jdbcType=VARCHAR})
+	</insert>
+	
+	<select id="getPicInfo" resultType="map" parameterType="string">
+		select t.filename,t.filecontent from FWZYSQGL t
+		where t.id = #{ID,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getShListByPage" resultType="map" parameterType="map">
+		select * from (
+			select k.*, rownum rnum from (
+				select t.id,t.yybs,c.fwcyf_yyxtmc as yymc,t.fwbs,b.fwmc,
+					t.ffbs,a.ffmc,t.sqyy,t.sysj,t.filename,t.sqsj,t.sqzt
+				from fwzysqgl t
+				left join fwzyffzcb a on t.fwbs=a.fwbs and t.ffbs=a.ffbs
+				left join fwzyzcb b on a.fwbs=b.fwbs
+				left join fwcyfzcb c on t.yybs=c.fwcyf_yyxtbh
+				where 1=1
+				<if test="fwbs!=null and fwbs!=''"> 
+        			and t.fwbs like '%'||#{fwbs,jdbcType=VARCHAR}||'%'
+        		</if>
+        		<if test="fwmc!=null and fwmc!=''"> 
+        			and b.fwmc like '%'||#{fwmc,jdbcType=VARCHAR}||'%'
+        		</if>
+	        	<if test="ffbs!=null and ffbs!=''"> 
+	        		and t.ffbs like '%'||#{ffbs,jdbcType=VARCHAR}||'%'
+	        	</if>
+	        	<if test="ffmc!=null and ffmc!=''"> 
+	        		and a.ffmc like '%'||#{ffmc,jdbcType=VARCHAR}||'%'
+	        	</if>
+	        	order by t.sqsj desc,t.yybs,t.fwbs,t.ffbs
+        	) k where rownum &lt;= #{end}
+		) where rnum &gt; #{start}
+	</select>
+ 	<select id="getShCountByPage" resultType="int" parameterType="map">
+ 		select count(1) from fwzysqgl t
+		left join fwzyffzcb a on t.fwbs=a.fwbs and t.ffbs=a.ffbs
+		left join fwzyzcb b on a.fwbs=b.fwbs
+		left join fwcyfzcb c on t.yybs=c.fwcyf_yyxtbh
+		where 1=1
+		<if test="fwbs!=null and fwbs!=''"> 
+        	and t.fwbs like '%'||#{fwbs,jdbcType=VARCHAR}||'%'
+        </if>
+        <if test="fwmc!=null and fwmc!=''"> 
+        	and b.fwmc like '%'||#{fwmc,jdbcType=VARCHAR}||'%'
+        </if>
+	    <if test="ffbs!=null and ffbs!=''"> 
+	        and t.ffbs like '%'||#{ffbs,jdbcType=VARCHAR}||'%'
+	    </if>
+	    <if test="ffmc!=null and ffmc!=''"> 
+	        and a.ffmc like '%'||#{ffmc,jdbcType=VARCHAR}||'%'
+	    </if>
+	</select>
+	
+	<update id="updateSqzt" parameterType="string">
+		update fwzysqgl t set t.sqzt = #{ZT,jdbcType=VARCHAR}
+		where t.id =  #{ID,jdbcType=VARCHAR}
+	</update>
+	
+	<insert id="addFwzysq" parameterType="string">
+		insert into FWZYSQB(FWCYF_YYXTBH,FWBS,FFBS)
+		values
+		(#{YYBS,jdbcType=VARCHAR},#{FWBS,jdbcType=VARCHAR},#{FFBS,jdbcType=VARCHAR})
+	</insert>
+	
+</mapper>

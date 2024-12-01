@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.business.dao.FwtcDao" >
+  <resultMap id="BaseResultMap" type="net.sinodata.business.entity.Fwtc" >
+    <id column="FWBS" property="fwbs" jdbcType="VARCHAR" />
+    <id column="TCSJ" property="tcsj" jdbcType="VARCHAR" />
+  </resultMap>
+   <select id="getFwtchisListByPage" resultMap="BaseResultMap"
+		parameterType="map">
+		select k.* from ( select s.* ,rownum as rid from 
+		 ( select  *   from FWZYTCSBRZB u  where 1=1    
+		 <if test="fwbs!=null"> and u.FWBS = #{fwbs,jdbcType=VARCHAR}</if> 
+		 order by u.TCSJ desc ) s
+		 where  rownum&lt;= #{end} ) k           
+		  where rid &gt; #{start}
+	</select>
+	<select id="getFwtchisCountByPage" resultType="int" parameterType="map">
+		select count(1)　 from FWZYTCSBRZB u  where 1=1 
+		<if test="fwbs!=null"> and u.FWBS = #{fwbs,jdbcType=VARCHAR}</if>
+	</select>
+  
+  	<select id="queryFwqqcs" resultType="java.lang.String" parameterType="java.lang.String">
+		select fwqqcs from FWZYTCB t  where 1=1 
+		<if test="fwbs!=null"> and t.FWBS = #{fwbs,jdbcType=VARCHAR}</if>
+	</select>
+	
+	
+	<select id="queryFwtgzbs" resultType="java.lang.String" parameterType="java.lang.String">
+		select FWTGZ_YYXTBH from FWZYZCB t  where 1=1 
+		<if test="fwbs!=null"> and t.FWBS = #{fwbs,jdbcType=VARCHAR}</if>
+	</select>
+	
+	
+	<select id="queryFw" resultType="map">
+		select t.fwmc||'-'||f.ffmc as ffmc,t.fwbs||'-'||f.ffbs as ffbs from FWZYZCB t  ,FWZYFFZCB  f where t.fwbs = f.fwbs
+	</select>
+	
+	
+	<select id="queryFf" resultType="map" parameterType="java.lang.String">
+		select t.ffbs,t.ffmc  from FWZYFFZCB t where 1=1
+		<if test="fwbs!=null"> and t.FWBS = #{fwbs,jdbcType=VARCHAR}</if>
+		order by t.ffmc
+	</select>
+</mapper>

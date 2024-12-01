@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.esb.dao.EsbVarRelationDao" >
+
+  <resultMap id="BaseResultMap" type="net.sinodata.esb.entity.EsbVarRelation" >
+  	<result column="RE_ID" property="reId" jdbcType="VARCHAR" />
+  	<result column="VAR_ID" property="varId" jdbcType="VARCHAR" />
+  	<result column="P_ID" property="pid" jdbcType="VARCHAR" />
+  	<result column="P_NAME" property="pname" jdbcType="VARCHAR" />
+  	<result column="ACTIVITY_NAME" property="activityName" jdbcType="VARCHAR"/>
+  </resultMap>
+
+	<select id="queryList" resultMap="BaseResultMap" parameterType="Map">
+		select RE_ID,VAR_ID,P_ID,P_NAME,ACTIVITY_NAME from 
+		(select * from (
+			select t.*,rownum rnum from esb_var_relation t where 1=1
+			<if test="var_id!=null and var_id!=''">
+				and VAR_ID=#{var_id,jdbcType=VARCHAR}
+			</if>
+			)
+			where rnum &lt;=#{end}
+		) where rnum &gt; #{start}
+	</select>
+	
+	<select id="queryListCount" resultType="int" parameterType="Map">
+		select count(*) from esb_var_relation where 1=1
+		<if test="var_id!=null and var_id!=''">
+			and VAR_ID=#{var_id,jdbcType=VARCHAR}
+		</if>
+	</select>
+	
+	<select id="queryListByVarId" resultMap="BaseResultMap">
+		select RE_ID,VAR_ID,P_ID,P_NAME,ACTIVITY_NAME from esb_var_relation t where  VAR_ID=#{varId,jdbcType=VARCHAR}
+	</select>
+</mapper>

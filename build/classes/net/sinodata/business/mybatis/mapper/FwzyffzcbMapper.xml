@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.business.dao.FwzyffzcbDao" >
+  <resultMap id="BaseResultMap" type="net.sinodata.business.entity.Fwzyffzcb" >
+    <id column="FFBS" property="ffbs" jdbcType="VARCHAR" />
+    <id column="FWBS" property="fwbs" jdbcType="VARCHAR" />
+    <result column="FFMC" property="ffmc" jdbcType="VARCHAR" />
+    <result column="FFL" property="ffl" jdbcType="VARCHAR" />
+    <result column="FFMS" property="ffms" jdbcType="VARCHAR" />
+    <result column="FWMC" property="fwmc" jdbcType="VARCHAR" />
+    <result column="JZFL" property="jzfl" jdbcType="VARCHAR" />
+    <result column="CZFL" property="czfl" jdbcType="VARCHAR" />
+    <result column="SFHCSJ" property="sfhcsj" jdbcType="VARCHAR" />
+    <result column="SJYXSJ" property="sjyxsj" jdbcType="DECIMAL" />
+    <result column="JZLBMC" property="jzlbmc" jdbcType="VARCHAR" />
+    <result column="WLFL" property="wlfl" jdbcType="VARCHAR" />
+    <result column="FFLB" property="fflb" jdbcType="VARCHAR" />
+    <result column="URL" property="url" jdbcType="VARCHAR" />
+    <result column="FFLX" property="fflx" jdbcType="VARCHAR" />
+    <result column="FWTGZ_YYXTBH" property="fwtgzYyxtbh" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="YyFwFfMap" type="net.sinodata.business.entity.YyFwFfInfo" >
+    <result column="YYBS" property="yybs" jdbcType="VARCHAR" />
+    <result column="YYMC" property="yymc" jdbcType="VARCHAR" />
+    <result column="FWBS" property="fwbs" jdbcType="VARCHAR" />
+    <result column="FWMC" property="fwmc" jdbcType="VARCHAR" />
+    <result column="FFBS" property="ffbs" jdbcType="VARCHAR" />
+    <result column="FFMC" property="ffmc" jdbcType="VARCHAR" />
+    <result column="FFMS" property="ffms" jdbcType="VARCHAR" />
+    <result column="URL" property="url" jdbcType="VARCHAR" />
+    <result column="FFLX" property="fflx" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="getYyFwFfListByPage" resultMap="YyFwFfMap" parameterType="map">
+  	select * from (
+		select k.*,rownum rnum from
+			(
+				select t.fwtgz_yyxtbh yybs,b.fwcyf_yyxtmc yymc,
+					t.fwbs,a.fwmc,
+					t.ffbs,t.ffmc,t.ffms,t.url,t.fflx
+				from fwzyffzcb t
+				left join fwzyzcb a on t.fwbs = a.fwbs
+				left join fwcyfzcb b on t.fwtgz_yyxtbh = b.fwcyf_yyxtbh
+				where 1 = 1
+				<if test="fwtgzYyxtbh!=null and fwtgzYyxtbh!=''"> and t.fwtgz_yyxtbh = #{fwtgzYyxtbh,jdbcType=VARCHAR}</if>
+				<if test="fwbs!=null"> and t.fwbs like '%${fwbs}%'</if>
+				<if test="fwmc!=null"> and a.fwmc like '%${fwmc}%'</if>
+				<if test="ffbs!=null"> and t.ffbs like '%${ffbs}%'</if>
+				<if test="ffmc!=null"> and t.ffmc like '%${ffmc}%'</if>
+				<if test="jzfl!=null"> and t.jzfl = #{jzfl,jdbcType=VARCHAR}</if>
+				<if test="sfhcsj!=null"> and t.sfhcsj = #{sfhcsj,jdbcType=VARCHAR}</if>
+				order by t.fwtgz_yyxtbh,t.fwbs,t.ffbs
+  			) k
+		where rownum &lt;= #{end}
+		)
+		where rnum &gt; #{start}
+	</select>
+	
+	<select id="getYyFwFfInfoCountByPage" resultType="int" parameterType="map">
+		select count(1) from fwzyffzcb t
+		left join fwzyzcb a on t.fwbs = a.fwbs
+		left join fwcyfzcb b on t.fwtgz_yyxtbh = b.fwcyf_yyxtbh
+		where 1 = 1
+		<if test="fwtgzYyxtbh!=null and fwtgzYyxtbh!=''"> and t.fwtgz_yyxtbh = #{fwtgzYyxtbh,jdbcType=VARCHAR}</if>
+		<if test="fwbs!=null"> and t.fwbs like '%${fwbs}%'</if>
+		<if test="fwmc!=null"> and a.fwmc like '%${fwmc}%'</if>
+		<if test="ffbs!=null"> and t.ffbs like '%${ffbs}%'</if>
+		<if test="ffmc!=null"> and t.ffmc like '%${ffmc}%'</if>
+		<if test="jzfl!=null"> and t.jzfl = #{jzfl,jdbcType=VARCHAR}</if>
+		<if test="sfhcsj!=null"> and t.sfhcsj = #{sfhcsj,jdbcType=VARCHAR}</if>
+	</select>
+  
+  <sql id="Base_Column_List" >
+    FFBS, FWBS, FFMC, FFL, FFMS, JZFL, CZFL, SFHCSJ, SJYXSJ,FWTGZ_YYXTBH,WLFL,FFLB,URL,FFLX
+  </sql>
+   <select id="queryListByFwbs" parameterType="java.lang.String" resultMap="BaseResultMap" >
+       SELECT   <include refid="Base_Column_List" /> from fwzyffzcb WHERE FWBS = #{fwbs,jdbcType=VARCHAR}
+    </select>
+    
+    <select id="getFwzyffListByPage" resultMap="BaseResultMap"
+		parameterType="map">
+  select <include refid="Base_Column_List" />,FWMC,JZLBMC from (
+		select k.*, rownum rnum from
+		(select u.*,r.FWMC,h.JZLBMC　 from fwzyffzcb u left join FWZYZCB r on u.FWBS=r.FWBS left join JZLBDMB h on u.JZFL=h.JZLBDM     where 1=1
+<!--   		<if test="fwbs!=null"> and u.FWBS = #{fwbs,jdbcType=VARCHAR}</if> -->
+  		<if test="fwbs!=null"> and r.FWBS like '%${fwbs}%'</if>
+  		<if test="fwmc!=null"> and r.FWMC like '%${fwmc}%'</if>
+		<if test="ffbs!=null"> and u.FFBS like '%${ffbs}%'</if>
+		<if test="ffmc!=null"> and u.FFMC like '%${ffmc}%'</if>
+		<if test="jzfl!=null"> and u.JZFL = #{jzfl,jdbcType=VARCHAR}</if>
+		<if test="sfhcsj!=null"> and u.SFHCSJ = #{sfhcsj,jdbcType=VARCHAR}</if>
+		<if test="fwtgzYyxtbh!=null and fwtgzYyxtbh!=''"> and u.FWTGZ_YYXTBH = #{fwtgzYyxtbh,jdbcType=VARCHAR}</if>
+  	order by u.fwtgz_yyxtbh,u.fwbs,u.ffbs	) k
+		where rownum &lt;= #{end}
+		)
+		where rnum &gt; #{start}
+
+	</select>
+	<select id="getFwzyffCountByPage" resultType="int" parameterType="map">
+select count(1) 　 from fwzyffzcb u left join FWZYZCB r on u.FWBS=r.FWBS left join JZLBDMB h on u.JZFL=h.JZLBDM    where 1=1
+		<if test="fwbs!=null"> and r.FWBS like '%${fwbs}%'</if>
+<!-- 		<if test="fwbs!=null"> and u.FWBS = #{fwbs,jdbcType=VARCHAR}</if> -->
+		<if test="fwmc!=null"> and r.FWMC like '%${fwmc}%'</if>
+		<if test="ffbs!=null"> and u.FFBS like '%${ffbs}%'</if>
+		<if test="ffmc!=null"> and u.FFMC like '%${ffmc}%'</if>
+		<if test="jzfl!=null"> and u.JZFL = #{jzfl,jdbcType=VARCHAR}</if>
+		<if test="sfhcsj!=null"> and u.SFHCSJ = #{sfhcsj,jdbcType=VARCHAR}</if>
+		<if test="fwtgzYyxtbh!=null  and fwtgzYyxtbh!=''"> and u.FWTGZ_YYXTBH = #{fwtgzYyxtbh,jdbcType=VARCHAR}</if>
+	</select>
+    
+    
+    
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="net.sinodata.business.entity.FwzyffzcbKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from FWZYFFZCB
+    where FFBS = #{ffbs,jdbcType=VARCHAR}
+      and FWBS = #{fwbs,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="net.sinodata.business.entity.FwzyffzcbKey" >
+    delete from FWZYFFZCB
+    where  FWBS = #{fwbs,jdbcType=VARCHAR}
+      <if test="ffbs != null" >
+      and  FFBS = #{ffbs,jdbcType=VARCHAR}
+      </if>
+  </delete>
+  <insert id="insert" parameterType="net.sinodata.business.entity.Fwzyffzcb" >
+  insert into FWZYFFZCB (FFBS, FWBS, FFMC, 
+      FFL, FFMS, JZFL, CZFL, 
+      SFHCSJ, SJYXSJ,FWTGZ_YYXTBH,WLFL,FFLB,URL,FFLX)
+    values (#{ffbs,jdbcType=VARCHAR}, #{fwbs,jdbcType=VARCHAR}, #{ffmc,jdbcType=VARCHAR}, 
+      #{ffl,jdbcType=VARCHAR}, #{ffms,jdbcType=VARCHAR}, #{jzfl,jdbcType=VARCHAR}, #{czfl,jdbcType=VARCHAR}, 
+      #{sfhcsj,jdbcType=VARCHAR}, #{sjyxsj,jdbcType=DECIMAL},#{fwtgzYyxtbh,jdbcType=VARCHAR},
+      #{wlfl,jdbcType=VARCHAR},#{fflb,jdbcType=VARCHAR},#{url,jdbcType=VARCHAR},#{fflx,jdbcType=VARCHAR})
+  </insert>
+  
+    <select id="queryFFBSbyFwbs" resultType="java.lang.String" parameterType="java.lang.String" >
+   
+    select  FUN_FFBS(#{fwbs,jdbcType=VARCHAR}) from dual
+  </select>	
+  
+   <select id="queryURLbyFwbs" resultType="java.lang.String" parameterType="map" >
+   select url from Fwzyffzcb u where 1=1
+   <if test="fwbs!=null"> and u.fwbs = #{fwbs,jdbcType=VARCHAR}</if>
+   <if test="ffbs!=null"> and u.ffbs = #{ffbs,jdbcType=VARCHAR}</if>
+  </select>	
+  
+   <select id="queryFFLXbyFwbs" resultType="java.lang.String" parameterType="map" >
+    select fflx from Fwzyffzcb  u where 1=1
+   <if test="fwbs!=null"> and u.fwbs = #{fwbs,jdbcType=VARCHAR}</if>
+   <if test="ffbs!=null"> and u.ffbs = #{ffbs,jdbcType=VARCHAR}</if>
+  </select>	
+     <insert id="insertByBatch" parameterType="java.util.List">
+      insert into FWZYFFZCB (FFBS, FWBS, FFMC, 
+      FFL, FFMS,FWTGZ_YYXTBH,WLFL,FFLB)
+      SELECT A.* from 
+      (
+    <foreach collection="list" item="item" index="index" separator="UNION ALL">
+     SELECT #{item.ffbs,jdbcType=VARCHAR} FFBS, #{item.fwbs,jdbcType=VARCHAR} FWBS, #{item.ffmc,jdbcType=VARCHAR} FFMC, 
+      #{item.ffl,jdbcType=VARCHAR} FFL, #{item.ffms,jdbcType=VARCHAR} FFMS ,#{item.fwtgzYyxtbh,jdbcType=VARCHAR} FWTGZ_YYXTBH,
+      ,#{item.wlfl,jdbcType=VARCHAR} WLFL,#{item.fflb,jdbcType=VARCHAR} FFLB,#{item.url,jdbcType=VARCHAR} URL
+      ,#{item.fflx,jdbcType=VARCHAR} FFLX
+     FROM dual
+   </foreach>
+   )A
+  </insert>
+  <insert id="insertSelective" parameterType="net.sinodata.business.entity.Fwzyffzcb" >
+    insert into FWZYFFZCB
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="fwbs != null" >
+        FFBS,
+      </if>
+      <if test="fwbs != null" >
+        FWBS,
+      </if>
+      <if test="ffmc != null" >
+        FFMC,
+      </if>
+      <if test="ffl != null" >
+        FFL,
+      </if>
+      <if test="ffms != null" >
+        FFMS,
+      </if>
+       <if test="jzfl != null" >
+        JZFL,
+      </if>
+      <if test="czfl != null" >
+        CZFL,
+      </if>
+      <if test="sfhcsj != null" >
+        SFHCSJ,
+      </if>
+      <if test="sjyxsj != null" >
+        SJYXSJ,
+      </if>
+       <if test="fwtgzYyxtbh != null" >
+        FWTGZ_YYXTBH,
+      </if>
+      <if test="wlfl != null" >
+        WLFL,
+      </if>
+       <if test="fflb != null" >
+        FFLB,
+      </if>
+      <if test="url!= null" >
+        URL,
+      </if>
+   	  <if test="fflx != null" >
+        FFLX,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="fwbs != null" >
+      FUN_FFBS( #{fwbs,jdbcType=VARCHAR}),
+        <!-- #{ffbs,jdbcType=VARCHAR}, -->
+      </if>
+      <if test="fwbs != null" >
+        #{fwbs,jdbcType=VARCHAR},
+      </if>
+      <if test="ffmc != null" >
+        #{ffmc,jdbcType=VARCHAR},
+      </if>
+      <if test="ffl != null" >
+        #{ffl,jdbcType=VARCHAR},
+      </if>
+      <if test="ffms != null" >
+        #{ffms,jdbcType=VARCHAR},
+      </if>
+      <if test="jzfl != null" >
+        #{jzfl,jdbcType=VARCHAR},
+      </if>
+      <if test="czfl != null" >
+        #{czfl,jdbcType=VARCHAR},
+      </if>
+      <if test="sfhcsj != null" >
+        #{sfhcsj,jdbcType=VARCHAR},
+      </if>
+      <if test="sjyxsj != null" >
+        #{sjyxsj,jdbcType=DECIMAL},
+      </if>
+       <if test="fwtgzYyxtbh != null" >
+         #{fwtgzYyxtbh,jdbcType=VARCHAR},
+      </if>
+      <if test="wlfl != null" >
+        #{wlfl,jdbcType=DECIMAL},
+      </if>
+       <if test="fflb != null" >
+         #{fflb,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+         #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="fflx != null" >
+         #{fflx,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="net.sinodata.business.entity.Fwzyffzcb" >
+    update FWZYFFZCB
+    <set >
+      <if test="ffmc != null" >
+        FFMC = #{ffmc,jdbcType=VARCHAR},
+      </if>
+      <if test="ffl != null" >
+        FFL = #{ffl,jdbcType=VARCHAR},
+      </if>
+      <if test="ffms != null" >
+        FFMS = #{ffms,jdbcType=VARCHAR},
+      </if>
+       <if test="jzfl != null" >
+        JZFL = #{jzfl,jdbcType=VARCHAR},
+      </if>
+      <if test="czfl != null" >
+        CZFL = #{czfl,jdbcType=VARCHAR},
+      </if>
+      <if test="sfhcsj != null" >
+        SFHCSJ = #{sfhcsj,jdbcType=VARCHAR},
+      </if>
+      <if test="sjyxsj != null" >
+        SJYXSJ = #{sjyxsj,jdbcType=DECIMAL},
+      </if>
+       <if test="fwtgzYyxtbh != null" >
+        FWTGZ_YYXTBH = #{fwtgzYyxtbh,jdbcType=VARCHAR},
+      </if>
+       <if test="wlfl != null" >
+        WLFL = #{wlfl,jdbcType=VARCHAR},
+      </if>
+       <if test="fflb != null" >
+        FFLB = #{fflb,jdbcType=VARCHAR},
+      </if>
+      
+      <if test="url != null" >
+        URL = #{url,jdbcType=VARCHAR},
+      </if>
+      
+      <if test="fflx != null" >
+        FFLX = #{fflx,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where FFBS = #{ffbs,jdbcType=VARCHAR}
+      and FWBS = #{fwbs,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="net.sinodata.business.entity.Fwzyffzcb" >
+    update FWZYFFZCB
+    set FFMC = #{ffmc,jdbcType=VARCHAR},
+      FFL = #{ffl,jdbcType=VARCHAR},
+      FFMS = #{ffms,jdbcType=VARCHAR},
+      JZFL = #{jzfl,jdbcType=VARCHAR},
+      CZFL = #{czfl,jdbcType=VARCHAR},
+      SFHCSJ = #{sfhcsj,jdbcType=VARCHAR},
+      SJYXSJ = #{sjyxsj,jdbcType=DECIMAL},
+      FWTGZ_YYXTBH = #{fwtgzYyxtbh,jdbcType=VARCHAR},
+      WLFL = #{wlfl,jdbcType=VARCHAR},
+      FFLB = #{fflb,jdbcType=VARCHAR},
+      URL = #{url,jdbcType=VARCHAR},
+      FFLX = #{fflX,jdbcType=VARCHAR}
+    where FFBS = #{ffbs,jdbcType=VARCHAR}
+      and FWBS = #{fwbs,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="selectByFwbsFfbs" resultMap="BaseResultMap" parameterType="map" >
+	  select  <include refid="Base_Column_List" />  from FWZYFFZCB u where 1=1 
+	  <if test="fwbs!=null"> and u.fwbs = #{fwbs,jdbcType=VARCHAR}</if>
+	  <if test="ffbs!=null"> and u.ffbs = #{ffbs,jdbcType=VARCHAR}</if>
+  </select>
+  
+  
+  <select id="getFfList" resultType="map" parameterType="map" >
+	  <!-- select ffbs,ffms  from FWZYFFZCB u where 1=1 -->
+	  
+	  select ffbs,'('||ffbs||')'||ffms as ffms from FWZYFFZCB u where 1=1 
+	  <if test="fwbs!=null"> and u.fwbs = #{fwbs,jdbcType=VARCHAR}</if>
+	  order by ffbs
+  </select>
+</mapper>

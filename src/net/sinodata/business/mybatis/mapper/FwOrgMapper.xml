@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.business.dao.FwOrgDao" >
+  <resultMap id="BaseResultMap" type="net.sinodata.business.entity.FwOrg" >
+  	<result column="ID" property="id" jdbcType="VARCHAR" />
+  	<result column="NAME" property="name" jdbcType="VARCHAR" />
+  	<result column="PATH" property="path" jdbcType="VARCHAR" />
+  	<result column="PARENTPATH" property="parentpath" jdbcType="VARCHAR" />
+  	<result column="STATUS" property="status" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="queryAllList" resultMap="BaseResultMap" parameterType="java.lang.String">
+  	select * from fw_org where 1=1
+  	<if test="path==null or path==''">
+  		and parentpath = (select min(parentpath) from fw_org where status='1')
+  	</if>
+  	<if test="path!=null and path!=''">
+  		and parentpath = #{path,jdbcType=VARCHAR}
+  	</if>
+  	order by id asc
+  </select>
+  
+</mapper>

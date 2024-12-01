@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.business.dao.FwzyzcbRegDao" >
+  <resultMap id="BaseResultMap" type="net.sinodata.business.entity.FwzyzcbReg" >
+    <id column="FWBS" property="fwbs" jdbcType="VARCHAR" />
+    <result column="FWMC" property="fwmc" jdbcType="VARCHAR" />
+    <result column="FW_RKDZLB" property="fwRkdzlb" jdbcType="VARCHAR" />
+    <result column="FW_IPDZ" property="fwIpdz" jdbcType="VARCHAR" />
+    <result column="FW_ZXDKHM" property="fwZxdkhm" jdbcType="VARCHAR" />
+    <result column="FW_LJ" property="fwLj" jdbcType="VARCHAR" />
+    <result column="FW_MS" property="fwMs" jdbcType="VARCHAR" />
+    <result column="FWZC_RQSJ" property="fwzcRqsj" jdbcType="TIMESTAMP" />
+    <result column="FWTZ_RQSJ" property="fwtzRqsj" jdbcType="TIMESTAMP" />
+    <result column="FWTGZ_YYXTBH" property="fwtgzYyxtbh" jdbcType="VARCHAR" />
+    <result column="FWZTDM" property="fwztdm" jdbcType="VARCHAR" />
+    <result column="FWNR_BZ" property="fwnrBz" jdbcType="VARCHAR" />
+    <result column="FWZXDZ" property="fwzxdz" jdbcType="VARCHAR" />
+    <result column="FWBBH" property="fwbbh" jdbcType="VARCHAR" />
+    <result column="FWZYKF_YYLXDM" property="fwzykfYylxdm" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="FWCYF_YYXTMC" property="fwcyfYyxtmc" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    FWBS, FWMC, FW_RKDZLB, FW_IPDZ, FW_ZXDKHM, FW_LJ, FW_MS, FWZC_RQSJ, FWTZ_RQSJ, FWTGZ_YYXTBH, 
+    FWZTDM, FWNR_BZ, FWZXDZ, FWBBH, FWZYKF_YYLXDM, STATUS
+  </sql>
+  
+  
+  
+    <select id="getFwzyzcbRegListByPage" resultMap="BaseResultMap"
+		parameterType="map">
+ select <include refid="Base_Column_List" />,FWCYF_YYXTMC from (
+		select k.*, rownum rnum from
+		(select u.*,r.FWCYF_YYXTMC　 from FWZYZCB_REG  u left join FWCYFZCB r on u.FWTGZ_YYXTBH=r.FWCYF_YYXTBH where 1=1
+  		<if test="fwmc!=null"> and u.FWMC like '%${fwmc}%' </if>
+		<if test="fwbs!=null"> and u.FWBS = #{fwbs,jdbcType=VARCHAR}</if>
+		<if test="status!=null"> and u.STATUS = #{status,jdbcType=VARCHAR}</if>
+		<!--  <if test="fwtgzYyxtbh!=null"> and FWTGZ_YYXTBH = #{fwtgzYyxtbh,jdbcType=VARCHAR}</if> -->
+		  <if test="fwtgzYyxtbh!=null"> and u.FWTGZ_YYXTBH in (${fwtgzYyxtbh})</if>
+		  
+		<if test="sfhcsj!=null"> and u.FWBS in (select r.fwbs from fwzyffzcb r where r.sfhcsj=#{sfhcsj,jdbcType=VARCHAR})</if>
+  		order by u.fwzc_rqsj desc,u.fwtgz_yyxtbh,u.fwbs ) k
+		where rownum &lt;= #{end}
+		)
+		where rnum &gt; #{start}
+
+
+	</select>
+	<select id="getFwzyzcbRegCountByPage" resultType="int" parameterType="map">
+select count(1) 　 from FWZYZCB_REG  u left join FWCYFZCB r on u.FWTGZ_YYXTBH=r.FWCYF_YYXTBH  where 1=1
+	
+		<if test="fwmc!=null"> and u.FWMC like '%${fwmc}%'</if><!-- = #{fwmc,jdbcType=VARCHAR} -->
+		<if test="fwbs!=null"> and u.FWBS = #{fwbs,jdbcType=VARCHAR}</if>
+		<if test="status!=null"> and u.STATUS = #{status,jdbcType=VARCHAR}</if>
+		 <!-- <if test="fwtgzYyxtbh!=null"> and FWTGZ_YYXTBH = #{fwtgzYyxtbh,jdbcType=VARCHAR}</if> -->
+		   <if test="fwtgzYyxtbh!=null"> and u.FWTGZ_YYXTBH in (${fwtgzYyxtbh})</if>
+		   <if test="sfhcsj!=null"> and u.FWBS in (select r.fwbs from fwzyffzcb r where r.sfhcsj=#{sfhcsj,jdbcType=VARCHAR})</if>
+	</select>
+  
+  
+  
+  
+  
+  
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from FWZYZCB_REG
+    where FWBS = #{fwbs,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from FWZYZCB_REG
+    where FWBS = #{fwbs,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="net.sinodata.business.entity.FwzyzcbReg" >
+    insert into FWZYZCB_REG (FWBS, FWMC, FW_RKDZLB, 
+      FW_IPDZ, FW_ZXDKHM, FW_LJ, 
+      FW_MS, FWZC_RQSJ, FWTZ_RQSJ, 
+      FWTGZ_YYXTBH, FWZTDM, FWNR_BZ, 
+      FWZXDZ, FWBBH, FWZYKF_YYLXDM, 
+      STATUS)
+    values (#{fwbs,jdbcType=VARCHAR}, #{fwmc,jdbcType=VARCHAR}, #{fwRkdzlb,jdbcType=VARCHAR}, 
+      #{fwIpdz,jdbcType=VARCHAR}, #{fwZxdkhm,jdbcType=VARCHAR}, #{fwLj,jdbcType=VARCHAR}, 
+      #{fwMs,jdbcType=VARCHAR}, #{fwzcRqsj,jdbcType=TIMESTAMP}, #{fwtzRqsj,jdbcType=TIMESTAMP}, 
+      #{fwtgzYyxtbh,jdbcType=VARCHAR}, #{fwztdm,jdbcType=VARCHAR}, #{fwnrBz,jdbcType=VARCHAR}, 
+      #{fwzxdz,jdbcType=VARCHAR}, #{fwbbh,jdbcType=VARCHAR}, #{fwzykfYylxdm,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="net.sinodata.business.entity.FwzyzcbReg" >
+    insert into FWZYZCB_REG
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+    <!--   <if test="fwbs != null" > -->
+      <if test="jgbs != null" >
+        FWBS,
+      </if>
+      <if test="fwmc != null" >
+        FWMC,
+      </if>
+      <if test="fwRkdzlb != null" >
+        FW_RKDZLB,
+      </if>
+      <if test="fwIpdz != null" >
+        FW_IPDZ,
+      </if>
+      <if test="fwZxdkhm != null" >
+        FW_ZXDKHM,
+      </if>
+      <if test="fwLj != null" >
+        FW_LJ,
+      </if>
+      <if test="fwMs != null" >
+        FW_MS,
+      </if>
+      <if test="fwzcRqsj != null" >
+        FWZC_RQSJ,
+      </if>
+      <if test="fwtzRqsj != null" >
+        FWTZ_RQSJ,
+      </if>
+      <if test="fwtgzYyxtbh != null" >
+        FWTGZ_YYXTBH,
+      </if>
+      <if test="fwztdm != null" >
+        FWZTDM,
+      </if>
+      <if test="fwnrBz != null" >
+        FWNR_BZ,
+      </if>
+      <if test="fwzxdz != null" >
+        FWZXDZ,
+      </if>
+      <if test="fwbbh != null" >
+        FWBBH,
+      </if>
+      <if test="fwzykfYylxdm != null" >
+        FWZYKF_YYLXDM,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+         <if test="jgbs != null" >
+    fun_fWbs(#{jgbs,jdbcType=VARCHAR}),
+    </if>
+     <!--  <if test="fwbs != null" >
+        #{fwbs,jdbcType=VARCHAR},
+      </if> -->
+      <if test="fwmc != null" >
+        #{fwmc,jdbcType=VARCHAR},
+      </if>
+      <if test="fwRkdzlb != null" >
+        #{fwRkdzlb,jdbcType=VARCHAR},
+      </if>
+      <if test="fwIpdz != null" >
+        #{fwIpdz,jdbcType=VARCHAR},
+      </if>
+      <if test="fwZxdkhm != null" >
+        #{fwZxdkhm,jdbcType=VARCHAR},
+      </if>
+      <if test="fwLj != null" >
+        #{fwLj,jdbcType=VARCHAR},
+      </if>
+      <if test="fwMs != null" >
+        #{fwMs,jdbcType=VARCHAR},
+      </if>
+      <if test="fwzcRqsj != null" >
+        #{fwzcRqsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fwtzRqsj != null" >
+        #{fwtzRqsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fwtgzYyxtbh != null" >
+        #{fwtgzYyxtbh,jdbcType=VARCHAR},
+      </if>
+      <if test="fwztdm != null" >
+        #{fwztdm,jdbcType=VARCHAR},
+      </if>
+      <if test="fwnrBz != null" >
+        #{fwnrBz,jdbcType=VARCHAR},
+      </if>
+      <if test="fwzxdz != null" >
+        #{fwzxdz,jdbcType=VARCHAR},
+      </if>
+      <if test="fwbbh != null" >
+        #{fwbbh,jdbcType=VARCHAR},
+      </if>
+      <if test="fwzykfYylxdm != null" >
+        #{fwzykfYylxdm,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="net.sinodata.business.entity.FwzyzcbReg" >
+    update FWZYZCB_REG
+    <set >
+      <if test="fwmc != null" >
+        FWMC = #{fwmc,jdbcType=VARCHAR},
+      </if>
+      <if test="fwRkdzlb != null" >
+        FW_RKDZLB = #{fwRkdzlb,jdbcType=VARCHAR},
+      </if>
+      <if test="fwIpdz != null" >
+        FW_IPDZ = #{fwIpdz,jdbcType=VARCHAR},
+      </if>
+      <if test="fwZxdkhm != null" >
+        FW_ZXDKHM = #{fwZxdkhm,jdbcType=VARCHAR},
+      </if>
+      <if test="fwLj != null" >
+        FW_LJ = #{fwLj,jdbcType=VARCHAR},
+      </if>
+      <if test="fwMs != null" >
+        FW_MS = #{fwMs,jdbcType=VARCHAR},
+      </if>
+      <if test="fwzcRqsj != null" >
+        FWZC_RQSJ = #{fwzcRqsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fwtzRqsj != null" >
+        FWTZ_RQSJ = #{fwtzRqsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fwtgzYyxtbh != null" >
+        FWTGZ_YYXTBH = #{fwtgzYyxtbh,jdbcType=VARCHAR},
+      </if>
+      <if test="fwztdm != null" >
+        FWZTDM = #{fwztdm,jdbcType=VARCHAR},
+      </if>
+      <if test="fwnrBz != null" >
+        FWNR_BZ = #{fwnrBz,jdbcType=VARCHAR},
+      </if>
+      <if test="fwzxdz != null" >
+        FWZXDZ = #{fwzxdz,jdbcType=VARCHAR},
+      </if>
+      <if test="fwbbh != null" >
+        FWBBH = #{fwbbh,jdbcType=VARCHAR},
+      </if>
+      <if test="fwzykfYylxdm != null" >
+        FWZYKF_YYLXDM = #{fwzykfYylxdm,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where FWBS = #{fwbs,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="net.sinodata.business.entity.FwzyzcbReg" >
+    update FWZYZCB_REG
+    set FWMC = #{fwmc,jdbcType=VARCHAR},
+      FW_RKDZLB = #{fwRkdzlb,jdbcType=VARCHAR},
+      FW_IPDZ = #{fwIpdz,jdbcType=VARCHAR},
+      FW_ZXDKHM = #{fwZxdkhm,jdbcType=VARCHAR},
+      FW_LJ = #{fwLj,jdbcType=VARCHAR},
+      FW_MS = #{fwMs,jdbcType=VARCHAR},
+      FWZC_RQSJ = #{fwzcRqsj,jdbcType=TIMESTAMP},
+      FWTZ_RQSJ = #{fwtzRqsj,jdbcType=TIMESTAMP},
+      FWTGZ_YYXTBH = #{fwtgzYyxtbh,jdbcType=VARCHAR},
+      FWZTDM = #{fwztdm,jdbcType=VARCHAR},
+      FWNR_BZ = #{fwnrBz,jdbcType=VARCHAR},
+      FWZXDZ = #{fwzxdz,jdbcType=VARCHAR},
+      FWBBH = #{fwbbh,jdbcType=VARCHAR},
+      FWZYKF_YYLXDM = #{fwzykfYylxdm,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR}
+    where FWBS = #{fwbs,jdbcType=VARCHAR}
+  </update>
+  
+    <insert id="insertTcb" parameterType="map" >
+   	  insert into FWZYTCB (FWBS, FWMC, FFBS, FFMC, FFMS, FWQQCS, FWKG)
+      values (#{fwbs,jdbcType=VARCHAR}, #{fwmc,jdbcType=VARCHAR}, #{ffbs,jdbcType=VARCHAR}, 
+      #{ffmc,jdbcType=VARCHAR}, #{ffms,jdbcType=VARCHAR}, #{fwqqcs,jdbcType=VARCHAR}, 
+      #{fwkg,jdbcType=VARCHAR})
+  </insert>
+</mapper>

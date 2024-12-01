@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.business.dao.TjReportDao">
+
+	<select id="getZl" resultType="map">
+		select 'yhzczl' as name, count(1) as count from fwcyfzcb s
+		union
+		select 'fwzczl' as name, count(1) as count from fwzyzcb s
+		union
+		select 'jkzczl' as name, count(1) as count from fwzyffzcb s
+	</select>
+	<select id="fwCountByMonth" resultType="map">
+		select * from (
+			select t.fwbs,a.fwmc,sum(t.num) as num 
+			from FWZYBWTJB_DAY t
+			left join fwzyzcb a on t.fwbs=a.fwbs
+			where substr(t.tjrq,1,6)=to_char(sysdate,'YYYYMM')
+			group by t.fwbs,a.fwmc
+			order by num desc
+		) where rownum &lt;= 10
+	</select>
+	<select id="jgCountByMonth" resultType="map">
+		select * from (
+			select substr(s.fwqqz_jgdm,1,6)||'000000' jgdm,
+			a.jgmc,sum(s.num) as num from FWZYBWTJB_DAY s
+			left join JGDMB a on substr(s.fwqqz_jgdm,1,6)||'000000'=a.jgbs
+			where substr(s.tjrq,1,6)=to_char(sysdate,'YYYYMM')
+			group by substr(s.fwqqz_jgdm,1,6)||'000000',a.jgmc
+			order by num desc
+		) where rownum &lt;= 10
+	</select>
+	
+	<!-- 统计分析 新 -->
+	<select id="tjsz" resultType="map">
+		select 'yhzczl' as name, count(1)||'个' as count from fwcyfzcb s
+		union
+		select 'dwsjyhzczl' as name,count(1)||'个' as count from fwcyfzcb s
+		where s.fwcyf_rqsj &gt;= add_months(trunc(sysdate),-1)
+		
+		union
+		
+		select 'xtdlzl' as name, count(1)||'次' as count from LOGIN_LOG s
+		where s.statue = 'success'
+		union
+		select 'dwsjxtdlzl' as name,count(1)||'次' as count from LOGIN_LOG s
+		where s.logintime &gt;= add_months(trunc(sysdate),-1)
+		and s.statue = 'success'
+		
+		union
+		
+		select 'fwzyzczl' as name, count(1)||'个' as count from fwzyffzcb_his s
+		where s.opt_type='C'
+		union
+		select 'dwsjfwzyzczl' as name,count(1)||'个' as count from fwzyffzcb_his s
+		where s.opt_type='C' and s.opt_time &gt;= add_months(trunc(sysdate),-1)
+		
+		union
+		select 'fwzysyzl' as name, round(sum(num)/10000,0)||'万' as count from fwzybwtjb_day
+		union
+		select 'dwsjfwzysyzl' as name, round(sum(s.num)/10000,0)||'万' as count from fwzybwtjb_day s
+		where s.tjrq &gt;= to_char(add_months(trunc(sysdate),-1),'yyyyMMdd')
+		
+		union
+		select 'bwcjzl' as name, round(sum(num)/10000,0)||'万' as count from fwzybwtjb_day
+		union
+		select 'dwsjbwcjzl' as name, round(sum(s.num)/10000,0)||'万' as count from fwzybwtjb_day s
+		where s.tjrq &gt;= to_char(add_months(trunc(sysdate),-1),'yyyyMMdd')
+	</select>
+	
+	<select id="zcyhlRankByTimeAndJg" resultType="map">
+		select * from 
+			(
+				select substr(s.fwcyf_ssfj,1,6)||'000000' as jgdm,a.jgmc,count(1) as count 
+				from fwcyfzcb s left join JGDMB a on a.jgbs=substr(s.fwcyf_ssfj,1,6)||'000000'
+				where s.fwcyf_rqsj &gt;= add_months(trunc(sysdate),-1)
+				group by substr(s.fwcyf_ssfj,1,6)||'000000',a.jgmc
+				order by count desc
+			)
+		where rownum &lt;= 5
+	</select>
+	
+	<select id="yhdllRankByTimeAndJg" resultType="map">
+		select * from
+			(
+				select substr(a.fwcyf_ssfj,1,6)||'000000' as jgdm,b.jgmc,count(1) as count
+				from login_log t
+				left join fwcyfzcb a on t.username=a.FWCYF_YYXTMC
+				left join JGDMB b on substr(a.fwcyf_ssfj,1,6)||'000000'=b.jgbs
+				where t.statue='success'
+				and t.logintime &gt;= add_months(trunc(sysdate),-1)
+				group by substr(a.fwcyf_ssfj,1,6)||'000000',b.jgmc
+			)
+		where rownum &lt;= 5
+	</select>
+	
+	<select id="fwzclByJg" resultType="map">
+		select * from
+			(
+				select substr(a.fwcyf_ssfj,1,6)||'000000' as jgdm,
+				b.jgmc,count(1) as count from fwzyzcb t
+				left join fwcyfzcb a on t.fwtgz_yyxtbh=a.fwcyf_yyxtbh
+				left join JGDMB b on b.jgbs=substr(a.fwcyf_ssfj,1,6)||'000000'
+				group by substr(a.fwcyf_ssfj,1,6)||'000000',b.jgmc
+				order by count desc
+			)
+		where rownum &lt;= 5
+	</select>
+	
+	<select id="fwzyRankByCzlx" resultType="map">
+		select
+			case
+  				when a.czfl='C' then '增加'
+     			when a.czfl='R' then '读取'
+      			when a.czfl='U' then '更新'
+        		when a.czfl='D' then '删除'
+     		end czfl,
+		a.count as all_count,
+			case 
+    			when b.count is not null then b.count
+  				else 0
+			end month_count
+		from 
+			(
+				select t.czfl,count(1) as count from FWZYFFZCB_HIS t
+				where t.opt_type='C' group by t.czfl
+			) a 
+		left join
+			(
+				select t.czfl,count(1) as count from FWZYFFZCB_HIS t
+				where t.opt_type='C' and t.opt_time &gt;= add_months(trunc(sysdate),-1)
+				group by t.czfl
+			) b 
+		on a.czfl = b.czfl
+		order by all_count desc
+	</select>
+	
+	<select id="fwzyRankByYy" resultType="map">
+		select * from
+			(
+				select c.fwcyf_yyxtmc as yymc, a.count as all_count,
+      				case 
+         	 			when b.count is not null then b.count
+          				else 0
+      				end month_count
+    			from 
+      				(
+        				select t.fwtgz_yyxtbh,count(1) as count from FWZYFFZCB_HIS t
+        				where t.opt_type='C' group by t.fwtgz_yyxtbh
+      				) a 
+    			left join
+      				(
+        				select t.fwtgz_yyxtbh,count(1) as count from FWZYFFZCB_HIS t
+        				where t.opt_type='C' and t.opt_time &gt;= add_months(trunc(sysdate),-1)
+        				group by t.fwtgz_yyxtbh
+      				) b 
+    			on a.fwtgz_yyxtbh = b.fwtgz_yyxtbh
+    			left join fwcyfzcb c on a.fwtgz_yyxtbh = c.fwcyf_yyxtbh
+    			order by all_count desc
+    		)
+   		where rownum &lt;= 5
+	</select>
+	
+	<select id="bwcjlRankByJg" resultType="map">
+		select * from
+			(
+				select substr(t.fwqqz_jgdm,1,6)||'000000' as jgdm,a.jgmc,sum(t.num) as count 
+				from fwzybwtjb_day t
+				left join JGDMB a on a.jgbs = substr(t.fwqqz_jgdm,1,6)||'000000'
+				where t.tjrq &gt;= to_char(add_months(trunc(sysdate),-1),'yyyyMMdd')
+				group by substr(t.fwqqz_jgdm,1,6)||'000000',a.jgmc
+				order by count desc
+			)
+		where rownum &lt;= 5
+	</select>
+	
+	<select id="fwzyRankByJzfl" resultType="map">
+		select * from
+			(
+				select c.jzlbmc, a.count as all_count,
+      				case 
+          				when b.count is not null then b.count
+          				else 0
+     	 			end month_count
+    			from 
+      				(
+        				select t.jzfl,count(1) as count from FWZYFFZCB_HIS t
+        				where t.opt_type='C' group by t.jzfl
+      				) a 
+    			left join
+      				(
+        				select t.jzfl,count(1) as count from FWZYFFZCB_HIS t
+        				where t.opt_type='C' and t.opt_time &gt;= add_months(trunc(sysdate),-1)
+        				group by t.jzfl
+      				) b 
+    			on a.jzfl = b.jzfl
+    			left join jzlbdmb c on a.jzfl = c.jzlbdm
+    			order by all_count desc
+			)
+		where rownum &lt;= 5
+	</select>
+	
+	<select id="qqlRankBySjAndJg" resultType="map">
+		select * from
+			(
+				select substr(t.fwqqz_jgdm,1,6)||'000000' as jgdm,
+					a.jgmc,sum(t.num) as count
+				from fwzybwtjb_day t
+				left join jgdmb a on a.jgbs=substr(t.fwqqz_jgdm,1,6)||'000000'
+				where t.tjrq &gt;= to_char(add_months(trunc(sysdate),-1),'yyyyMMdd')
+				group by substr(t.fwqqz_jgdm,1,6)||'000000',a.jgmc
+				order by count desc
+			)
+		where rownum &lt;= 10
+	</select>
+	
+	<select id="fwzydylRank" resultType="map">
+		select * from
+			(
+				select t.fwbs,t.ffbs,a.ffms,sum(t.num) as count from fwzybwtjb_day t
+				left join fwzyffzcb a on t.fwbs = a.fwbs and t.ffbs = a.ffbs
+				where t.tjrq &gt;= to_char(add_months(trunc(sysdate),-1),'yyyyMMdd')
+				group by t.fwbs,t.ffbs,a.ffms
+				order by count desc
+			)
+		where rownum &lt;= 10
+	</select>
+	
+	<select id="yyxtdylRank" resultType="map">
+		select * from
+			(
+				select t.fwtgz_zcxx,a.fwcyf_yyxtmc,sum(t.num) as count from fwzybwtjb_day t
+				left join fwcyfzcb a on t.fwtgz_zcxx=a.fwcyf_yyxtbh
+				where t.tjrq &gt;= to_char(add_months(trunc(sysdate),-1),'yyyyMMdd')
+				group by t.fwtgz_zcxx,a.fwcyf_yyxtmc
+				order by count desc
+			)
+		where rownum &lt;= 10
+	</select>
+	
+	<select id="zdyyqqlRank" resultType="map">
+		select * from
+			(
+				select t.fwqqz_zcxx,a.fwcyf_yyxtmc,sum(t.num) as count from fwzybwtjb_day t
+        		left join fwcyfzcb a on t.fwqqz_zcxx=a.fwcyf_yyxtbh
+        		where t.tjrq &gt;= to_char(add_months(trunc(sysdate),-1),'yyyyMMdd')
+        		group by t.fwqqz_zcxx,a.fwcyf_yyxtmc
+        		order by count desc
+			)
+		where rownum &lt;= 10
+	</select>
+	
+	<select id="fwzyyclRank" resultType="map">
+		select * from
+			(
+				select t.fwbs,t.ffbs,
+					case 
+  						when a.ffms is null then '未知'
+  						when a.ffms is not null then a.ffms
+					end ffms,
+					count(1) as count from FWZYQQBWYCCJB t
+					left join fwzyffzcb a on t.fwbs=a.fwbs and t.ffbs=a.ffbs
+				where substr(t.fwqq_rqsj,1,8) &gt;= to_char(add_months(trunc(sysdate),-1),'yyyyMMdd')
+				group by t.fwbs,t.ffbs,a.ffms
+				order by count desc
+			)
+		where rownum &lt;= 10
+	</select>
+	
+	<select id="fwzysygfsdRank" resultType="map">
+		select * from
+			(
+				select t.tjrq,sum(t.num) as count from fwzybwtjb_hour t
+				where substr(t.tjrq,1,8) &gt;= to_char(add_months(trunc(sysdate),-1),'yyyyMMdd')
+				group by t.tjrq order by count desc
+			)
+		where rownum &lt;= 10
+	</select>
+	
+	<select id="fwzyxysjRank" resultType="map">
+		select * from
+			(
+				select s.fwbs,s.ffbs,s.ffms,count(1),sum(xysj),
+					round(sum(xysj)/count(1),2) as pjxysj
+				from 
+					(
+						select t.fwbs,t.ffbs,a.ffms,t.start_time,a.end_time,
+							uf_timestamp_diff(to_timestamp(a.END_TIME,'yyyy-mm-dd hh24:mi:ss,ff'),
+							to_timestamp(t.START_TIME,'yyyy-mm-dd hh24:mi:ss,ff'))/1000 xysj
+						from fwzyqqbwcjb t
+						left join fwzyxybwcjb a on t.qqbwbs=a.xybwbs
+						where t.start_time &gt;= to_char(add_months(trunc(sysdate),-1),'yyyy-MM-dd')
+					) s 
+				group by s.fwbs,s.ffbs,s.ffms order by pjxysj
+			)
+		where rownum &lt;= 10
+	</select>
+	
+</mapper>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.business.dao.FwzyxybwcjbDao" >
+  <resultMap id="BaseResultMap" type="net.sinodata.business.entity.Fwzyxybwcjb" >
+    <id column="XYBWBS" property="xybwbs" jdbcType="VARCHAR" />
+    <result column="FWBS" property="fwbs" jdbcType="VARCHAR" />
+    <result column="FWTGZ_ZCXX" property="fwtgzZcxx" jdbcType="VARCHAR" />
+    <result column="FWTG_RQSJ" property="fwtgRqsj" jdbcType="VARCHAR" />
+    <result column="FWTG_NR" property="fwtgNr" jdbcType="VARCHAR" />
+    <result column="FWTGZTDM" property="fwtgztdm" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    XYBWBS, FWBS, FWTGZ_ZCXX, FWTG_RQSJ, FWTG_NR, FWTGZTDM
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from FWZYXYBWCJB
+    where XYBWBS = #{xybwbs,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from FWZYXYBWCJB
+    where XYBWBS = #{xybwbs,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="net.sinodata.business.entity.Fwzyxybwcjb" >
+    insert into FWZYXYBWCJB (XYBWBS, FWBS, FWTGZ_ZCXX, 
+      FWTG_RQSJ, FWTG_NR, FWTGZTDM
+      )
+    values (#{xybwbs,jdbcType=VARCHAR}, #{fwbs,jdbcType=VARCHAR}, #{fwtgzZcxx,jdbcType=VARCHAR}, 
+      #{fwtgRqsj,jdbcType=VARCHAR}, #{fwtgNr,jdbcType=VARCHAR}, #{fwtgztdm,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="net.sinodata.business.entity.Fwzyxybwcjb" >
+    insert into FWZYXYBWCJB
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="xybwbs != null" >
+        XYBWBS,
+      </if>
+      <if test="fwbs != null" >
+        FWBS,
+      </if>
+      <if test="fwtgzZcxx != null" >
+        FWTGZ_ZCXX,
+      </if>
+      <if test="fwtgRqsj != null" >
+        FWTG_RQSJ,
+      </if>
+      <if test="fwtgNr != null" >
+        FWTG_NR,
+      </if>
+      <if test="fwtgztdm != null" >
+        FWTGZTDM,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="xybwbs != null" >
+        #{xybwbs,jdbcType=VARCHAR},
+      </if>
+      <if test="fwbs != null" >
+        #{fwbs,jdbcType=VARCHAR},
+      </if>
+      <if test="fwtgzZcxx != null" >
+        #{fwtgzZcxx,jdbcType=VARCHAR},
+      </if>
+      <if test="fwtgRqsj != null" >
+        #{fwtgRqsj,jdbcType=VARCHAR},
+      </if>
+      <if test="fwtgNr != null" >
+        #{fwtgNr,jdbcType=VARCHAR},
+      </if>
+      <if test="fwtgztdm != null" >
+        #{fwtgztdm,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="net.sinodata.business.entity.Fwzyxybwcjb" >
+    update FWZYXYBWCJB
+    <set >
+      <if test="fwbs != null" >
+        FWBS = #{fwbs,jdbcType=VARCHAR},
+      </if>
+      <if test="fwtgzZcxx != null" >
+        FWTGZ_ZCXX = #{fwtgzZcxx,jdbcType=VARCHAR},
+      </if>
+      <if test="fwtgRqsj != null" >
+        FWTG_RQSJ = #{fwtgRqsj,jdbcType=VARCHAR},
+      </if>
+      <if test="fwtgNr != null" >
+        FWTG_NR = #{fwtgNr,jdbcType=VARCHAR},
+      </if>
+      <if test="fwtgztdm != null" >
+        FWTGZTDM = #{fwtgztdm,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where XYBWBS = #{xybwbs,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="net.sinodata.business.entity.Fwzyxybwcjb" >
+    update FWZYXYBWCJB
+    set FWBS = #{fwbs,jdbcType=VARCHAR},
+      FWTGZ_ZCXX = #{fwtgzZcxx,jdbcType=VARCHAR},
+      FWTG_RQSJ = #{fwtgRqsj,jdbcType=VARCHAR},
+      FWTG_NR = #{fwtgNr,jdbcType=VARCHAR},
+      FWTGZTDM = #{fwtgztdm,jdbcType=VARCHAR}
+    where XYBWBS = #{xybwbs,jdbcType=VARCHAR}
+  </update>
+</mapper>

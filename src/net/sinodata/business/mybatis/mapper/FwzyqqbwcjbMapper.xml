@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.business.dao.FwzyqqbwcjbDao" >
+  <resultMap id="BaseResultMap" type="net.sinodata.business.entity.Fwzyqqbwcjb" >
+    <id column="QQBWBS" property="qqbwbs" jdbcType="VARCHAR" />
+    <result column="FWQQ_IP" property="fwqqIp" jdbcType="VARCHAR" />
+    <result column="FWQQ_DK" property="fwqqDk" jdbcType="VARCHAR" />
+    <result column="FWQQZ_ZCXX" property="fwqqzZcxx" jdbcType="VARCHAR" />
+    <result column="FWBS" property="fwbs" jdbcType="VARCHAR" />
+    <result column="FFBS" property="ffbs" jdbcType="VARCHAR" />
+    <result column="FWQQ_RQSJ" property="fwqqRqsj" jdbcType="VARCHAR" />
+    <result column="FWQQ_NR" property="fwqqNr" jdbcType="VARCHAR" />
+    <result column="XXCZRY_XM" property="xxczryXm" jdbcType="VARCHAR" />
+    <result column="XXCZRY_GMSFHM" property="xxczryGmsfhm" jdbcType="VARCHAR" />
+    <result column="XXCZRY_GAJGJGDM" property="xxczryGajgjgdm" jdbcType="VARCHAR" />
+    <result column="FWQQSB_BH" property="fwqqsbBh" jdbcType="VARCHAR" />
+    <result column="FWQQ_SJSJLX" property="fwqqSjsjlx" jdbcType="VARCHAR" />
+    <result column="START_TIME" property="startTime" jdbcType="VARCHAR" />
+    <result column="QQQW" property="qqqw" jdbcType="VARCHAR" />
+    <result column="FWTG_NR" property="fwtgNr" jdbcType="VARCHAR" />
+    <result column="END_TIME" property="endTime" jdbcType="VARCHAR" />
+    <result column="FWTGZTDM" property="fwtgztdm" jdbcType="VARCHAR" />
+    <result column="ID" property="id" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="LogListMap" type="net.sinodata.business.entity.FwzyqqbwcjbDownload" >
+    <result column="QQBWBS" property="qqbwbs" jdbcType="VARCHAR" />
+    <result column="FWQQZ_ZCXX" property="fwqqzZcxx" jdbcType="VARCHAR" />
+    <result column="FWBS" property="fwbs" jdbcType="VARCHAR" />
+    <result column="FFBS" property="ffbs" jdbcType="VARCHAR" />   
+    <result column="START_TIME" property="startTime" jdbcType="VARCHAR" />
+    <result column="END_TIME" property="endTime" jdbcType="VARCHAR" />
+    <result column="TIMECONSUMING" property="timeConsuming" jdbcType="VARCHAR" />
+    <result column="FWTGZTDM" property="fwtgztdm" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    QQBWBS, FWBS, FWQQZ_ZCXX, FWQQ_RQSJ, FWQQ_NR, XXCZRY_XM, XXCZRY_GMSFHM, XXCZRY_GAJGJGDM, 
+    FWQQSB_BH,START_TIME
+  </sql>
+  <select id="queryList" resultMap="BaseResultMap" parameterType="Map">
+  	select (select FWCYF_YYXTMC from fwcyfzcb where FWCYF_YYXTBH=t.FWQQZ_ZCXX and rownum=1) FWQQZ_ZCXX,FWQQZ_ZCXX,
+  		(select FWMC from fwzyzcb where FWBS=t.FWBS and rownum=1) FWBS,
+  		(select FFMS from fwzyffzcb where FWBS=t.FWBS and FFBS=t.FFBS and rownum=1) FFBS,
+  		(select wm_concat(jgmc) from jgdmb t start with jgbs=t.XXCZRY_GAJGJGDM connect by jgbs = prior sssjjg) XXCZRY_GAJGJGDM,
+  		ID,QQBWBS,FWQQ_IP,FWQQ_DK,FWQQ_RQSJ,FWQQ_NR,XXCZRY_XM,XXCZRY_GMSFHM,FWQQSB_BH,
+  		FWQQ_SJSJLX,START_TIME,QQQW,FWTG_NR,END_TIME,FWTGZTDM,timeConsuming from (
+  	select x.*,rownum rnum from (select QQ.QQBWBS || '-' || QQ.SEQ_QQBWID ID,qq.QQBWBS,qq.FWQQ_IP,qq.FWQQ_DK,qq.FWQQZ_ZCXX,qq.FWBS,qq.FFBS,qq.FWQQ_RQSJ,qq.FWQQ_NR,qq.XXCZRY_XM,
+  		qq.XXCZRY_GMSFHM,qq.XXCZRY_GAJGJGDM,qq.FWQQSB_BH,qq.FWQQ_SJSJLX,qq.START_TIME,qq.QQQW,xy.FWTG_NR,xy.END_TIME,xy.FWTGZTDM,
+      uf_timestamp_diff(to_timestamp(xy.END_TIME,'yyyy-mm-dd hh24:mi:ss,ff'),to_timestamp(qq.START_TIME,'yyyy-mm-dd hh24:mi:ss,ff'))/1000 timeConsuming
+  	from fwzyqqbwcjb partition(${days})  qq,fwzyxybwcjb  partition(${days}) xy
+  	where qq.QQBWBS = xy.XYBWBS(+)
+  	
+  	<if test="fwtgzYyxtbh!=null"> and qq.FWQQZ_ZCXX = #{fwtgzYyxtbh,jdbcType=VARCHAR}</if>
+  	
+  	<if test="qqbwbs!=null">
+  		and qq.QQBWBS = #{qqbwbs,jdbcType=VARCHAR}
+  	</if>
+  	<if test="ffmc!=null">
+  		and qq.FFBS = #{ffmc,jdbcType=VARCHAR}
+  	</if>
+  	
+  	<if test="fwbs!=null">
+  		and qq.FWBS = #{fwbs,jdbcType=VARCHAR}
+  	</if>
+  	
+  	<if test="fwqqzZcxx!=null">
+  		and qq.FWQQZ_ZCXX = #{fwqqzZcxx,jdbcType=VARCHAR}
+  	</if>
+  	
+  	<if test="startTime!=null">
+  		and qq.START_TIME &gt;= #{startTime,jdbcType=VARCHAR}
+  	</if>
+  	
+  	<if test="endTime!=null">
+  		and qq.START_TIME &lt;= #{endTime,jdbcType=VARCHAR}
+  	</if>
+  	order by qq.START_TIME desc) x where rownum &lt;=#{end}
+  	) t where rnum &gt; #{start}
+  </select>
+  
+  <select id="getLogList" resultMap="LogListMap" parameterType="Map">
+  	select (select FWCYF_YYXTMC from fwcyfzcb where FWCYF_YYXTBH=t.FWQQZ_ZCXX and rownum=1) FWQQZ_ZCXX,FWQQZ_ZCXX,
+  		(select FWMC from fwzyzcb where FWBS=t.FWBS and rownum=1) FWBS,
+  		(select FFMS from fwzyffzcb where FWBS=t.FWBS and FFBS=t.FFBS and rownum=1) FFBS,
+  		(select wm_concat(jgmc) from jgdmb t start with jgbs=t.XXCZRY_GAJGJGDM connect by jgbs = prior sssjjg) XXCZRY_GAJGJGDM,
+  		ID,QQBWBS,FWQQ_IP,FWQQ_DK,FWQQ_RQSJ,FWQQ_NR,XXCZRY_XM,XXCZRY_GMSFHM,FWQQSB_BH,
+  		FWQQ_SJSJLX,START_TIME,QQQW,FWTG_NR,END_TIME,FWTGZTDM,timeConsuming from (
+  	select x.*,rownum rnum from (select QQ.QQBWBS || '-' || QQ.SEQ_QQBWID ID,qq.QQBWBS,qq.FWQQ_IP,qq.FWQQ_DK,qq.FWQQZ_ZCXX,qq.FWBS,qq.FFBS,qq.FWQQ_RQSJ,qq.FWQQ_NR,qq.XXCZRY_XM,
+  		qq.XXCZRY_GMSFHM,qq.XXCZRY_GAJGJGDM,qq.FWQQSB_BH,qq.FWQQ_SJSJLX,qq.START_TIME,qq.QQQW,xy.FWTG_NR,xy.END_TIME,xy.FWTGZTDM,
+      uf_timestamp_diff(to_timestamp(xy.END_TIME,'yyyy-mm-dd hh24:mi:ss,ff'),to_timestamp(qq.START_TIME,'yyyy-mm-dd hh24:mi:ss,ff'))/1000 timeConsuming
+  	from fwzyqqbwcjb partition(${days})  qq,fwzyxybwcjb  partition(${days}) xy
+  	where qq.QQBWBS = xy.XYBWBS(+)
+  	
+  	<if test="fwtgzYyxtbh!=null"> and qq.FWQQZ_ZCXX = #{fwtgzYyxtbh,jdbcType=VARCHAR}</if>
+  	
+  	<if test="qqbwbs!=null">
+  		and qq.QQBWBS = #{qqbwbs,jdbcType=VARCHAR}
+  	</if>
+  	<if test="ffmc!=null">
+  		and qq.FFBS = #{ffmc,jdbcType=VARCHAR}
+  	</if>
+  	
+  	<if test="fwbs!=null">
+  		and qq.FWBS = #{fwbs,jdbcType=VARCHAR}
+  	</if>
+  	
+  	<if test="fwqqzZcxx!=null">
+  		and qq.FWQQZ_ZCXX = #{fwqqzZcxx,jdbcType=VARCHAR}
+  	</if>
+  	
+  	<if test="startTime!=null">
+  		and qq.START_TIME &gt;= #{startTime,jdbcType=VARCHAR}
+  	</if>
+  	
+  	<if test="endTime!=null">
+  		and qq.START_TIME &lt;= #{endTime,jdbcType=VARCHAR}
+  	</if>
+  	order by qq.START_TIME desc) x where rownum &lt;=#{end}
+  	) t where rnum &gt; #{start}
+  </select>
+
+    <select id="queryQuartzList" resultMap="BaseResultMap" parameterType="Map">
+        select (select FWCYF_YYXTMC from fwcyfzcb where FWCYF_YYXTBH=t.FWQQZ_ZCXX and rownum=1) FWQQZ_ZCXX,FWQQZ_ZCXX,
+        (select FWMC from fwzyzcb where FWBS=t.FWBS and rownum=1) FWBS,
+        (select FFMS from fwzyffzcb where FWBS=t.FWBS and FFBS=t.FFBS and rownum=1) FFBS,
+        (select wm_concat(jgmc) from jgdmb t start with jgbs=t.XXCZRY_GAJGJGDM connect by jgbs = prior sssjjg) XXCZRY_GAJGJGDM,
+        ID,QQBWBS,FWQQ_IP,FWQQ_DK,FWQQ_RQSJ,FWQQ_NR,XXCZRY_XM,XXCZRY_GMSFHM,FWQQSB_BH,
+        FWQQ_SJSJLX,START_TIME,QQQW,FWTG_NR,END_TIME,FWTGZTDM,timeConsuming from (
+        select x.*,rownum rnum from (select QQ.QQBWBS || '-' || QQ.SEQ_QQBWID ID,qq.QQBWBS,qq.FWQQ_IP,qq.FWQQ_DK,qq.FWQQZ_ZCXX,qq.FWBS,qq.FFBS,qq.FWQQ_RQSJ,qq.FWQQ_NR,qq.XXCZRY_XM,
+        qq.XXCZRY_GMSFHM,qq.XXCZRY_GAJGJGDM,qq.FWQQSB_BH,qq.FWQQ_SJSJLX,qq.START_TIME,qq.QQQW,xy.FWTG_NR,xy.END_TIME,xy.FWTGZTDM,
+        uf_timestamp_diff(to_timestamp(xy.END_TIME,'yyyy-mm-dd hh24:mi:ss,ff'),to_timestamp(qq.START_TIME,'yyyy-mm-dd hh24:mi:ss,ff'))/1000 timeConsuming
+        from fwzyqqbwcjb partition(${days})  qq,fwzyxybwcjb  partition(${days}) xy
+        where qq.QQBWBS = xy.XYBWBS(+)
+
+        <if test="fwtgzYyxtbh!=null"> and qq.FWQQZ_ZCXX = #{fwtgzYyxtbh,jdbcType=VARCHAR}</if>
+
+        <if test="qqbwbs!=null">
+            and qq.QQBWBS = #{qqbwbs,jdbcType=VARCHAR}
+        </if>
+        <if test="ffmc!=null">
+            and qq.FFBS = #{ffmc,jdbcType=VARCHAR}
+        </if>
+
+        <if test="fwbs!=null">
+            and qq.FWBS = #{fwbs,jdbcType=VARCHAR}
+        </if>
+
+        <if test="fwqqzZcxx!=null">
+            and qq.FWQQZ_ZCXX = #{fwqqzZcxx,jdbcType=VARCHAR}
+        </if>
+
+        <if test="startTime!=null">
+            and qq.START_TIME &gt;= #{startTime,jdbcType=VARCHAR}
+        </if>
+
+        <if test="endTime!=null">
+            and qq.START_TIME &lt; #{endTime,jdbcType=VARCHAR}
+        </if>
+        order by qq.START_TIME asc) x
+        ) t
+    </select>
+
+    <select id="selectMaxDataTime" resultType="String">
+        SELECT MAX(data_time) FROM ES_LOG
+    </select>
+  
+  <select id="queryListCount" resultType="int" parameterType="Map">
+  	select count(qq.QQBWBS)
+  	from fwzyqqbwcjb qq,fwzyxybwcjb xy
+  	where qq.QQBWBS = xy.XYBWBS(+)
+  	<if test="fwtgzYyxtbh!=null"> and qq.FWQQZ_ZCXX = #{fwtgzYyxtbh,jdbcType=VARCHAR}</if>
+  	<if test="ffmc!=null">
+  		and qq.FFBS = #{ffmc,jdbcType=VARCHAR}
+  	</if>
+  	<if test="qqbwbs!=null">
+  		and qq.QQBWBS = #{qqbwbs,jdbcType=VARCHAR}
+  	</if>
+  	
+  	<if test="fwbs!=null">
+  		and qq.FWBS = #{fwbs,jdbcType=VARCHAR}
+  	</if>
+  	
+  	<if test="fwqqzZcxx!=null">
+  		and qq.FWQQZ_ZCXX = #{fwqqzZcxx,jdbcType=VARCHAR}
+  	</if>
+  	<if test="startTime!=null">
+  		and qq.START_TIME &gt;= #{startTime,jdbcType=VARCHAR}
+  	</if>
+  	
+  	<if test="endTime!=null">
+  		and qq.START_TIME &lt;= #{endTime,jdbcType=VARCHAR}
+  	</if>
+  </select>
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from FWZYQQBWCJB
+    where QQBWBS = #{qqbwbs,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from FWZYQQBWCJB
+    where QQBWBS = #{qqbwbs,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="net.sinodata.business.entity.Fwzyqqbwcjb" >
+    insert into FWZYQQBWCJB (QQBWBS, FWBS, FWQQZ_ZCXX, 
+      FWQQ_RQSJ, FWQQ_NR, XXCZRY_XM, 
+      XXCZRY_GMSFHM, XXCZRY_GAJGJGDM, FWQQSB_BH
+      )
+    values (#{qqbwbs,jdbcType=VARCHAR}, #{fwbs,jdbcType=VARCHAR}, #{fwqqzZcxx,jdbcType=VARCHAR}, 
+      #{fwqqRqsj,jdbcType=TIMESTAMP}, #{fwqqNr,jdbcType=VARCHAR}, #{xxczryXm,jdbcType=VARCHAR}, 
+      #{xxczryGmsfhm,jdbcType=VARCHAR}, #{xxczryGajgjgdm,jdbcType=VARCHAR}, #{fwqqsbBh,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="net.sinodata.business.entity.Fwzyqqbwcjb" >
+    insert into FWZYQQBWCJB
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="qqbwbs != null" >
+        QQBWBS,
+      </if>
+      <if test="fwbs != null" >
+        FWBS,
+      </if>
+      <if test="fwqqzZcxx != null" >
+        FWQQZ_ZCXX,
+      </if>
+      <if test="fwqqRqsj != null" >
+        FWQQ_RQSJ,
+      </if>
+      <if test="fwqqNr != null" >
+        FWQQ_NR,
+      </if>
+      <if test="xxczryXm != null" >
+        XXCZRY_XM,
+      </if>
+      <if test="xxczryGmsfhm != null" >
+        XXCZRY_GMSFHM,
+      </if>
+      <if test="xxczryGajgjgdm != null" >
+        XXCZRY_GAJGJGDM,
+      </if>
+      <if test="fwqqsbBh != null" >
+        FWQQSB_BH,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="qqbwbs != null" >
+        #{qqbwbs,jdbcType=VARCHAR},
+      </if>
+      <if test="fwbs != null" >
+        #{fwbs,jdbcType=VARCHAR},
+      </if>
+      <if test="fwqqzZcxx != null" >
+        #{fwqqzZcxx,jdbcType=VARCHAR},
+      </if>
+      <if test="fwqqRqsj != null" >
+        #{fwqqRqsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fwqqNr != null" >
+        #{fwqqNr,jdbcType=VARCHAR},
+      </if>
+      <if test="xxczryXm != null" >
+        #{xxczryXm,jdbcType=VARCHAR},
+      </if>
+      <if test="xxczryGmsfhm != null" >
+        #{xxczryGmsfhm,jdbcType=VARCHAR},
+      </if>
+      <if test="xxczryGajgjgdm != null" >
+        #{xxczryGajgjgdm,jdbcType=VARCHAR},
+      </if>
+      <if test="fwqqsbBh != null" >
+        #{fwqqsbBh,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="net.sinodata.business.entity.Fwzyqqbwcjb" >
+    update FWZYQQBWCJB
+    <set >
+      <if test="fwbs != null" >
+        FWBS = #{fwbs,jdbcType=VARCHAR},
+      </if>
+      <if test="fwqqzZcxx != null" >
+        FWQQZ_ZCXX = #{fwqqzZcxx,jdbcType=VARCHAR},
+      </if>
+      <if test="fwqqRqsj != null" >
+        FWQQ_RQSJ = #{fwqqRqsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fwqqNr != null" >
+        FWQQ_NR = #{fwqqNr,jdbcType=VARCHAR},
+      </if>
+      <if test="xxczryXm != null" >
+        XXCZRY_XM = #{xxczryXm,jdbcType=VARCHAR},
+      </if>
+      <if test="xxczryGmsfhm != null" >
+        XXCZRY_GMSFHM = #{xxczryGmsfhm,jdbcType=VARCHAR},
+      </if>
+      <if test="xxczryGajgjgdm != null" >
+        XXCZRY_GAJGJGDM = #{xxczryGajgjgdm,jdbcType=VARCHAR},
+      </if>
+      <if test="fwqqsbBh != null" >
+        FWQQSB_BH = #{fwqqsbBh,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where QQBWBS = #{qqbwbs,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="net.sinodata.business.entity.Fwzyqqbwcjb" >
+    update FWZYQQBWCJB
+    set FWBS = #{fwbs,jdbcType=VARCHAR},
+      FWQQZ_ZCXX = #{fwqqzZcxx,jdbcType=VARCHAR},
+      FWQQ_RQSJ = #{fwqqRqsj,jdbcType=TIMESTAMP},
+      FWQQ_NR = #{fwqqNr,jdbcType=VARCHAR},
+      XXCZRY_XM = #{xxczryXm,jdbcType=VARCHAR},
+      XXCZRY_GMSFHM = #{xxczryGmsfhm,jdbcType=VARCHAR},
+      XXCZRY_GAJGJGDM = #{xxczryGajgjgdm,jdbcType=VARCHAR},
+      FWQQSB_BH = #{fwqqsbBh,jdbcType=VARCHAR}
+    where QQBWBS = #{qqbwbs,jdbcType=VARCHAR}
+  </update>
+
+    <insert id="insertEsLog" parameterType="java.util.Map">
+        insert into ES_LOG(ID,DATA_DATE,DATA_TIME,ES_TABLE,TOTAL_NUM,SUCCESS_NUM,LOAD_DT)
+        values(
+        #{id,jdbcType=VARCHAR},
+        #{dataDate,jdbcType=VARCHAR},
+        #{dataTime,jdbcType=VARCHAR},
+        #{esTable,jdbcType=VARCHAR},
+        #{totalNum,jdbcType=DECIMAL},
+        #{successNum,jdbcType=DECIMAL},
+        #{loadDt,jdbcType=VARCHAR}
+        )
+    </insert>
+</mapper>

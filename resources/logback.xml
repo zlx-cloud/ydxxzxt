@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "xmlspec.dtd"> -->
+
+<configuration>
+<!-- <substitutionProperty name="LOG_HOME" value="/logs" /> -->
+<!-- <substitutionProperty name="LOG_HOME" value="/home/weblogic/apache-tomcat-7.0.52/webapps/logs/" /> -->
+<!-- <substitutionProperty name="LOG_HOME" value="/home/weblogic/tomcat-7.0.52/webapps/ydxxzxt_logs/ " /> -->
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
+			
+		</encoder>
+	</appender>
+
+
+	<appender name="rollingFile"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_HOME}/log.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/log.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<!--  <fileNamePattern>${LOG_HOME}/mylog-%d{yyyy-MM-dd_HH-mm}.%i.log</fileNamePattern>   -->
+			 <maxHistory>5</maxHistory> 
+			 <TimeBasedFileNamingAndTriggeringPolicy
+                class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <MaxFileSize>1024MB</MaxFileSize>
+            </TimeBasedFileNamingAndTriggeringPolicy> 
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+			</pattern>
+			<charset>UTF-8</charset> 
+		</encoder>
+	</appender>
+
+	<!-- <appender name="db-classic-oracle-pool" class="net.sinodata.otp.common.log.db.DBAppenderOtp">
+			<connectionSource class="ch.qos.logback.core.db.DriverManagerConnectionSource">
+				<driverClass>oracle.jdbc.OracleDriver</driverClass>
+				<url>jdbc:oracle:thin:@10.6.121.91:1521/b06dcap</url>
+				<user>dcap</user>
+				<password>dcap</password>
+			</connectionSource>
+	</appender> -->
+
+	<!-- <logger name="net.sinodata.business.dao" level="debug"
+		additivity="false">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="db-classic-oracle-pool" />
+	</logger> -->
+	<!-- <logger name="net.sinodata.otp" level="INFO" additivity="true">
+		<appender-ref ref="db-classic-oracle-pool" />
+		<appender-ref ref="STDOUT" />
+	</logger> -->
+
+	<!--log4jdbc -->
+	<logger name="net.sinodata.business.rest.GreetingController" level="INFO"
+		additivity="false">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="rollingFile" />
+		<!--<appender-ref ref="db-classic-oracle-pool" /> -->
+	</logger>
+	<logger name="jdbc.sqltiming" level="INFO" /> 
+	<root level="INFO">
+		<appender-ref ref="STDOUT" />
+		<!-- <appender-ref ref="rollingFile" /> -->
+	</root>
+</configuration>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.business.dao.quartzJob.SSJKDao">
+	
+
+	<sql id="inteport_seq">SEQ_INTEPORT.NEXTVAL</sql>
+	<insert id="addInPortSJ">
+		insert into INTEPORTJK_RESULT_TAB
+		(id,INTERNAME,IP,PORT,INTEPORTJKLOG,EXE_TIME,FINISH_TIME,STATUS)
+		values(
+		<include refid="inteport_seq" />
+		,'${INTERNAME}','${IP}','${PORT}'
+		,#{COUNTRY,jdbcType=CLOB},'${EXE_TIME}','${FINISH_TIME}','${STATUS}')
+	</insert>
+	<select id="queryInPort" resultType="java.util.HashMap">
+		select * from (
+		select
+		(t.FINISH_TIME-t.EXE_TIME) as EXETIME,
+		decode(t.STATUS,'0','成功','1','失败','2') as EXESTATUS,t.* from
+		INTEPORTJK_RESULT_TAB t order by t.exe_time desc) a where a.id
+		in(select max(id) from INTEPORTJK_RESULT_TAB t group by
+		ip,port)
+
+	</select>
+	<select id="queryInPortTable" resultType="java.util.HashMap">
+		select *
+		from (select
+		rownum row_num,a.*
+		from (select (t.FINISH_TIME-t.EXE_TIME) as EXETIME,
+		decode(t.STATUS,'0','成功','1','失败','2') as EXESTATUS,t.*
+		from
+		INTEPORTJK_RESULT_TAB t
+		where 1 = 1
+		order by t.exe_time desc) a
+		where a.id in(select max(id) from INTEPORTJK_RESULT_TAB t group
+		by ip,port)) b where
+		b.row_num &gt; ${start} and
+		b.row_num &lt;= ${end}
+
+	</select>
+	<select id="queryInPortCount" resultType="java.lang.Integer">
+		select count(*)
+		from
+		(select
+		rownum row_num,a.*
+		from (select (t.FINISH_TIME-t.EXE_TIME) as
+		EXETIME,
+		decode(t.STATUS,'0','成功','1','失败','2') as EXESTATUS,t.*
+		from
+		INTEPORTJK_RESULT_TAB t
+		where 1 = 1
+		order by t.exe_time desc) a
+		where a.id in(select max(id) from INTEPORTJK_RESULT_TAB t group
+		by ip,port)) b
+	</select>
+
+	<select id="queryByIP" resultType="java.util.HashMap">
+		select * from ( select * from (
+		select (t.FINISH_TIME-t.EXE_TIME) as EXETIME,
+		decode(t.STATUS,'0','成功','1','失败','2') as EXESTATUS,t.* from
+		INTEPORTJK_RESULT_TAB t
+		where 1=1 and t.IP =#{IP}
+		order by t.exe_time desc) a
+		where rownum &lt;= 30 ) order by exe_time asc
+
+	</select>
+
+	<select id="queryCountByIP" resultType="java.lang.Integer"
+		parameterType="map">
+		select count(*) from
+		INTEPORTJK_RESULT_TAB t where 1 = 1
+		<if test="IP!=null"> and t.IP =#{IP,jdbcType=VARCHAR} </if>
+		and rownum &lt; 30
+	</select>
+
+	<select id="queryByIPTable" resultType="java.util.HashMap"
+		parameterType="map">
+
+		select *
+		from (select
+		rownum row_num,a.*
+		from (select
+		(t.FINISH_TIME-t.EXE_TIME) as EXETIME,
+		decode(t.STATUS,'0','成功','1','失败','2') as EXESTATUS,t.*
+		from
+		INTEPORTJK_RESULT_TAB t
+		where 1 = 1
+		<if test="IP!=null"> and t.IP =#{IP,jdbcType=VARCHAR} </if>
+		order by t.exe_time desc) a) b where
+		b.row_num &gt; ${start} and
+		b.row_num &lt;= ${end}
+	</select>
+
+	<select id="queryIpPort" resultType="java.util.HashMap"
+		parameterType="map">
+		select * from t_ip_port t where t.isenable='1'
+	</select>
+	
+	<select id="selectQqfwCount" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select count(1) from FWZYQQBWCJB t
+		where t.start_time &gt; #{startTime,jdbcType=VARCHAR}
+		and t.start_time &lt;= #{endTime,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectYcCount" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select count(1) from FWZYQQBWYCCJB t
+		where t.start_time &gt; #{startTime,jdbcType=VARCHAR}
+		and t.start_time &lt;= #{endTime,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectZxTime" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select 
+			nvl(
+				round(
+					avg(
+						uf_timestamp_diff(
+							to_timestamp(a.END_TIME,'yyyy-mm-dd hh24:mi:ss,ff'),
+              				to_timestamp(t.START_TIME,'yyyy-mm-dd hh24:mi:ss,ff')
+              			)/1000
+              		)
+              	,2)
+            ,0) time
+        from fwzyqqbwcjb t
+        left join fwzyxybwcjb a on t.qqbwbs=a.xybwbs
+        where t.start_time &gt; #{startTime,jdbcType=VARCHAR}
+		and t.start_time &lt;= #{endTime,jdbcType=VARCHAR}
+	</select>
+	
+</mapper>

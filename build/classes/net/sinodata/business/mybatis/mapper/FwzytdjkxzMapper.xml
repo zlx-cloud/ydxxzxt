@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.business.dao.FwzytdjkxzDao" >
+  <resultMap id="BaseResultMap" type="net.sinodata.business.entity.Fwzytdjkxz" >
+  	<result column="WYID" property="wyid" jdbcType="VARCHAR" />
+  	<result column="YYJGID" property="yyjgid" jdbcType="VARCHAR" />
+  	<result column="YYBS" property="yybs" jdbcType="VARCHAR" />
+	<result column="FWBS" property="fwbs" jdbcType="VARCHAR" />
+	<result column="FFBS" property="ffbs" jdbcType="VARCHAR" />
+	<result column="QYBZ" property="qybz" jdbcType="VARCHAR" />
+	<result column="XZLB" property="xzlb" jdbcType="VARCHAR" />
+	<result column="XZLX" property="xzlx" jdbcType="VARCHAR" />
+	<result column="MAXCOUNT" property="maxCount" jdbcType="VARCHAR" />
+	<result column="CREATETIME" property="createTime" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="queryList" resultMap="BaseResultMap" parameterType="Map">
+  	select * from (select x.*,rownum rnum from (
+  	select * from FWZYTDJKXZB where 1=1
+<!-- 	  	<if test="fwbs!=null and fwbs!=''"> -->
+<!-- 	  		and fwbs = #{fwbs,jdbcType=VARCHAR} -->
+<!-- 	  	</if> -->
+  	) x
+  	where rownum &lt;=#{end})
+  	where rnum &gt; #{start}
+  </select>
+  
+  <select id="queryListCount" resultType="int" parameterType="Map">
+  	select count(*) from FWZYTDJKXZB where 1=1 
+<!--   	<if test="fwbs!=null and fwbs!=''"> -->
+<!--   		and fwbs = #{fwbs,jdbcType=VARCHAR} -->
+<!--   	</if> -->
+  </select>
+  
+  
+   <insert id="insertSelective" parameterType="net.sinodata.business.entity.Fwzytdjkxz" >
+    insert into FWZYTDJKXZB
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="wyid != null" >
+        WYID,
+      </if>
+      <if test="yyjgid != null" >
+        YYJGID,
+      </if>
+      <if test="yybs != null" >
+        YYBS,
+      </if>
+      <if test="fwbs != null" >
+        FWBS,
+      </if>
+      <if test="ffbs != null" >
+        FFBS,
+      </if>
+      <if test="qybz != null" >
+        QYBZ,
+      </if>
+      <if test="xzlx != null" >
+        XZLX,
+      </if>
+      <if test="xzlb != null" >
+        XZLB,
+      </if>
+      <if test="maxCount != null" >
+        MAXCOUNT,
+      </if>
+      <if test="createTime != null" >
+        CREATETIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="wyid != null" >
+        #{wyid,jdbcType=VARCHAR},
+      </if>
+      <if test="yyjgid != null" >
+        #{yyjgid,jdbcType=VARCHAR},
+      </if>
+      <if test="yybs != null" >
+        #{yybs,jdbcType=VARCHAR},
+      </if>
+      <if test="fwbs != null" >
+        #{fwbs,jdbcType=VARCHAR},
+      </if>
+      <if test="ffbs != null" >
+        #{ffbs,jdbcType=VARCHAR},
+      </if>
+      <if test="qybz != null" >
+        #{qybz,jdbcType=VARCHAR},
+      </if> 
+       <if test="xzlx != null" >
+        #{xzlx,jdbcType=VARCHAR},
+      </if> 
+       <if test="xzlb != null" >
+        #{xzlb,jdbcType=VARCHAR},
+      </if> 
+       <if test="maxCount != null" >
+        #{maxCount,jdbcType=VARCHAR},
+      </if> 
+       <if test="createTime != null" >
+        #{createTime,jdbcType=VARCHAR},
+      </if> 
+    </trim>
+  </insert>										  
+   <update id="updateByPrimaryKey" parameterType="net.sinodata.business.entity.Fwzytdjkxz" >
+    update FWZYTDJKXZB
+    <set >
+      <if test="yyjgid != null" >
+        YYJGID = #{yyjgid,jdbcType=VARCHAR},
+      </if>
+      <if test="yybs != null" >
+        YYBS = #{yybs,jdbcType=VARCHAR},
+      </if>
+      <if test="fwbs != null" >
+        FWBS = #{fwbs,jdbcType=VARCHAR},
+      </if>
+      <if test="ffbs != null" >
+        FFBS = #{ffbs,jdbcType=VARCHAR},
+      </if>
+      <if test="qybz != null" >
+        QYBZ = #{qybz,jdbcType=VARCHAR},
+      </if>
+       <if test="xzlx != null" >
+        XZLX = #{xzlx,jdbcType=VARCHAR},
+      </if>
+       <if test="xzlb != null" >
+        XZLB = #{xzlb,jdbcType=VARCHAR},
+      </if>
+       <if test="maxCount != null" >
+        MAXCOUNT = #{maxCount,jdbcType=VARCHAR},
+      </if>
+       <if test="createTime != null" >
+        CREATETIME = #{createTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where WYID = #{wyid,jdbcType=VARCHAR}
+  </update>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from FWZYXZB where WYID = #{wyid,jdbcType=VARCHAR}
+  </delete>
+  
+</mapper>

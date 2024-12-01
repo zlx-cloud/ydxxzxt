@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.business.dao.PoliceMemberDao">
+	<select id="getListByPage" resultType="map" parameterType="map">
+		select * from (
+			select k.*, rownum rnum from (
+				select t.POLICE_NO,t.POLICE_SFZH,t.POLICE_NAME,
+					case
+            			when b.jzlbmc is null then t.police_type
+            			else b.jzlbmc
+          			end POLICE_TYPE,
+					t.POLICE_SEX,
+					case
+           				when a.jgmc is null then t.org_code
+           				else a.jgmc
+          			end ORG_CODE,
+					t.PHONE
+				from JYJBXX t
+				left join JGDMB a on t.org_code = a.jgbs
+				left join jzlbdmb b on t.police_type = b.jzlbdm
+				where 1=1
+				<if test="jh!=null and jh!=''"> 
+        			and t.POLICE_NO like '%'||#{jh,jdbcType=VARCHAR}||'%'
+        		</if>
+        		<if test="sfzh!=null and sfzh!=''"> 
+        			and t.POLICE_SFZH like '%'||#{sfzh,jdbcType=VARCHAR}||'%'
+        		</if>
+				<if test="name!=null and name!=''"> 
+        			and t.POLICE_NAME like '%'||#{name,jdbcType=VARCHAR}||'%'
+        		</if>
+        		<if test="jz!=null and jz!=''"> 
+        			and t.POLICE_TYPE like '%'||#{jz,jdbcType=VARCHAR}||'%'
+        		</if>
+	        	<if test="sex!=null and sex!=''"> 
+	        		and t.POLICE_SEX = #{sex,jdbcType=VARCHAR}
+	        	</if>
+	        	<if test="jg!=null and jg!=''"> 
+	        		and t.ORG_CODE like '%'||#{jg,jdbcType=VARCHAR}||'%'
+	        	</if>
+	        	<if test="phone!=null and phone!=''"> 
+	        		and t.PHONE like '%'||#{phone,jdbcType=VARCHAR}||'%'
+	        	</if>
+	        	order by t.POLICE_NO
+        	) k where rownum &lt;= #{end}
+		) where rnum &gt; #{start}
+	</select>
+	<select id="getCountByPage" resultType="int" parameterType="map">
+ 		select count(1) from JYJBXX t where 1=1
+		<if test="jh!=null and jh!=''"> 
+        	and t.POLICE_NO like '%'||#{jh,jdbcType=VARCHAR}||'%'
+        </if>
+        <if test="sfzh!=null and sfzh!=''"> 
+        	and t.POLICE_SFZH like '%'||#{sfzh,jdbcType=VARCHAR}||'%'
+        </if>
+		<if test="name!=null and name!=''"> 
+        	and t.POLICE_NAME like '%'||#{name,jdbcType=VARCHAR}||'%'
+        </if>
+        <if test="jz!=null and jz!=''"> 
+        	and t.POLICE_TYPE like '%'||#{jz,jdbcType=VARCHAR}||'%'
+        </if>
+	    <if test="sex!=null and sex!=''"> 
+	        and t.POLICE_SEX = #{sex,jdbcType=VARCHAR}
+	    </if>
+	    <if test="jg!=null and jg!=''"> 
+	       	and t.ORG_CODE like '%'||#{jg,jdbcType=VARCHAR}||'%'
+	    </if>
+	    <if test="phone!=null and phone!=''"> 
+	       	and t.PHONE like '%'||#{phone,jdbcType=VARCHAR}||'%'
+	    </if>
+	</select>
+</mapper>

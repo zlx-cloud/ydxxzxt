@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.business.dao.MenuTDao" >
+  <resultMap id="BaseResultMap" type="net.sinodata.business.entity.MenuT" >
+    <id column="MENUID" property="menuid" jdbcType="VARCHAR" />
+    <result column="MENUNAME" property="menuname" jdbcType="VARCHAR" />
+    <result column="MENUPATH" property="menupath" jdbcType="VARCHAR" />
+    <result column="PARENTID" property="parentid" jdbcType="VARCHAR" />
+    <result column="MENUDESCRIPTION" property="menudescription" jdbcType="VARCHAR" />
+    <result column="STATE" property="state" jdbcType="VARCHAR" />
+    <result column="ICONCLS" property="iconcls" jdbcType="VARCHAR" />
+  </resultMap>
+
+  
+  <sql id="Base_Column_List" >
+    MENUID, MENUNAME, MENUPATH, PARENTID, MENUDESCRIPTION, STATE, ICONCLS
+  </sql>
+  
+  
+   <select id="queryByParentIdAndMenuId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_MENU
+    where 1=1
+     <if test="menuIds != null" >
+     and   MENUID in (${menuIds}) 
+     </if>
+   <if test="parentId != null and parentId != ''" >
+      and PARENTID= #{parentId,jdbcType=VARCHAR}
+     </if>
+    
+   order by sort asc
+  </select>
+  
+  
+  
+  
+  
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_MENU
+    where MENUID = #{menuid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from T_MENU
+    where MENUID = #{menuid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="net.sinodata.business.entity.MenuT" >
+    insert into T_MENU (MENUID, MENUNAME, MENUPATH, 
+      PARENTID, MENUDESCRIPTION, STATE, 
+      ICONCLS)
+    values (#{menuid,jdbcType=VARCHAR}, #{menuname,jdbcType=VARCHAR}, #{menupath,jdbcType=VARCHAR}, 
+      #{parentid,jdbcType=VARCHAR}, #{menudescription,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, 
+      #{iconcls,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="net.sinodata.business.entity.MenuT" >
+    insert into T_MENU
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <!-- <if test="menuid != null" > -->
+        MENUID,
+      <!-- </if> -->
+      <if test="menuname != null" >
+        MENUNAME,
+      </if>
+      <if test="menupath != null" >
+        MENUPATH,
+      </if>
+      <if test="parentid != null" >
+        PARENTID,
+      </if>
+      <if test="menudescription != null" >
+        MENUDESCRIPTION,
+      </if>
+      <if test="state != null" >
+        STATE,
+      </if>
+      <if test="iconcls != null" >
+        ICONCLS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <!-- <if test="menuid != null" >
+        #{menuid,jdbcType=VARCHAR},
+      </if> -->
+      <include refid="batch_seq" />,
+      <if test="menuname != null" >
+        #{menuname,jdbcType=VARCHAR},
+      </if>
+      <if test="menupath != null" >
+        #{menupath,jdbcType=VARCHAR},
+      </if>
+      <if test="parentid != null" >
+        #{parentid,jdbcType=VARCHAR},
+      </if>
+      <if test="menudescription != null" >
+        #{menudescription,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="iconcls != null" >
+        #{iconcls,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="net.sinodata.business.entity.MenuT" >
+    update T_MENU
+    <set >
+      <if test="menuname != null" >
+        MENUNAME = #{menuname,jdbcType=VARCHAR},
+      </if>
+      <if test="menupath != null" >
+        MENUPATH = #{menupath,jdbcType=VARCHAR},
+      </if>
+      <if test="parentid != null" >
+        PARENTID = #{parentid,jdbcType=VARCHAR},
+      </if>
+      <if test="menudescription != null" >
+        MENUDESCRIPTION = #{menudescription,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        STATE = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="iconcls != null" >
+        ICONCLS = #{iconcls,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where MENUID = #{menuid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="net.sinodata.business.entity.MenuT" >
+    update T_MENU
+    set MENUNAME = #{menuname,jdbcType=VARCHAR},
+      MENUPATH = #{menupath,jdbcType=VARCHAR},
+      PARENTID = #{parentid,jdbcType=VARCHAR},
+      MENUDESCRIPTION = #{menudescription,jdbcType=VARCHAR},
+      STATE = #{state,jdbcType=VARCHAR},
+      ICONCLS = #{iconcls,jdbcType=VARCHAR}
+    where MENUID = #{menuid,jdbcType=VARCHAR}
+  </update>
+  <sql id="batch_seq">MENU_SEQ.NEXTVAL</sql>
+</mapper>

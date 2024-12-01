@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.business.dao.FwzyffqqcsbDao" >
+  <resultMap id="BaseResultMap" type="net.sinodata.business.entity.Fwzyffqqcsb" >
+    <id column="FFBS" property="ffbs" jdbcType="VARCHAR" />
+    <id column="FWBS" property="fwbs" jdbcType="VARCHAR" />
+    <id column="QQCSBS" property="qqcsbs" jdbcType="VARCHAR" />
+    <result column="QQCSM" property="qqcsm" jdbcType="VARCHAR" />
+    <result column="QQCSLX" property="qqcslx" jdbcType="VARCHAR" />
+    <result column="QQCSCD" property="qqcscd" jdbcType="DECIMAL" />
+    <result column="QQCSZY" property="qqcszy" jdbcType="VARCHAR" />
+    <result column="FWMC" property="fwmc" jdbcType="VARCHAR" />
+    <result column="FFMC" property="ffmc" jdbcType="VARCHAR" />
+    <result column="FWTGZ_YYXTBH" property="fwtgzYyxtbh" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    FFBS, FWBS, QQCSBS, QQCSM, QQCSLX, QQCSCD, QQCSZY,FWTGZ_YYXTBH
+  </sql>
+  
+  
+  
+    <select id="getFwzyffqqcsListByPage" resultMap="BaseResultMap"
+		parameterType="map">
+  select <include refid="Base_Column_List" />,FWMC,FFMC from (
+		select k.*, rownum rnum from
+		(select u.*,r.FWMC,f.FFMC　 from FWZYFFQQCSB u left join FWZYZCB r on u.FWBS=r.FWBS left join fwzyffzcb f on f.ffbs = u.ffbs and  u.fwbs=f.fwbs  where 1=1
+  		<if test="fwbs!=null"> and u.FWBS = #{fwbs,jdbcType=VARCHAR}</if>
+		<if test="ffbs!=null"> and u.FFBS = #{ffbs,jdbcType=VARCHAR}</if>
+		<if test="qqcsbs!=null"> and u.QQCSBS like '%${qqcsbs}%'</if>
+		<if test="fwmc!=null"> and r.FWMC like '%${fwmc}%'</if>
+		<if test="ffmc!=null"> and f.FFMC like '%${ffmc}%'</if>
+		<if test="qqcsm!=null"> and u.QQCSM like '%${qqcsm}%'</if>
+		<if test="fwtgzYyxtbh!=null"> and u.FWTGZ_YYXTBH = #{fwtgzYyxtbh,jdbcType=VARCHAR}</if>
+		order by u.fwtgz_yyxtbh,u.fwbs,u.ffbs
+  		) k
+		where rownum &lt;= #{end}
+		)
+		where rnum &gt; #{start}
+
+	</select>
+	<select id="getFwzyffqqcsCountByPage" resultType="int" parameterType="map">
+select count(1) 　 from FWZYFFQQCSB u left join FWZYZCB r on u.FWBS=r.FWBS left join fwzyffzcb f on f.ffbs = u.ffbs and  u.fwbs=f.fwbs  where 1=1
+	
+		<if test="fwbs!=null"> and u.FWBS = #{fwbs,jdbcType=VARCHAR}</if>
+		<if test="ffbs!=null"> and u.FFBS = #{ffbs,jdbcType=VARCHAR}</if>
+		<if test="qqcsbs!=null"> and u.QQCSBS like '%${qqcsbs}%'</if>
+		<if test="fwmc!=null"> and r.FWMC like '%${fwmc}%'</if>
+		<if test="ffmc!=null"> and f.FFMC like '%${ffmc}%'</if>
+		<if test="qqcsm!=null"> and u.QQCSM like '%${qqcsm}%'</if>
+		<if test="fwtgzYyxtbh!=null"> and u.FWTGZ_YYXTBH = #{fwtgzYyxtbh,jdbcType=VARCHAR}</if>
+	</select>
+  
+  
+  
+  
+  
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="net.sinodata.business.entity.FwzyffqqcsbKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from FWZYFFQQCSB
+    where FFBS = #{ffbs,jdbcType=VARCHAR}
+      and FWBS = #{fwbs,jdbcType=VARCHAR}
+      and QQCSBS = #{qqcsbs,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="queryListByFwbsAndFfbs" resultMap="BaseResultMap" parameterType="net.sinodata.business.entity.FwzyffqqcsbKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from FWZYFFQQCSB
+    where FFBS = #{ffbs,jdbcType=VARCHAR}
+      and FWBS = #{fwbs,jdbcType=VARCHAR}
+    
+  </select>
+  
+  
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="net.sinodata.business.entity.FwzyffqqcsbKey" >
+    delete from FWZYFFQQCSB
+    where FWBS = #{fwbs,jdbcType=VARCHAR}
+      <if test="ffbs != null" >
+      and  FFBS = #{ffbs,jdbcType=VARCHAR}
+      </if>
+      <if test="qqcsbs != null" >
+         and QQCSBS = #{qqcsbs,jdbcType=VARCHAR}
+      </if>
+     
+  </delete>
+  <insert id="insert" parameterType="net.sinodata.business.entity.Fwzyffqqcsb" >
+    insert into FWZYFFQQCSB (FFBS, FWBS, QQCSBS, 
+      QQCSM, QQCSLX, QQCSCD, 
+      QQCSZY,FWTGZ_YYXTBH)
+    values (#{ffbs,jdbcType=VARCHAR}, #{fwbs,jdbcType=VARCHAR}, #{qqcsbs,jdbcType=VARCHAR}, 
+      #{qqcsm,jdbcType=VARCHAR}, #{qqcslx,jdbcType=VARCHAR}, #{qqcscd,jdbcType=DECIMAL}, 
+      #{qqcszy,jdbcType=VARCHAR},#{fwtgzYyxtbh,jdbcType=VARCHAR})
+  </insert>
+   <insert id="insertByBatch" parameterType="java.util.List">
+     insert into FWZYFFQQCSB (FFBS, FWBS, QQCSBS, 
+      QQCSM, QQCSLX, QQCSCD, 
+      QQCSZY,FWTGZ_YYXTBH)
+      SELECT A.* from 
+      (
+    <foreach collection="list" item="item" index="index" separator="UNION ALL">
+     SELECT 
+    #{item.ffbs,jdbcType=VARCHAR} FFBS, #{item.fwbs,jdbcType=VARCHAR} FWBS, #{item.qqcsbs,jdbcType=VARCHAR} QQCSBS, #{item.qqcsm,jdbcType=VARCHAR} QQCSM, 
+      #{item.qqcslx,jdbcType=VARCHAR} QQCSLX, #{item.qqcscd,jdbcType=DECIMAL} QQCSCD, #{item.qqcszy,jdbcType=VARCHAR} QQCSZY,#{item.fwtgzYyxtbh,jdbcType=VARCHAR} FWTGZ_YYXTBH
+     FROM dual
+   </foreach>
+   )A
+  </insert>
+  <insert id="insertSelective" parameterType="net.sinodata.business.entity.Fwzyffqqcsb" >
+    insert into FWZYFFQQCSB
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="ffbs != null" >
+        FFBS,
+      </if>
+      <if test="fwbs != null" >
+        FWBS,
+      </if>
+      <if test="qqcsbs != null" >
+        QQCSBS,
+      </if>
+      <if test="qqcsm != null" >
+        QQCSM,
+      </if>
+      <if test="qqcslx != null" >
+        QQCSLX,
+      </if>
+      <if test="qqcscd != null" >
+        QQCSCD,
+      </if>
+      <if test="qqcszy != null" >
+        QQCSZY,
+      </if>
+       <if test="fwtgzYyxtbh != null" >
+        FWTGZ_YYXTBH,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="ffbs != null" >
+        #{ffbs,jdbcType=VARCHAR},
+      </if>
+      <if test="fwbs != null" >
+        #{fwbs,jdbcType=VARCHAR},
+      </if>
+      <if test="qqcsbs != null" >
+        #{qqcsbs,jdbcType=VARCHAR},
+      </if>
+      <if test="qqcsm != null" >
+        #{qqcsm,jdbcType=VARCHAR},
+      </if>
+      <if test="qqcslx != null" >
+        #{qqcslx,jdbcType=VARCHAR},
+      </if>
+      <if test="qqcscd != null" >
+        #{qqcscd,jdbcType=DECIMAL},
+      </if>
+      <if test="qqcszy != null" >
+        #{qqcszy,jdbcType=VARCHAR},
+      </if>
+       <if test="fwtgzYyxtbh != null" >
+         #{fwtgzYyxtbh,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="net.sinodata.business.entity.Fwzyffqqcsb" >
+    update FWZYFFQQCSB
+    <set >
+      <if test="qqcsm != null" >
+        QQCSM = #{qqcsm,jdbcType=VARCHAR},
+      </if>
+      <if test="qqcslx != null" >
+        QQCSLX = #{qqcslx,jdbcType=VARCHAR},
+      </if>
+      <if test="qqcscd != null" >
+        QQCSCD = #{qqcscd,jdbcType=DECIMAL},
+      </if>
+      <if test="qqcszy != null" >
+        QQCSZY = #{qqcszy,jdbcType=VARCHAR},
+      </if>
+       <if test="fwtgzYyxtbh != null" >
+        FWTGZ_YYXTBH = #{fwtgzYyxtbh,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where FFBS = #{ffbs,jdbcType=VARCHAR}
+      and FWBS = #{fwbs,jdbcType=VARCHAR}
+      and QQCSBS = #{qqcsbs,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="net.sinodata.business.entity.Fwzyffqqcsb" >
+    update FWZYFFQQCSB
+    set QQCSM = #{qqcsm,jdbcType=VARCHAR},
+      QQCSLX = #{qqcslx,jdbcType=VARCHAR},
+      QQCSCD = #{qqcscd,jdbcType=DECIMAL},
+      QQCSZY = #{qqcszy,jdbcType=VARCHAR},
+      FWTGZ_YYXTBH = #{fwtgzYyxtbh,jdbcType=VARCHAR}
+    where FFBS = #{ffbs,jdbcType=VARCHAR}
+      and FWBS = #{fwbs,jdbcType=VARCHAR}
+      and QQCSBS = #{qqcsbs,jdbcType=VARCHAR}
+  </update>
+</mapper>

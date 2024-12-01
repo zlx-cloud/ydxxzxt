@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.business.dao.FwzysqbDao" >
+  <resultMap id="BaseResultMap" type="net.sinodata.business.entity.Fwzysqb" >
+    <id column="FFBS" property="ffbs" jdbcType="VARCHAR" />
+    <id column="FWBS" property="fwbs" jdbcType="VARCHAR" />
+    <id column="FWCYF_YYXTBH" property="fwcyfYyxtbh" jdbcType="VARCHAR" />
+    <result column="FWSQ_KSRQ" property="fwsqKsrq" jdbcType="TIMESTAMP" />
+    <result column="FWSQ_ZZRQ" property="fwsqZzrq" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    FFBS, FWBS, FWCYF_YYXTBH, FWSQ_KSRQ, FWSQ_ZZRQ
+  </sql>
+  
+   <select id="queryFwSqByFwcyfYyxtbh" parameterType="java.util.HashMap" resultMap="BaseResultMap" >
+       SELECT   <include refid="Base_Column_List" /> 
+       from FWZYSQB WHERE 1=1
+       <if test="fwcyfYyxtbh!= null" >
+       and FWCYF_YYXTBH = #{fwcyfYyxtbh,jdbcType=VARCHAR} 
+       </if>
+       <if test="fwbs!= null" >
+       and FWBS = #{fwbs,jdbcType=VARCHAR}
+       </if>
+    </select>
+    
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="net.sinodata.business.entity.FwzysqbKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from FWZYSQB
+    where 1=1
+    
+     <if test="ffbs != null" >
+     and   FFBS = #{ffbs,jdbcType=VARCHAR}
+     </if>
+  
+      and FWBS = #{fwbs,jdbcType=VARCHAR}
+      and FWCYF_YYXTBH = #{fwcyfYyxtbh,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="net.sinodata.business.entity.FwzysqbKey" >
+    delete from FWZYSQB
+    where 1=1
+    <if test="ffbs != null" >
+     and   FFBS = #{ffbs,jdbcType=VARCHAR}
+     </if>
+     <!-- FFBS = #{ffbs,jdbcType=VARCHAR} -->
+     and FWBS = #{fwbs,jdbcType=VARCHAR}
+      <if test="fwcyfYyxtbh != null" >
+      and FWCYF_YYXTBH = #{fwcyfYyxtbh,jdbcType=VARCHAR}
+      </if>
+  </delete>
+  <insert id="insert" parameterType="net.sinodata.business.entity.Fwzysqb" >
+    insert into FWZYSQB (FFBS, FWBS, FWCYF_YYXTBH, 
+      FWSQ_KSRQ, FWSQ_ZZRQ)
+    values (#{ffbs,jdbcType=VARCHAR}, #{fwbs,jdbcType=VARCHAR}, #{fwcyfYyxtbh,jdbcType=VARCHAR}, 
+      #{fwsqKsrq,jdbcType=TIMESTAMP}, #{fwsqZzrq,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="net.sinodata.business.entity.Fwzysqb" >
+    insert into FWZYSQB
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="ffbs != null" >
+        FFBS,
+      </if>
+      <if test="fwbs != null" >
+        FWBS,
+      </if>
+      <if test="fwcyfYyxtbh != null" >
+        FWCYF_YYXTBH,
+      </if>
+      <if test="fwsqKsrq != null" >
+        FWSQ_KSRQ,
+      </if>
+      <if test="fwsqZzrq != null" >
+        FWSQ_ZZRQ,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="ffbs != null" >
+        #{ffbs,jdbcType=VARCHAR},
+      </if>
+      <if test="fwbs != null" >
+        #{fwbs,jdbcType=VARCHAR},
+      </if>
+      <if test="fwcyfYyxtbh != null" >
+        #{fwcyfYyxtbh,jdbcType=VARCHAR},
+      </if>
+      <if test="fwsqKsrq != null" >
+        #{fwsqKsrq,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fwsqZzrq != null" >
+        #{fwsqZzrq,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="net.sinodata.business.entity.Fwzysqb" >
+    update FWZYSQB
+    <set >
+      <if test="fwsqKsrq != null" >
+        FWSQ_KSRQ = #{fwsqKsrq,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fwsqZzrq != null" >
+        FWSQ_ZZRQ = #{fwsqZzrq,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where FFBS = #{ffbs,jdbcType=VARCHAR}
+      and FWBS = #{fwbs,jdbcType=VARCHAR}
+      and FWCYF_YYXTBH = #{fwcyfYyxtbh,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="net.sinodata.business.entity.Fwzysqb" >
+    update FWZYSQB
+    set FWSQ_KSRQ = #{fwsqKsrq,jdbcType=TIMESTAMP},
+      FWSQ_ZZRQ = #{fwsqZzrq,jdbcType=TIMESTAMP}
+    where FFBS = #{ffbs,jdbcType=VARCHAR}
+      and FWBS = #{fwbs,jdbcType=VARCHAR}
+      and FWCYF_YYXTBH = #{fwcyfYyxtbh,jdbcType=VARCHAR}
+  </update>
+</mapper>
