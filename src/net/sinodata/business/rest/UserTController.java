@@ -65,7 +65,8 @@ public class UserTController {
 		String newPassword=request.getParameter("newPassword");
 		Fwcyfzcb userT=new Fwcyfzcb();
 		userT.setFwcyfYyxtbh(userId);
-		userT.setFwcyfDlmm(newPassword);
+		//userT.setFwcyfDlmm(newPassword);
+		userT.setFwcyfDlmm(MD5Utils.getMD5String(newPassword));
 		int updateNum=UserTService.updateByPrimaryKeySelective(userT);
 		JSONObject result=new JSONObject();
 		if(updateNum>0){
@@ -120,7 +121,6 @@ public class UserTController {
 	@ResponseBody
 	public void createUser(Fwcyfzcb user,HttpServletRequest request,
 			HttpServletResponse response) {
-		user.setFwcyfDlmm(MD5Utils.getMD5String(user.getFwcyfDlmm()));
 		JSONObject result=new JSONObject();
 		String flag=request.getParameter("flag");
 			if(!StringUtil.isNotEmpty(flag)){
@@ -135,6 +135,7 @@ public class UserTController {
 					e.printStackTrace();
 				}
 			}else{
+				user.setFwcyfDlmm(MD5Utils.getMD5String(user.getFwcyfDlmm()));
 				if( UserTService.findUserByLoginName(user.getFwcyfYyxtmc()).size()>0){
 					result.put("success", true);
 					result.put("errorMsg", "此用户名已经存在");

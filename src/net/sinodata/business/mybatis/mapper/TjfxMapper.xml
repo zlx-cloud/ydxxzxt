@@ -4,20 +4,12 @@
 
 <!-- 当前活跃服务 -->
 <select id="selectCurrentActiveServiceData" resultType="java.util.HashMap">
-<!-- 		select distinct c.fwqqz_zcxx,c.fwcyf_yyxtmc,count(*) as count from -->
-<!-- 		(select a.qqbwbs,a.fwqq_ip,a.fwqq_dk,a.fwqqz_zcxx,a.fwbs,a.ffbs,a.fwqq_rqsj,a.xxczry_xm, -->
-<!--        	  a.xxczry_gmsfhm,a.xxczry_gajgjgdm,a.fwqqsb_bh,a.fwqq_sjsjlx,a.start_time,b.fwcyf_yyxtmc -->
-<!-- 		  from FWZYQQBWCJB a  -->
-<!-- 		  left join FWCYFZCB b on a.fwqqz_zcxx=b.fwcyf_yyxtbh -->
-<!-- 		  where a.fwqq_rqsj>=TO_CHAR(SYSDATE-5/24/60,'yyyymmddhh24miss')) c -->
-<!-- 		group by c.fwqqz_zcxx,c.fwcyf_yyxtmc -->
-<!-- 		order by c.fwqqz_zcxx -->
 select distinct c.fwqqz_zcxx as x,c.fwcyf_yyxtmc as z,count(*) as count from
     (select a.qqbwbs,a.fwqq_ip,a.fwqq_dk,a.fwqqz_zcxx,a.fwbs,a.ffbs,a.fwqq_rqsj,a.xxczry_xm,
            a.xxczry_gmsfhm,a.xxczry_gajgjgdm,a.fwqqsb_bh,a.fwqq_sjsjlx,a.start_time,b.fwcyf_yyxtmc
       from FWZYQQBWCJB a 
       left join FWCYFZCB b on a.fwqqz_zcxx=b.fwcyf_yyxtbh
-      where a.fwqq_rqsj>=TO_CHAR(SYSDATE-5/24/60,'yyyymmddhh24miss')) c
+      where a.fwqq_rqsj &gt;= TO_CHAR(SYSDATE-5/24/60,'yyyymmddhh24miss')) c
     group by c.fwqqz_zcxx,c.fwcyf_yyxtmc
     order by count desc
 </select>
@@ -28,21 +20,25 @@ select distinct c.fwqqz_zcxx as x,c.fwcyf_yyxtmc as z,count(*) as count from
        	  a.xxczry_gmsfhm,a.xxczry_gajgjgdm,a.fwqqsb_bh,a.fwqq_sjsjlx,a.start_time,b.fwcyf_yyxtmc
 		  from FWZYQQBWCJB a 
 		  left join FWCYFZCB b on a.fwqqz_zcxx=b.fwcyf_yyxtbh
-		  where a.fwqq_rqsj>=TO_CHAR(SYSDATE-5/24/60,'yyyymmddhh24miss')
+		  where a.fwqq_rqsj &gt;= TO_CHAR(SYSDATE-5/24/60,'yyyymmddhh24miss')
 		order by a.fwqq_rqsj
 		) a where a.row_num &gt; ${start} and a.row_num &lt;= ${end}
 </select>
 <select id="queryCurrentActiveServiceCount" resultType="java.lang.Integer">
 		select count(*) from FWZYQQBWCJB t
-		where t.fwqq_rqsj>=TO_CHAR(SYSDATE-5/24/60,'yyyymmddhh24miss')
+		where t.fwqq_rqsj &gt;= TO_CHAR(SYSDATE-5/24/60,'yyyymmddhh24miss')
 </select>
 
 <!-- 服务日调用量统计 -->
 <select id="serviceUseByDay" resultType="java.util.HashMap">
-		select substr(t.fwqq_rqsj,0,8) as time ,count(*) as count from FWZYQQBWCJB t
+		<!-- select substr(t.fwqq_rqsj,0,8) as time ,count(*) as count from FWZYQQBWCJB t
       	where t.fwqq_rqsj>=TO_CHAR(Trunc(SYSDATE-6),'yyyymmddhh24miss')
       	group by substr(t.fwqq_rqsj,0,8)
-     	order by substr(t.fwqq_rqsj,0,8)
+     	order by substr(t.fwqq_rqsj,0,8) -->
+     	select tjrq_date as time,sum(num) as count 
+  		from TJ_FWQQJGRY t 
+   		where t.tjrq_date &gt;= TO_CHAR(SYSDATE-6,'yyyymmdd')
+    	group by tjrq_date order by tjrq_date
 </select>
 <select id="queryServiceUseByDayTable" resultType="java.util.HashMap">
 		select * from 
@@ -51,23 +47,23 @@ select distinct c.fwqqz_zcxx as x,c.fwcyf_yyxtmc as z,count(*) as count from
        	  a.xxczry_gmsfhm,a.xxczry_gajgjgdm,a.fwqqsb_bh,a.fwqq_sjsjlx,a.start_time,b.fwcyf_yyxtmc
 		  from FWZYQQBWCJB a 
 		  left join FWCYFZCB b on a.fwqqz_zcxx=b.fwcyf_yyxtbh
-		where a.fwqq_rqsj>=TO_CHAR(Trunc(SYSDATE-6),'yyyymmddhh24miss')
+		where a.fwqq_rqsj &gt;= TO_CHAR(Trunc(SYSDATE-6),'yyyymmddhh24miss')
 		order by a.fwqq_rqsj
 		) a where a.row_num &gt; ${start} and a.row_num &lt;= ${end}
 </select>
 <select id="queryServiceUseByDayCount" resultType="java.lang.Integer">
 		select count(*) from FWZYQQBWCJB t
-		where t.fwqq_rqsj>=TO_CHAR(Trunc(SYSDATE-6),'yyyymmddhh24miss')
+		where t.fwqq_rqsj &gt;= TO_CHAR(Trunc(SYSDATE-6),'yyyymmddhh24miss')
 </select>
 
 <!-- 服务周调用量统计 -->
 <select id="serviceUseByWeek" resultType="java.lang.Integer" parameterType="java.lang.String">
-		select count(*) from FWZYQQBWCJB t
+		<!-- select count(*) from FWZYQQBWCJB t
 		where t.fwqq_rqsj &gt; = #{firstDay,jdbcType=VARCHAR} 
-		and t.fwqq_rqsj &lt; = #{lastDay,jdbcType=VARCHAR}
-<!-- 		select sum(num) from FWZYBWTJB_DAY t -->
-<!-- 		where t.tjrq &gt; = #{firstDay,jdbcType=VARCHAR}  -->
-<!-- 		and t.tjrq &lt; = #{lastDay,jdbcType=VARCHAR} -->
+		and t.fwqq_rqsj &lt; = #{lastDay,jdbcType=VARCHAR} -->
+		select nvl(sum(num),0) from TJ_FWQQJGRY t
+		where t.tjrq_date &gt;= #{firstDay,jdbcType=VARCHAR} 
+		and t.tjrq_date &lt;= #{lastDay,jdbcType=VARCHAR}
 </select>
 <select id="queryServiceUseByWeekTable" resultType="java.util.HashMap">
 		select * from 
@@ -76,25 +72,17 @@ select distinct c.fwqqz_zcxx as x,c.fwcyf_yyxtmc as z,count(*) as count from
        	  a.xxczry_gmsfhm,a.xxczry_gajgjgdm,a.fwqqsb_bh,a.fwqq_sjsjlx,a.start_time,b.fwcyf_yyxtmc
 		  from FWZYQQBWCJB a 
 		  left join FWCYFZCB b on a.fwqqz_zcxx=b.fwcyf_yyxtbh
-		  where 1=1 and a.fwqq_rqsj >= #{monday,jdbcType=VARCHAR}
+		  where 1=1 and a.fwqq_rqsj &gt;= #{monday,jdbcType=VARCHAR}
 		order by a.fwqq_rqsj
 		) a where a.row_num &gt; ${start} and a.row_num &lt;= ${end}
 </select>
 <select id="queryServiceUseByWeekCount" resultType="java.lang.Integer">
-		select count(*) from FWZYQQBWCJB t where 1=1  and t.fwqq_rqsj >= #{monday,jdbcType=VARCHAR}
+		select count(*) from FWZYQQBWCJB t where 1=1  and t.fwqq_rqsj &gt;= #{monday,jdbcType=VARCHAR}
 </select>
 
 <!-- 各分局调用量占比统计 -->
 <select id="serviceUseByOrg" resultType="java.util.HashMap">
-<!-- 		select distinct c.xxczry_gajgjgdm,c.jgmc,count(*) as count from -->
-<!--       	(select a.qqbwbs,a.fwqq_ip,a.fwqq_dk,a.fwqqz_zcxx,a.fwbs,a.ffbs,a.fwqq_rqsj,a.xxczry_xm, -->
-<!--            a.xxczry_gmsfhm,a.xxczry_gajgjgdm,a.fwqqsb_bh,a.fwqq_sjsjlx,a.start_time,b.jgmc -->
-<!--       	   from FWZYQQBWCJB a  -->
-<!-- 		   left join JGDMB b on a.xxczry_gajgjgdm=b.jgbs -->
-<!-- 		   where a.fwqq_rqsj>=TO_CHAR(Trunc(SYSDATE),'yyyymmddhh24miss')) c -->
-<!-- 		group by c.xxczry_gajgjgdm,c.jgmc -->
-<!-- 		order by c.xxczry_gajgjgdm -->
-  select * from (select rownum as no,s.* from ( 
+  <!-- select * from (select rownum as no,s.* from ( 
   select distinct substr(c.xxczry_gajgjgdm,1,6)||'000000' as x ,c.jgmc as z,count(*) as count from
           (select a.qqbwbs,a.fwqq_ip,a.fwqq_dk,a.fwqqz_zcxx,a.fwbs,a.ffbs,a.fwqq_rqsj,a.xxczry_xm,
              a.xxczry_gmsfhm,a.xxczry_gajgjgdm,a.fwqqsb_bh,a.fwqq_sjsjlx,a.start_time,b.jgmc
@@ -102,7 +90,18 @@ select distinct c.fwqqz_zcxx as x,c.fwcyf_yyxtmc as z,count(*) as count from
          left join JGDMB b on substr(a.xxczry_gajgjgdm,1,6)||'000000'=b.jgbs
          where a.fwqq_rqsj>=TO_CHAR(Trunc(SYSDATE),'yyyymmddhh24miss') and jgmc is not null) c 
       group by substr(c.xxczry_gajgjgdm,1,6)||'000000',c.jgmc
-      order by count desc) s ) where no between 0 and 10
+      order by count desc) s ) where no between 0 and 10 -->
+      select * from (
+      	select rownum as no,s.* from (
+      		select distinct substr(c.xxczry_gajgjgdm,1,6)||'000000' as x ,c.jgmc as z,sum(num) as count
+         	from (
+            	select a.xxczry_gajgjgdm,b.jgmc,a.num from TJ_FWQQJGRY a 
+                left join JGDMB b on substr(a.xxczry_gajgjgdm,1,6)||'000000'=b.jgbs
+                where a.tjrq_date &gt;= TO_CHAR(SYSDATE,'yyyymmdd') and jgmc is not null) c 
+          	group by substr(c.xxczry_gajgjgdm,1,6)||'000000',c.jgmc order by count desc
+        ) s 
+      ) 
+	  where no between 0 and 10
 </select>
 <select id="queryServiceUseByOrgTable" resultType="java.util.HashMap">
 		select * from 
@@ -111,27 +110,28 @@ select distinct c.fwqqz_zcxx as x,c.fwcyf_yyxtmc as z,count(*) as count from
           a.xxczry_gmsfhm,a.xxczry_gajgjgdm,a.fwqqsb_bh,a.fwqq_sjsjlx,a.start_time,b.jgmc
       	  from FWZYQQBWCJB a 
 		  left join JGDMB b on a.xxczry_gajgjgdm=b.jgbs
-		  where a.fwqq_rqsj>=TO_CHAR(Trunc(SYSDATE),'yyyymmddhh24miss')
+		  where a.fwqq_rqsj &gt;= TO_CHAR(Trunc(SYSDATE),'yyyymmddhh24miss')
 		  order by a.xxczry_gajgjgdm,a.fwqq_rqsj
 		) a where a.row_num &gt; ${start} and a.row_num &lt;= ${end}
 </select>
 <select id="queryServiceUseByOrgCount" resultType="java.lang.Integer">
 		select count(*) from FWZYQQBWCJB t
-		where t.fwqq_rqsj>=TO_CHAR(Trunc(SYSDATE),'yyyymmddhh24miss')
+		where t.fwqq_rqsj &gt;= TO_CHAR(Trunc(SYSDATE),'yyyymmddhh24miss')
 </select>
 
 <!-- 各分局调用量日统计 -->
-<select id="selectOrgCodeAndName" resultType="java.util.HashMap">
-<!-- 		select distinct c.xxczry_gajgjgdm,c.jgmc from -->
-<!--        	(select a.xxczry_gajgjgdm,b.jgmc from FWZYQQBWCJB a -->
-<!--        	left join JGDMB b on a.xxczry_gajgjgdm=b.jgbs -->
-<!--        	where a.fwqq_rqsj>=TO_CHAR(Trunc(SYSDATE-6),'yyyymmddhh24miss'))c -->
-<!--        	order by c.xxczry_gajgjgdm -->
-         
-              select s.count,s.z,s.xxczry_gajgjgdm,b.jgmc as x from (
-         select substr(a.xxczry_gajgjgdm,1,6)||'000000' as xxczry_gajgjgdm,count(1) as count,substr(fwqq_rqsj,0,8) as z from FWZYQQBWCJB a 
-         where 1=1  and   a.fwqq_rqsj>=TO_CHAR(Trunc(SYSDATE-6),'yyyymmddhh24miss')
-         group by substr(a.xxczry_gajgjgdm,1,6)||'000000',substr(fwqq_rqsj,0,8) order by z asc) s, JGDMB b  where substr(s.xxczry_gajgjgdm,1,6)||'000000'=b.jgbs 
+<select id="selectOrgCodeAndName" resultType="java.util.HashMap">    
+   <!-- select s.count,s.z,s.xxczry_gajgjgdm,b.jgmc as x from (
+   select substr(a.xxczry_gajgjgdm,1,6)||'000000' as xxczry_gajgjgdm,count(1) as count,substr(fwqq_rqsj,0,8) as z from FWZYQQBWCJB a 
+   where 1=1  and   a.fwqq_rqsj>=TO_CHAR(Trunc(SYSDATE-6),'yyyymmddhh24miss')
+   group by substr(a.xxczry_gajgjgdm,1,6)||'000000',substr(fwqq_rqsj,0,8) order by z asc) s, JGDMB b  where substr(s.xxczry_gajgjgdm,1,6)||'000000'=b.jgbs  -->
+   select s.count,s.z,s.xxczry_gajgjgdm,b.jgmc as x 
+      from ( 
+         select substr(a.xxczry_gajgjgdm,1,6)||'000000' as xxczry_gajgjgdm,sum(num) as count, tjrq_date as z 
+             from TJ_FWQQJGRY a 
+               where 1=1 and a.tjrq_date &gt;= TO_CHAR(SYSDATE-6,'yyyymmdd') 
+                   group by substr(a.xxczry_gajgjgdm,1,6)||'000000',tjrq_date order by z asc) s, JGDMB b 
+    where substr(s.xxczry_gajgjgdm,1,6)||'000000'=b.jgbs
 </select>
 <select id="selectCountByOrgAndDay" resultType="java.lang.Integer" parameterType="java.lang.String">
 		select count(*) from FWZYQQBWCJB t
@@ -147,35 +147,26 @@ select distinct c.fwqqz_zcxx as x,c.fwcyf_yyxtmc as z,count(*) as count from
           a.xxczry_gmsfhm,a.xxczry_gajgjgdm,a.fwqqsb_bh,a.fwqq_sjsjlx,a.start_time,b.jgmc
       	  from FWZYQQBWCJB a 
 		  left join JGDMB b on a.xxczry_gajgjgdm=b.jgbs
-		  where a.fwqq_rqsj>=TO_CHAR(Trunc(SYSDATE-6),'yyyymmddhh24miss')
+		  where a.fwqq_rqsj &gt;= TO_CHAR(Trunc(SYSDATE-6),'yyyymmddhh24miss')
 		  order by a.xxczry_gajgjgdm,a.fwqq_rqsj
 		) a where a.row_num &gt; ${start} and a.row_num &lt;= ${end}
 </select>
 <select id="queryServiceUseByOrgAndDayCount" resultType="java.lang.Integer">
 		select count(*) from FWZYQQBWCJB t
-		where t.fwqq_rqsj>=TO_CHAR(Trunc(SYSDATE-6),'yyyymmddhh24miss')
+		where t.fwqq_rqsj &gt;= TO_CHAR(Trunc(SYSDATE-6),'yyyymmddhh24miss')
 </select>
 
 <!-- 服务调用Top10 -->
 <select id="selectServiceUseTopTen" resultType="java.util.HashMap">
-<!-- 		select a.* from -->
-<!-- 		(select distinct c.xxczry_gajgjgdm,c.jgmc,count(*) as count from -->
-<!--       		(select a.qqbwbs,a.fwqq_ip,a.fwqq_dk,a.fwqqz_zcxx,a.fwbs,a.ffbs,a.fwqq_rqsj,a.xxczry_xm, -->
-<!--              a.xxczry_gmsfhm,a.xxczry_gajgjgdm,a.fwqqsb_bh,a.fwqq_sjsjlx,a.start_time,b.jgmc -->
-<!--       	     from FWZYQQBWCJB a  -->
-<!-- 		     left join JGDMB b on a.xxczry_gajgjgdm=b.jgbs -->
-<!-- 		     where a.fwqq_rqsj>=TO_CHAR(Trunc(SYSDATE),'yyyymmddhh24miss')) c -->
-<!-- 		  group by c.xxczry_gajgjgdm,c.jgmc order by count desc,xxczry_gajgjgdm) a -->
-<!--     	where rownum &lt;=10 -->
-  select a.* from
-    (select distinct substr(c.xxczry_gajgjgdm,1,6)||'000000' as x,c.jgmc as z,count(*) as count from
-          (select a.qqbwbs,a.fwqq_ip,a.fwqq_dk,a.fwqqz_zcxx,a.fwbs,a.ffbs,a.fwqq_rqsj,a.xxczry_xm,
-             a.xxczry_gmsfhm,a.xxczry_gajgjgdm,a.fwqqsb_bh,a.fwqq_sjsjlx,a.start_time,b.jgmc
-             from FWZYQQBWCJB a 
-         left join JGDMB b on substr(a.xxczry_gajgjgdm,1,6)||'000000'=b.jgbs
-         where a.fwqq_rqsj>=TO_CHAR(Trunc(SYSDATE),'yyyymmddhh24miss') and jgmc is not null) c
-      group by substr(c.xxczry_gajgjgdm,1,6)||'000000',c.jgmc order by count desc,substr(xxczry_gajgjgdm,1,6)||'000000') a
-      where rownum &lt;=10	
+     select a.* from (
+     select distinct substr(c.xxczry_gajgjgdm,1,6)||'000000' as x,c.jgmc as z,sum(num) as count 
+            from (
+                 select a.xxczry_gajgjgdm,b.jgmc ,a.num
+                        from TJ_FWQQJGRY a 
+                         left join JGDMB b on substr(a.xxczry_gajgjgdm,1,6)||'000000'=b.jgbs 
+                          where a.tjrq_date &gt;= TO_CHAR(SYSDATE,'yyyymmdd') and jgmc is not null) c 
+                          group by substr(c.xxczry_gajgjgdm,1,6)||'000000',c.jgmc order by count desc,substr(xxczry_gajgjgdm,1,6)||'000000') a 
+                          where rownum &lt;= 10
 </select>
 <select id="queryServiceUseTopTenTable" resultType="java.util.HashMap">
 		select * from 
@@ -184,20 +175,22 @@ select distinct c.fwqqz_zcxx as x,c.fwcyf_yyxtmc as z,count(*) as count from
           a.xxczry_gmsfhm,a.xxczry_gajgjgdm,a.fwqqsb_bh,a.fwqq_sjsjlx,a.start_time,b.jgmc
       	  from FWZYQQBWCJB a 
 		  left join JGDMB b on a.xxczry_gajgjgdm=b.jgbs
-		  where a.fwqq_rqsj>=TO_CHAR(Trunc(SYSDATE),'yyyymmddhh24miss')
+		  where a.fwqq_rqsj &gt;= TO_CHAR(Trunc(SYSDATE),'yyyymmddhh24miss')
 		  order by a.xxczry_gajgjgdm,a.fwqq_rqsj
 		) a where a.row_num &gt; ${start} and a.row_num &lt;= ${end}
 </select>
 <select id="queryServiceUseTopTenCount" resultType="java.lang.Integer">
 		select count(*) from FWZYQQBWCJB t
-		where t.fwqq_rqsj>=TO_CHAR(Trunc(SYSDATE),'yyyymmddhh24miss')
+		where t.fwqq_rqsj &gt;= TO_CHAR(Trunc(SYSDATE),'yyyymmddhh24miss')
 </select>
 
 <!-- 总线服务调用统计 -->
 <select id="selectCurrentZXInfo" resultType="java.lang.Integer" parameterType="java.lang.String">
-		select count(*) from esb_db.ESB_MF_INFORMATION t
+		<!-- select count(*) from esb_db.ESB_MF_INFORMATION t
 		where TO_CHAR((t.start_time),'yyyymmddhh24miss') &gt; #{startTime,jdbcType=VARCHAR}
-		and TO_CHAR((t.start_time),'yyyymmddhh24miss') &lt;= #{endTime,jdbcType=VARCHAR}
+		and TO_CHAR((t.start_time),'yyyymmddhh24miss') &lt;= #{endTime,jdbcType=VARCHAR} -->
+		select nvl(sum(num),0) from WARN_FRE_MSG t where tjrq_date||tjrq_hour &gt; #{startTime,jdbcType=VARCHAR}
+		and tjrq_date||tjrq_hour &lt;= #{endTime,jdbcType=VARCHAR}
 </select>
 <select id="queryZXInfoTable" resultType="java.util.HashMap">
 		select * from 
@@ -212,9 +205,11 @@ select distinct c.fwqqz_zcxx as x,c.fwcyf_yyxtmc as z,count(*) as count from
 		) a where a.row_num &gt; ${start} and a.row_num &lt;= ${end}
 </select>
 <select id="queryZXInfoCount" resultType="java.lang.Integer">
-		select count(*) from esb_db.ESB_MF_INFORMATION s
+		<!-- select count(*) from esb_db.ESB_MF_INFORMATION s
 		where TO_CHAR((s.start_time),'yyyymmddhh24miss') &gt; #{startTime,jdbcType=VARCHAR}
-		and TO_CHAR((s.start_time),'yyyymmddhh24miss') &lt;= #{endTime,jdbcType=VARCHAR}
+		and TO_CHAR((s.start_time),'yyyymmddhh24miss') &lt;= #{endTime,jdbcType=VARCHAR} -->
+		select nvl(sum(num),0) from WARN_FRE_MSG t where tjrq_date||tjrq_hour &gt; #{startTime,jdbcType=VARCHAR}
+		and tjrq_date||tjrq_hour &lt;= #{endTime,jdbcType=VARCHAR}
 </select>
   <insert id="insertFwzytcsbrzb" parameterType="java.lang.String" >
     insert into FWZYTCSBRZB (FWBS, TCSJ)

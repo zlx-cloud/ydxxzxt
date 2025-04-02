@@ -73,9 +73,9 @@
 
 
 	<!--elasticsearch jdbc连接-->
-	<bean id="esJdbc" class="net.sinodata.business.util.elasticsearch.EsJdbc" init-method="init">
+	<!-- <bean id="esJdbc" class="net.sinodata.business.util.elasticsearch.EsJdbc" init-method="init">
 		<constructor-arg value="${elasticsearch.url}"/>
-	</bean>
+	</bean> -->
 
 	<!-- 使用annotation定义事务 -->
 	<tx:annotation-driven transaction-manager="transactionManager"

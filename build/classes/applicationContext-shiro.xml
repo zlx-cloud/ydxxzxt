@@ -47,6 +47,9 @@
 		</property>
 		<property name="filterChainDefinitions">
 			<value>
+				 /esLog/** = anon
+				 /parquetLog/** = anon
+				 /dbLog/** = anon
 				 /InterfaceManage/** = anon  <!-- 对外接口-->
 			     /register/**=anon
 			     /service/**=anon

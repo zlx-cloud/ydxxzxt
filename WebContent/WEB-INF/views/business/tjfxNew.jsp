@@ -16,6 +16,9 @@
 .fontSizeBig {
 	margin-top: 20px !important;
 }
+.homeLeft01 {
+	width: 15.2%;
+}
 </style>
 <script type="text/javascript" src="${ctx}/static/js/jquery-1.10.1.min.js"></script>
 <script type="text/javascript" src="${ctx}/static/js/echarts.js"></script>
@@ -81,7 +84,7 @@
 				</div>
 				<div class="aRight">
 					<p class="fontSizeBig" id="dwsjfwzyzczl"></p>
-					<p class="fontSizeMin">近一月服务资源注册量</p>
+					<p class="fontSizeMin" style="margin-left:-12px">近一月服务资源注册量</p>
 				</div>
 			</a>
 		</div>
@@ -101,7 +104,7 @@
 				</div>
 				<div class="aRight">
 					<p class="fontSizeBig" id="dwsjfwzysyzl"></p>
-					<p class="fontSizeMin">近一月服务资源调用量</p>
+					<p class="fontSizeMin" style="margin-left:-10px">近一月服务资源调用量</p>
 				</div>
 			</a>
 		</div>
@@ -122,6 +125,19 @@
 				<div class="aRight">
 					<p class="fontSizeBig" id="dwsjbwcjzl"></p>
 					<p class="fontSizeMin">近一月报文采集量</p>
+				</div>
+			</a>
+		</div>
+		<div class="homeLeft01">
+			<a href="javascript:void(0)" style="height: 200px;background-color: red;">
+				<div class="aLeft">
+					<img class="tjfx_img" src="${ctx}/static/images/tjfx/fwzyzczl.png" />
+				</div>
+				<div class="aRight" style="margin-top: 25px;">
+					<p class="fontSizeMin" style="margin-left: -10px;">当日服务请求异常数量</p>
+				</div>
+				<div style="margin-top: 100px;">
+					<p style="text-align-last: center;" class="fontSizeBig" id="drfwqqycsl"></p>
 				</div>
 			</a>
 		</div>

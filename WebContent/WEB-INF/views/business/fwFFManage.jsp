@@ -279,6 +279,15 @@
 			
 		}
 	 
+	 function responsePackageFormat(value, row, index){
+		 if(row.responsePackage=='Y'){
+			 return "是";
+		 }if(row.responsePackage=='N'){
+			 return "否";
+		 }
+			
+		}
+	 
 	 function wlflformat(value, row, index){
 		 //console.log(row);
 		 if(row.wlfl=='1'){
@@ -358,6 +367,8 @@
     		      <th field="ffms"  align="center" formatter="formatCellTooltip">方法描述</th>
     		      <th field="url"  align="center" >url</th>
     		      <th field="fflx"  align="center" >接口方法类型</th>
+    		      <th field="responseLimit"  align="center" >响应结果限制(KB)</th>
+    		      <th field="responsePackage" formatter="responsePackageFormat" align="center" >响应结果是否封装</th>
                     </tr>
                 </thead>
             </table>
@@ -376,7 +387,7 @@
 		&nbsp; 服务标识：&nbsp;<input type="text" class="easyui-textbox"  name="fwbsindex" id="fwbsindex" size="15" />
 		&nbsp; 方法标识：&nbsp;<input type="text" class="easyui-textbox"  name="ffbsindex" id="ffbsindex" size="15" />
        	&nbsp; 警种分类：&nbsp;<input class="easyui-combobox" id="jzflindex"   name="jzflindex" url="${ctx}/fwFFManage/jzfl" valueField="jzlbdm"   textField="jzlbmc"  panelHeight="200" size="15"/>
-       	&nbsp; 是否缓存数据：&nbsp;<select class="easyui-combobox" name="sfhcsjindex" id="sfhcsjindex"  panelHeight="auto" style="width:8%">
+       	&nbsp; 是否存储响应日志：&nbsp;<select class="easyui-combobox" name="sfhcsjindex" id="sfhcsjindex"  panelHeight="auto" style="width:8%">
   			  <option value="">请选择...</option>
               <option value="0">否</option><option value="1">是</option>
                </select></br>
@@ -431,7 +442,7 @@
 
 
 
-<div id="addUpdate" class="easyui-dialog" style="width: 700px;height: 400px;padding: 10px 20px" closable="false"
+<div id="addUpdate" class="easyui-dialog" style="width: 700px;height: 440px;padding: 10px 20px" closable="false"
   closed="true" buttons="#addUpdate-buttons">
   <form id="addUpdatefm" method="post">
   	<table cellspacing="5px;">
@@ -465,7 +476,6 @@
   			<td><select class="easyui-combobox" name="fflb" id="fflb" style="width:100%;" panelHeight="auto" required="true">
   			 <option></option><option value="1">公开</option><option value="2">受控</option><option value="3">私有</option>
   			 </select></td>
-  			</td>
   		</tr>
   		<tr>
   		    <td>URL：</td>
@@ -474,7 +484,6 @@
   			<td><select class="easyui-combobox" name="fflx" id="fflx" style="width:100%;" panelHeight="auto" required="true">
   			 <option value="POST">POST</option><option value="GET">GET</option><option value="FORM-DATA">FORM-DATA</option>
   			 </select></td>
-  			</td>
   		</tr>
   		<tr>
   		   <td>操作分类：</td>
@@ -482,20 +491,30 @@
   			 <option></option>
               <option value="R">查询</option><option value="C">增加</option><option value="U">更新</option><option value="D">删除</option>
                </select></td>
-  			 <td>是否缓存数据：</td>
+  			 <td>是否存储响应日志：</td>
   			<td>
   			<span class="radioSpan">
                 <input type="radio" name="sfhcsj" value="0" checked>否</input>
                 <input type="radio" name="sfhcsj" value="1">是</input>	
             </span>
-  			
+  			</td>
   			
   		</tr>
   		
   		<tr>
-  		   <td>缓存数据有效时间（秒）：</td>
+  		   <td>超时时间（秒）：</td>
   			<td><input type="text" id="sjyxsj" name="sjyxsj" class="easyui-numberbox" required="true" value="0" /></td>
-  			
+  			<td>响应结果限制（KB）：</td>
+  			<td><input type="text" id="responseLimit" name="responseLimit" class="easyui-numberbox" required="true" value="5" /></td>
+  		</tr>
+  		<tr>
+  		   <td>响应结果是否封装：</td>
+  			<td>
+  			<span class="radioSpan">
+                <input type="radio" name="responsePackage" value="N" checked>否</input>
+                <input type="radio" name="responsePackage" value="Y">是</input>	
+            </span>
+  			</td>
   		</tr>
   		
   		<tr>

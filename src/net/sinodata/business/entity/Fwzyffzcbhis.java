@@ -39,6 +39,10 @@ public class Fwzyffzcbhis {
     private String jzlbmc;
     private String wlfl;
     private String fflb;
+    
+    private String responseLimit;
+    private String responsePackage;
+    
     public Fwzyffzcbhis(){
     	
     }
@@ -55,6 +59,8 @@ public class Fwzyffzcbhis {
        this.fwtgzYyxtbh=Fwzyffzcb.getFwtgzYyxtbh();
        this.wlfl=Fwzyffzcb.getWlfl();
        this.fflb=Fwzyffzcb.getFflb();
+       this.responseLimit=Fwzyffzcb.getResponseLimit();
+       this.responsePackage=Fwzyffzcb.getResponsePackage();
     }
     public String getOptId() {
         return optId;
@@ -198,6 +204,18 @@ public class Fwzyffzcbhis {
 	}
 	public void setFflb(String fflb) {
 		this.fflb = fflb;
+	}
+	public String getResponseLimit() {
+		return responseLimit;
+	}
+	public void setResponseLimit(String responseLimit) {
+		this.responseLimit = responseLimit;
+	}
+	public String getResponsePackage() {
+		return responsePackage;
+	}
+	public void setResponsePackage(String responsePackage) {
+		this.responsePackage = responsePackage;
 	}
     
 }

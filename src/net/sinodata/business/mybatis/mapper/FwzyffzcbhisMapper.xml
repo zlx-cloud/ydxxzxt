@@ -17,12 +17,14 @@
     <result column="SFHCSJ" property="sfhcsj" jdbcType="VARCHAR" />
     <result column="SJYXSJ" property="sjyxsj" jdbcType="DECIMAL" />
     <result column="FWTGZ_YYXTBH" property="fwtgzYyxtbh" jdbcType="VARCHAR" />
+    <result column="RESPONSE_LIMIT" property="responseLimit" jdbcType="VARCHAR" />
+    <result column="RESPONSE_PACKAGE" property="responsePackage" jdbcType="VARCHAR" />
    <!--  <result column="FWMC" property="fwmc" jdbcType="VARCHAR" />
      <result column="JZLBMC" property="jzlbmc" jdbcType="VARCHAR" /> -->
   </resultMap>
   <sql id="Base_Column_List" >
     OPT_ID, OPT_TYPE, OPT_APP, OPT_NAME, OPT_TIME, FFBS, FFMC, FFL, FFMS, FWBS, JZFL, 
-    CZFL, SFHCSJ, SJYXSJ, FWTGZ_YYXTBH
+    CZFL, SFHCSJ, SJYXSJ, FWTGZ_YYXTBH, RESPONSE_LIMIT,RESPONSE_PACKAGE
   </sql>
   
   
@@ -79,12 +81,13 @@ select count(1) 　 from fwzyffzcb_his u left join FWZYZCB r on u.FWBS=r.FWBS le
       OPT_NAME, OPT_TIME, FFBS, 
       FFMC, FFL, FFMS, FWBS, 
       JZFL, CZFL, SFHCSJ, 
-      SJYXSJ, FWTGZ_YYXTBH)
+      SJYXSJ, FWTGZ_YYXTBH,RESPONSE_LIMIT,RESPONSE_PACKAGE)
     values (#{optId,jdbcType=VARCHAR}, #{optType,jdbcType=VARCHAR}, #{optApp,jdbcType=VARCHAR}, 
       #{optName,jdbcType=VARCHAR}, #{optTime,jdbcType=TIMESTAMP}, #{ffbs,jdbcType=VARCHAR}, 
       #{ffmc,jdbcType=VARCHAR}, #{ffl,jdbcType=VARCHAR}, #{ffms,jdbcType=VARCHAR}, #{fwbs,jdbcType=VARCHAR}, 
       #{jzfl,jdbcType=VARCHAR}, #{czfl,jdbcType=VARCHAR}, #{sfhcsj,jdbcType=VARCHAR}, 
-      #{sjyxsj,jdbcType=DECIMAL}, #{fwtgzYyxtbh,jdbcType=VARCHAR})
+      #{sjyxsj,jdbcType=DECIMAL}, #{fwtgzYyxtbh,jdbcType=VARCHAR},
+      #{responseLimit,jdbcType=VARCHAR}, #{responsePackage,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="net.sinodata.business.entity.Fwzyffzcbhis" >
     insert into FWZYFFZCB_HIS
@@ -134,6 +137,12 @@ select count(1) 　 from fwzyffzcb_his u left join FWZYZCB r on u.FWBS=r.FWBS le
       <if test="fwtgzYyxtbh != null" >
         FWTGZ_YYXTBH,
       </if>
+      <if test="responseLimit != null" >
+        RESPONSE_LIMIT,
+      </if>
+      <if test="responsePackage != null" >
+        RESPONSE_PACKAGE,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
      <!--  <if test="optId != null" >
@@ -182,6 +191,12 @@ select count(1) 　 from fwzyffzcb_his u left join FWZYZCB r on u.FWBS=r.FWBS le
       <if test="fwtgzYyxtbh != null" >
         #{fwtgzYyxtbh,jdbcType=VARCHAR},
       </if>
+      <if test="responseLimit != null" >
+        #{responseLimit,jdbcType=VARCHAR},
+      </if>
+      <if test="responsePackage != null" >
+        #{responsePackage,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="net.sinodata.business.entity.Fwzyffzcbhis" >
@@ -229,6 +244,12 @@ select count(1) 　 from fwzyffzcb_his u left join FWZYZCB r on u.FWBS=r.FWBS le
       <if test="fwtgzYyxtbh != null" >
         FWTGZ_YYXTBH = #{fwtgzYyxtbh,jdbcType=VARCHAR},
       </if>
+      <if test="responseLimit != null" >
+        RESPONSE_LIMIT = #{responseLimit,jdbcType=VARCHAR},
+      </if>
+      <if test="responsePackage != null" >
+        RESPONSE_PACKAGE = #{responsePackage,jdbcType=VARCHAR},
+      </if>
     </set>
     where OPT_ID = #{optId,jdbcType=VARCHAR}
   </update>
@@ -247,7 +268,9 @@ select count(1) 　 from fwzyffzcb_his u left join FWZYZCB r on u.FWBS=r.FWBS le
       CZFL = #{czfl,jdbcType=VARCHAR},
       SFHCSJ = #{sfhcsj,jdbcType=VARCHAR},
       SJYXSJ = #{sjyxsj,jdbcType=DECIMAL},
-      FWTGZ_YYXTBH = #{fwtgzYyxtbh,jdbcType=VARCHAR}
+      FWTGZ_YYXTBH = #{fwtgzYyxtbh,jdbcType=VARCHAR},
+      RESPONSE_LIMIT = #{responseLimit,jdbcType=VARCHAR},
+      RESPONSE_PACKAGE = #{responsePackage,jdbcType=VARCHAR}
     where OPT_ID = #{optId,jdbcType=VARCHAR}
   </update>
   <sql id="seq_opt_id">SEQ_OPT_ID.NEXTVAL</sql>

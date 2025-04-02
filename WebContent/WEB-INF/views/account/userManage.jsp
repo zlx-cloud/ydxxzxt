@@ -221,6 +221,54 @@
 	        return year + "-" + month + "-" + date+" "+hour+":"+minute+":"+second+"."+mseconds;
 	    }  
 	}
+ 
+
+	function openModifyPassword(){
+		var selectedRows=$("#dg").datagrid('getSelections');
+		if(selectedRows.length!=1){
+			$.messager.alert('系统提示','请选择一条数据！');
+			return;
+		}
+		var row=selectedRows[0];
+		$("#mmdlg").dialog("open").dialog("setTitle","修改密码");
+		$("#userId").textbox("setValue",row.fwcyfYyxtbh);
+		$("#userId").textbox('textbox').attr('readonly',true); 
+		$("#userId").textbox('textbox').css('background','#E0ECFF');	
+	}
+	
+	function closePasswordModifyDialog(){
+		$("#mmdlg").dialog("close");
+		$("#newPassword").val("");
+		$("#newPassword2").val("");
+	}
+	
+	function modifyPassword(){
+		$("#mmfm").form("submit",{
+			url: "${ctx}/userT/modifyPassword",
+			onSubmit:function(){
+				var newPassword=$("#newPassword").val();
+				var newPassword2=$("#newPassword2").val();
+				if(!$(this).form("validate")){
+					return false;
+				}
+				if(newPassword!=newPassword2){
+					$.messager.alert('系统提示','确认密码输入错误！');
+					return false;
+				}
+				return true;
+			},
+			success:function(result){
+				var result=eval('('+result+')');
+				if(result.errorMsg){
+					$.messager.alert('系统提示',result.errorMsg);
+					return;
+				}else{
+					$.messager.alert('系统提示','密码修改成功，下一次登录生效！');
+					closePasswordModifyDialog();
+				}
+			}
+		});
+	}
 </script>
 </head>
 <body style="margin: 1px;">
@@ -257,6 +305,7 @@
 		<a href="javascript:openUserAddDialog()" class="easyui-linkbutton" iconCls="icon-add" plain="true">添加</a>
 		<a href="javascript:openUserModifyDialog()" class="easyui-linkbutton" iconCls="icon-edit" plain="true">修改</a>
 		<a href="javascript:deleteUser()" class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
+		<a href="javascript:openModifyPassword()" class="easyui-linkbutton" iconCls="icon-lock" plain="true">修改密码</a>
 		<a href="${ctx}/userT/exportExcel" class="easyui-linkbutton" iconCls="icon-download-chart" plain="true">下载应用</a>
 	</div>
 	<div>
@@ -279,8 +328,10 @@
   			<td>应用名称：</td>
   			<td><input type="text" id="fwcyfYyxtmc" name="fwcyfYyxtmc" class="easyui-textbox" required="true"/></td>
   			 <td>应用密码：</td>
-  			<td><input type="text" id="fwcyfDlmm" name="fwcyfDlmm" class="easyui-validatebox" data-options="validType:'pwd'"/>
-  				<script>
+  			<td><input type="text" id="fwcyfDlmm" name="fwcyfDlmm" class="easyui-validatebox" 
+  			data-options="validType:'pwd'"
+  			/>
+  				<!-- <script>
   				$(function(){
         			$.extend($.fn.validatebox.defaults.rules, {
         				pwd: {
@@ -291,7 +342,7 @@
             			}
         			})
   				})
-    			</script> 
+    			</script> --> 
   			</td>
   		</tr>
   		<tr>
@@ -386,5 +437,32 @@
 	<a href="javascript:chooseRole()" class="easyui-linkbutton" iconCls="icon-ok" >确定</a>
 	<a href="javascript:closeRoleDialog()" class="easyui-linkbutton" iconCls="icon-cancel" >关闭</a>
 </div>
+
+
+<div id="mmdlg" class="easyui-dialog" style="width: 400px;height: 220px;padding: 20px 40px" 
+ closed="true" buttons="#mmdlg-buttons" data-options="iconCls:'icon-modifyPassword'">
+ <form id="mmfm" method="post">
+ 	<table cellspacing="4px;">
+ 		<tr>
+ 			<td>应用标识：</td>
+ 			<td><input type="text" name="userId" id="userId" class="easyui-textbox"/></td>
+ 		</tr>
+ 		<tr>
+ 			<td>新密码：</td>
+ 			<td><input type="password" class="easyui-validatebox" name="newPassword" id="newPassword" style="width: 160px;" required="true"  /></td>
+ 		</tr>
+ 		<tr>
+ 			<td>确认新密码：</td>
+ 			<td><input type="password" class="easyui-validatebox" name="newPassword2" id="newPassword2" style="width: 160px;" required="true" /></td>
+ 		</tr>
+ 	</table>
+ </form>
+</div>
+<div id="mmdlg-buttons">
+	<a href="javascript:modifyPassword()" class="easyui-linkbutton" iconCls="icon-ok">保存</a>
+	<a href="javascript:closePasswordModifyDialog()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+</div>
+
+
 </body>
 </html>

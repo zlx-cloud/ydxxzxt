@@ -29,7 +29,7 @@
       and PARENTID= #{parentId,jdbcType=VARCHAR}
      </if>
     
-   order by sort asc
+   order by to_number(sort) asc
   </select>
   
   

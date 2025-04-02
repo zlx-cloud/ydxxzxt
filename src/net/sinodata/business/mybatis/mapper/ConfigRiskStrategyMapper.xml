@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.business.dao.ConfigRiskStrategyDao">
+
+	<resultMap id="BaseResultMap" type="net.sinodata.business.entity.ConfigRiskStrategy">
+		<id column="ID" property="id" jdbcType="VARCHAR" />
+		<id column="YYBS" property="yybs" jdbcType="VARCHAR" />
+		<id column="YYMC" property="yymc" jdbcType="VARCHAR" />
+		<id column="FWBS" property="fwbs" jdbcType="VARCHAR" />
+		<id column="FWMC" property="fwmc" jdbcType="VARCHAR" />
+		<id column="FFBS" property="ffbs" jdbcType="VARCHAR" />
+		<id column="FFMC" property="ffmc" jdbcType="VARCHAR" />
+		<id column="FFMS" property="ffms" jdbcType="VARCHAR" />
+		<id column="EXECUTE_START_TIME" property="executeStartTime" jdbcType="VARCHAR" />
+		<id column="EXECUTE_END_TIME" property="executeEndTime" jdbcType="VARCHAR" />
+		<id column="RISK_TYPE" property="riskType" jdbcType="VARCHAR" />
+		<id column="RISK_MSG" property="riskMsg" jdbcType="VARCHAR" />
+		<id column="ENABLED" property="enabled" jdbcType="VARCHAR" />
+		<id column="CREATE_TIME" property="createTime" jdbcType="VARCHAR" />
+		<id column="UPDATE_TIME" property="updateTime" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="queryListByPage" resultMap="BaseResultMap" parameterType="map">
+		select * from (
+		select k.*, rownum rnum from
+		(
+		select cat.id,c.fwcyf_yyxtbh as yybs,
+		c.fwcyf_yyxtmc as yymc,cat.fwbs,b.fwmc,cat.ffbs,a.ffmc,a.ffms,
+		cat.execute_start_time,cat.execute_end_time,cat.risk_type,
+		cat.risk_msg,cat.enabled,cat.create_time,cat.update_time
+		from config_risk_strategy cat
+		left join fwzyffzcb a on cat.ffbs = a.ffbs and cat.fwbs = a.fwbs
+		left join fwzyzcb b on cat.fwbs = b.fwbs
+		left join fwcyfzcb c on b.fwtgz_yyxtbh = c.fwcyf_yyxtbh
+		where 1 = 1
+		<if test="yybs!=null"> and c.fwcyf_yyxtbh like '%${yybs}%'</if>
+		<if test="yymc!=null"> and c.fwcyf_yyxtmc like '%${yymc}%'</if>
+		<if test="fwbs!=null"> and cat.fwbs like '%${fwbs}%'</if>
+		<if test="fwmc!=null"> and b.fwmc like '%${fwmc}%'</if>
+		<if test="ffbs!=null"> and cat.ffbs like '%${ffbs}%'</if>
+		<if test="ffmc!=null"> and a.ffmc like '%${ffmc}%'</if>
+		<if test="riskType!=null"> and cat.risk_type = #{riskType}</if>
+		order by cat.create_time desc
+		) k
+		where rownum &lt;= #{end}
+		)
+		where rnum &gt; #{start}
+	</select>
+
+	<select id="queryListCountByPage" resultType="int" parameterType="map">
+		select count(1) from config_risk_strategy cat
+		left join fwzyffzcb a on cat.ffbs = a.ffbs and cat.fwbs = a.fwbs
+		left join fwzyzcb b on cat.fwbs = b.fwbs
+		left join fwcyfzcb c on b.fwtgz_yyxtbh = c.fwcyf_yyxtbh
+		where 1 = 1
+		<if test="yybs!=null"> and c.fwcyf_yyxtbh like '%${yybs}%'</if>
+		<if test="yymc!=null"> and c.fwcyf_yyxtmc like '%${yymc}%'</if>
+		<if test="fwbs!=null"> and cat.fwbs like '%${fwbs}%'</if>
+		<if test="fwmc!=null"> and b.fwmc like '%${fwmc}%'</if>
+		<if test="ffbs!=null"> and cat.ffbs like '%${ffbs}%'</if>
+		<if test="ffmc!=null"> and a.ffmc like '%${ffmc}%'</if>
+		<if test="riskType!=null"> and cat.risk_type = #{riskType}</if>
+	</select>
+	
+	<insert id="insertSelective" parameterType="net.sinodata.business.entity.ConfigRiskStrategy">
+		insert into config_risk_strategy(ID,FWBS,FFBS,EXECUTE_START_TIME,EXECUTE_END_TIME,
+			RISK_TYPE,RISK_MSG,ENABLED,CREATE_TIME) values
+		(#{id,jdbcType=VARCHAR},#{fwbs,jdbcType=VARCHAR},#{ffbs,jdbcType=VARCHAR},
+		#{executeStartTime,jdbcType=VARCHAR},#{executeEndTime,jdbcType=VARCHAR},
+		#{riskType,jdbcType=VARCHAR},#{riskMsg,jdbcType=VARCHAR},#{enabled,jdbcType=VARCHAR},
+		#{createTime,jdbcType=VARCHAR})
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="net.sinodata.business.entity.ConfigRiskStrategy">
+		update config_risk_strategy set
+		FWBS=#{fwbs,jdbcType=VARCHAR},FFBS=#{ffbs,jdbcType=VARCHAR},
+		EXECUTE_START_TIME=#{executeStartTime,jdbcType=VARCHAR},
+		EXECUTE_END_TIME=#{executeEndTime,jdbcType=VARCHAR},
+		RISK_TYPE=#{riskType,jdbcType=VARCHAR},RISK_MSG=#{riskMsg,jdbcType=VARCHAR},
+		UPDATE_TIME=#{updateTime,jdbcType=VARCHAR} where id=#{id,jdbcType=VARCHAR}
+	</update>
+	
+	<delete id="deleteByPrimaryKey" parameterType="string">
+		delete from config_risk_strategy where id = #{id,jdbcType=VARCHAR}
+	</delete>
+	
+	<update id="updateStatus" parameterType="string">
+		update config_risk_strategy set
+		enabled=#{enabled,jdbcType=VARCHAR},update_time=#{updateTime,jdbcType=VARCHAR}
+		where id=#{id,jdbcType=VARCHAR}
+	</update>
+
+</mapper>

@@ -33,8 +33,8 @@ public interface FwzyqqbwcjbService{
 	    
 	    public List<Fwzyzcb> selectAllFwzyzcb();
 
-    SearchResult getQwList(Page page, Map<String, Object> condition);
-    List<QwLogDownload> getQwList(Map<String, Object> condition);
+    //SearchResult getQwList(Page page, Map<String, Object> condition);
+    //List<QwLogDownload> getQwList(Map<String, Object> condition);
     
-    Map<String, Object> getQw(String id);
+    //Map<String, Object> getQw(String id);
 }

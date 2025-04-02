@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.business.dao.ConfigWarnStrategyDao">
+
+	<resultMap id="BaseResultMap" type="net.sinodata.business.entity.ConfigWarnStrategy">
+		<id column="ID" property="id" jdbcType="VARCHAR" />
+		<id column="YYBS" property="yybs" jdbcType="VARCHAR" />
+		<id column="YYMC" property="yymc" jdbcType="VARCHAR" />
+		<id column="FWBS" property="fwbs" jdbcType="VARCHAR" />
+		<id column="FWMC" property="fwmc" jdbcType="VARCHAR" />
+		<id column="FFBS" property="ffbs" jdbcType="VARCHAR" />
+		<id column="FFMC" property="ffmc" jdbcType="VARCHAR" />
+		<id column="FFMS" property="ffms" jdbcType="VARCHAR" />
+		<id column="COMPOSE_CONDITION" property="composeCondition" jdbcType="VARCHAR" />
+		<id column="EXECUTE_START_TIME" property="executeStartTime" jdbcType="VARCHAR" />
+		<id column="EXECUTE_END_TIME" property="executeEndTime" jdbcType="VARCHAR" />
+		<id column="WARN_STRATEGY" property="warnStrategy" jdbcType="VARCHAR" />
+		<id column="FREQUENCY" property="frequency" jdbcType="VARCHAR" />
+		<id column="KEY_CONTENT" property="keyContent" jdbcType="VARCHAR" />
+		<id column="ENABLED" property="enabled" jdbcType="VARCHAR" />
+		<id column="CREATE_TIME" property="createTime" jdbcType="VARCHAR" />
+		<id column="UPDATE_TIME" property="updateTime" jdbcType="VARCHAR" />
+		<id column="NAME" property="name" jdbcType="VARCHAR" />
+		<id column="USER_ID" property="userId" jdbcType="VARCHAR" />
+		<id column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="queryListByPage" resultMap="BaseResultMap" parameterType="map">
+		select * from (
+		select k.*, rownum rnum from
+		(
+		select cat.id,c.fwcyf_yyxtbh as yybs,
+		c.fwcyf_yyxtmc as yymc,cat.fwbs,b.fwmc,cat.ffbs,a.ffmc,a.ffms,cat.compose_condition,
+		cat.execute_start_time,cat.execute_end_time,cat.warn_strategy,cat.frequency,
+		cat.key_content,cat.enabled,cat.create_time,cat.update_time,cat.name,cat.user_id,
+		d.fwcyf_yyxtmc as user_name
+		from config_warn_strategy cat
+		left join fwzyffzcb a on cat.ffbs = a.ffbs and cat.fwbs = a.fwbs
+		left join fwzyzcb b on cat.fwbs = b.fwbs
+		left join fwcyfzcb c on b.fwtgz_yyxtbh = c.fwcyf_yyxtbh
+		left join fwcyfzcb d on d.fwcyf_yyxtbh = cat.user_id
+		where 1 = 1
+		<if test="yybs!=null"> and c.fwcyf_yyxtbh like '%${yybs}%'</if>
+		<if test="yymc!=null"> and c.fwcyf_yyxtmc like '%${yymc}%'</if>
+		<if test="fwbs!=null"> and cat.fwbs like '%${fwbs}%'</if>
+		<if test="fwmc!=null"> and b.fwmc like '%${fwmc}%'</if>
+		<if test="ffbs!=null"> and cat.ffbs like '%${ffbs}%'</if>
+		<if test="ffmc!=null"> and a.ffmc like '%${ffmc}%'</if>
+		<if test="name!=null"> and cat.name like '%${name}%'</if>
+		<if test="userName!=null"> and d.fwcyf_yyxtmc like '%${userName}%'</if>
+		<if test="startTime!=null"> and substr(cat.create_time,0,10) = #{startTime}</if>
+		order by cat.create_time desc
+		) k
+		where rownum &lt;= #{end}
+		)
+		where rnum &gt; #{start}
+	</select>
+
+	<select id="queryListCountByPage" resultType="int" parameterType="map">
+		select count(1) from config_warn_strategy cat
+		left join fwzyffzcb a on cat.ffbs = a.ffbs and cat.fwbs = a.fwbs
+		left join fwzyzcb b on cat.fwbs = b.fwbs
+		left join fwcyfzcb c on b.fwtgz_yyxtbh = c.fwcyf_yyxtbh
+		left join fwcyfzcb d on d.fwcyf_yyxtbh = cat.user_id
+		where 1 = 1
+		<if test="yybs!=null"> and c.fwcyf_yyxtbh like '%${yybs}%'</if>
+		<if test="yymc!=null"> and c.fwcyf_yyxtmc like '%${yymc}%'</if>
+		<if test="fwbs!=null"> and cat.fwbs like '%${fwbs}%'</if>
+		<if test="fwmc!=null"> and b.fwmc like '%${fwmc}%'</if>
+		<if test="ffbs!=null"> and cat.ffbs like '%${ffbs}%'</if>
+		<if test="ffmc!=null"> and a.ffmc like '%${ffmc}%'</if>
+		<if test="name!=null"> and cat.name like '%${name}%'</if>
+		<if test="userName!=null"> and d.fwcyf_yyxtmc like '%${userName}%'</if>
+		<if test="startTime!=null"> and substr(cat.create_time,0,10) = #{startTime}</if>
+	</select>
+	
+	<insert id="insertSelective" parameterType="net.sinodata.business.entity.ConfigWarnStrategy">
+		insert into config_warn_strategy(ID,FWBS,FFBS,COMPOSE_CONDITION,
+			EXECUTE_START_TIME,EXECUTE_END_TIME,WARN_STRATEGY,FREQUENCY,KEY_CONTENT,
+			ENABLED,CREATE_TIME,UPDATE_TIME,NAME,USER_ID) values
+		(#{id,jdbcType=VARCHAR},#{fwbs,jdbcType=VARCHAR},#{ffbs,jdbcType=VARCHAR},
+		#{composeCondition,jdbcType=VARCHAR},#{executeStartTime,jdbcType=VARCHAR},#{executeEndTime,jdbcType=VARCHAR},
+		#{warnStrategy,jdbcType=VARCHAR},#{frequency,jdbcType=VARCHAR},#{keyContent,jdbcType=VARCHAR},
+		#{enabled,jdbcType=VARCHAR},#{createTime,jdbcType=VARCHAR},#{updateTime,jdbcType=VARCHAR},
+		#{name,jdbcType=VARCHAR},#{userId,jdbcType=VARCHAR})
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="net.sinodata.business.entity.ConfigWarnStrategy">
+		update config_warn_strategy set NAME=#{name,jdbcType=VARCHAR},
+		FWBS=#{fwbs,jdbcType=VARCHAR},FFBS=#{ffbs,jdbcType=VARCHAR},
+		COMPOSE_CONDITION=#{composeCondition,jdbcType=VARCHAR},EXECUTE_START_TIME=#{executeStartTime,jdbcType=VARCHAR},
+		EXECUTE_END_TIME=#{executeEndTime,jdbcType=VARCHAR},WARN_STRATEGY=#{warnStrategy,jdbcType=VARCHAR},
+		FREQUENCY=#{frequency,jdbcType=VARCHAR},KEY_CONTENT=#{keyContent,jdbcType=VARCHAR},
+		ENABLED=#{enabled,jdbcType=VARCHAR},UPDATE_TIME=#{updateTime,jdbcType=VARCHAR}
+		where id=#{id,jdbcType=VARCHAR}
+	</update>
+	
+	<delete id="deleteByPrimaryKey" parameterType="string">
+		delete from config_warn_strategy where id = #{id,jdbcType=VARCHAR}
+	</delete>
+	
+	<update id="updateStatus" parameterType="string">
+		update config_warn_strategy set
+		enabled=#{enabled,jdbcType=VARCHAR},update_time=#{updateTime,jdbcType=VARCHAR}
+		where id=#{id,jdbcType=VARCHAR}
+	</update>
+
+</mapper>

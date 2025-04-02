@@ -90,15 +90,18 @@
 			onClick : function(node) {
 				var father = $(this).tree("getParent", node.target);
 				if (father == null) {
-					$.messager.alert('系统提示', '请选择方法！');
+					$.messager.alert('系统提示', '请选择服务或方法！');
 				} else {
 					var twofather = $(this).tree("getParent",father.target);
 					if (twofather == null) {
-						$.messager.alert('系统提示', '请选择方法！');
+						$.messager.alert('系统提示', '请选择服务或方法！');
 					} else {
 						var threefather = $(this).tree("getParent",twofather.target);
 						if (threefather == null) {
-							$.messager.alert('系统提示', '请选择方法！');
+							$("#ffms").textbox("setValue",node.text);
+							$("#ffbs").val("");
+							$("#fwbs").val(node.id);
+							$("#fwffTree").dialog("close");
 						} else {
 							var fourfather = $(this).tree("getParent",threefather.target);
 							if (fourfather == null) {
@@ -133,6 +136,9 @@
 		var row = selectedRows[0];
 		$("#addUpdate").dialog("open").dialog("setTitle", "修改访问频度配置");
 		$("#addUpdatefm").form("load", row);
+		if(row.ffms == '' || row.ffms == null){
+			$("#ffms").textbox("setValue", row.fwmc);
+		}
 
 		url = "${ctx}/configAccessFrequency/add";
 	}
@@ -190,6 +196,16 @@
 		})
 	}
 	
+	function formatDealStrategy(value) {
+		if (value == 'BLOCK') {
+			return "阻断";
+		} else if (value == 'WARN') {
+			return "预警";
+		} else {
+			return "";
+		}
+	}
+	
 	function formatEnabled(value) {
 		if (value == 'Y') {
 			return "启用";
@@ -203,17 +219,19 @@
 	function rowformat(value, row, index) {
 		if (row.enabled == "Y") {
 			return '<a class="editcls" onclick="updateStatus(\'' + row.id
-					+ '\',\'' + 'N' + '\')" href="javascript:void(0)">停用</a>';
+					+ '\',\'' + 'N' + '\',\'' + row.yybs + '\',\'' + row.fwbs +'\')" href="javascript:void(0)">停用</a>';
 		} else {
 			return '<a class="editcls" onclick="updateStatus(\'' + row.id
-					+ '\',\'' + 'Y' + '\')" href="javascript:void(0)">启用</a>';
+					+ '\',\'' + 'Y' + '\',\'' + row.yybs + '\',\'' + row.fwbs +'\')" href="javascript:void(0)">启用</a>';
 		}
 	}
 
-	function updateStatus(id, enabled) {
+	function updateStatus(id, enabled, yybs, fwbs) {
 		$.post("${ctx}/configAccessFrequency/updateStatus", {
 			id : id,
-			enabled : enabled
+			enabled : enabled,
+			yybs : yybs,
+			fwbs : fwbs
 		}, function(result) {
 			if (result.success) {
 				$.messager.alert('系统提示', "操作成功！");
@@ -244,6 +262,7 @@
 					<th field="ffms" align="center">方法描述</th>
 					<th field="duration" align="center">时长（秒）</th>
 					<th field="visits" align="center">访问次数</th>
+					<th field="dealStrategy" align="center" formatter="formatDealStrategy">处置策略</th>
 					<th field="enabled" align="center" formatter="formatEnabled">状态</th>
 					<th field="createTime" align="center">创建时间</th>
 					<th field="updateTime" align="center">修改时间</th>
@@ -300,6 +319,16 @@
 						<td>
 							<input type="text" id="visits" name="visits" class="easyui-textbox"/>
 						</td>
+					</tr>
+					<tr>
+						<td>处置策略：</td>
+						<td>
+				  			<select class="easyui-combobox" name="dealStrategy" id="dealStrategy" style="width:100%;">
+				  				<option value="">请选择...</option>
+				  				<option value="BLOCK">阻断</option>
+				  				<option value="WARN">预警</option>
+				  			</select>
+				  		</td>
 					</tr>
 				</table>
 			</form>

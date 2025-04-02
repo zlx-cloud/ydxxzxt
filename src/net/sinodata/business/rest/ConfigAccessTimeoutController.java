@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import net.sf.json.JSONObject;
 import net.sinodata.business.entity.ConfigAccessTimeout;
+import net.sinodata.business.entity.ConfigInfo;
 import net.sinodata.business.service.ConfigAccessTimeoutService;
 import net.sinodata.business.util.DateUtil;
+import net.sinodata.business.util.HttpRequest;
 import net.sinodata.business.util.Page;
 import net.sinodata.business.util.ResponseUtil;
 import net.sinodata.business.util.SearchResult;
@@ -31,6 +33,8 @@ public class ConfigAccessTimeoutController {
 
 	@Autowired
 	private ConfigAccessTimeoutService configAccessTimeoutService;
+	@Autowired(required = false)
+	private ConfigInfo configInfo;
 
 	@RequestMapping(value = "/show", method = RequestMethod.GET)
 	public String show(Model model) {
@@ -121,14 +125,24 @@ public class ConfigAccessTimeoutController {
 	@ResponseBody
 	public void updateStatus(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String id = request.getParameter("id");
+		String yybs = request.getParameter("yybs");
+		String fwbs = request.getParameter("fwbs");
 		String enabled = request.getParameter("enabled");
 		String updateTime = DateUtil.formatDate(new Date(), "yyyy-MM-dd HH:mm:ss");
 		int i = configAccessTimeoutService.updateStatus(id, enabled, updateTime);
 		JSONObject result = new JSONObject();
 		if (i > 0) {
 			result.put("success", "true");
+			syncBuildData(yybs, fwbs);
 		}
 		ResponseUtil.write(response, result);
+	}
+	
+	public void syncBuildData(String yybs, String fwbs) {
+		Map<String, String> condition = new HashMap<>();
+		condition.put("paramKey", yybs + "_" + fwbs);
+		String str = HttpRequest.sendGetRequest(configInfo.getSyncDataUrl(), condition);
+		System.out.println(str);
 	}
 
 }

@@ -1,4 +1,6 @@
 eclipse.preferences.version=1
+encoding//WebContent/static/js/tjfx_new.js=UTF-8
+encoding//resources/application.properties=UTF-8
 encoding//resources/log4j.properties=UTF-8
 encoding//src/net/sinodata/business/util/Constants.java=UTF-8
 encoding//src/net/sinodata/business/util/LinuxSystemTool.java=UTF-8

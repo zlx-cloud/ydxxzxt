@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;  
 import java.util.Set;  
 import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Resource;
+
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 import org.springframework.util.CollectionUtils;
@@ -12,6 +15,7 @@ import org.springframework.util.CollectionUtils;
 
 public class RedisUtil {  
 
+	@Resource(name = "redisTemplate")
     private RedisTemplate<String, Object> redisTemplate;  
 
     public void setRedisTemplate(RedisTemplate<String, Object> redisTemplate) {

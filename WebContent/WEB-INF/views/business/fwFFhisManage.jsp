@@ -90,6 +90,15 @@ if(row.optType=='D'){
 		 }
 			
 		}
+	 
+	 function responsePackageFormat(value, row, index){
+		 if(row.responsePackage=='Y'){
+			 return "是";
+		 }if(row.responsePackage=='N'){
+			 return "否";
+		 }
+			
+		}
 </script>
 </head>
 <body class="easyui-layout" >
@@ -105,13 +114,15 @@ if(row.optType=='D'){
     		      <th field="fwbs"  align="center">服务标识</th>
     		       <th field="fwmc"  align="center" >服务名称</th>
     		     <th field="ffbs"  align="center">方法标识</th>
-    		      <th field="ffmc"  align="center" >方法名</th>
+    		      <th field="ffmc"  align="center" >方法名称<</th>
     		      <th field="ffl"  align="center" width="50" formatter="formatCellTooltip" >方法类</th>
     		      <th field="jzlbmc"  align="center" >警种分类</th>
     		      <th field="czfl" formatter="staformat" align="center">操作分类</th>
     		      <th field="sfhcsj" formatter="format" align="center" >是否缓存</th>
     		      <th field="sjyxsj"  align="center" >缓存时间(秒)</th>
     		      <th field="ffms"  align="center" width="50" formatter="formatCellTooltip">方法描述</th>
+    		      <th field="responseLimit"  align="center" >响应结果限制(KB)</th>
+    		      <th field="responsePackage" formatter="responsePackageFormat" align="center" >响应结果是否封装</th>
                     </tr>
                 </thead>
             </table>

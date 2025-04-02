@@ -196,7 +196,7 @@ public class ExcelReaderDown<T>  {
         // 生成一个表格  
         HSSFSheet sheet = workbook.createSheet(title);  
         // 设置表格默认列宽度为15个字节  
-        sheet.setDefaultColumnWidth((short) 15);  
+        sheet.setDefaultColumnWidth((short) 18);  
         // 生成一个样式  
         HSSFCellStyle style = workbook.createCellStyle();  
         // 设置这些样式  
@@ -241,7 +241,8 @@ public class ExcelReaderDown<T>  {
         comment.setAuthor("leno");  
   
         // 产生表格标题行  
-        HSSFRow row = sheet.createRow(0);  
+        HSSFRow row = sheet.createRow(0);
+        HSSFFont font3 = workbook.createFont();
         for (short i = 0; i < headers.length; i++)  
         {  
             HSSFCell cell = row.createCell(i);  
@@ -349,7 +350,6 @@ public class ExcelReaderDown<T>  {
                         {  
                             HSSFRichTextString richString = new HSSFRichTextString(  
                                     textValue);  
-                            HSSFFont font3 = workbook.createFont();  
                             font3.setColor(HSSFColor.BLUE.index);  
                             richString.applyFont(font3);  
                             cell.setCellValue(richString);  

@@ -21,6 +21,7 @@ public class ConfigAccessTraffic {
 	private String enabled;
 	private String createTime;
 	private String updateTime;
+	private String dealStrategy;
 
 	public ConfigAccessTraffic() {
 	}
@@ -151,6 +152,14 @@ public class ConfigAccessTraffic {
 
 	public void setUpdateTime(String updateTime) {
 		this.updateTime = updateTime;
+	}
+
+	public String getDealStrategy() {
+		return dealStrategy;
+	}
+
+	public void setDealStrategy(String dealStrategy) {
+		this.dealStrategy = dealStrategy;
 	}
 
 }

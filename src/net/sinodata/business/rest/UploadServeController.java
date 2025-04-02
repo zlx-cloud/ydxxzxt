@@ -25,6 +25,7 @@ import net.sinodata.business.service.ServeManageService;
 import net.sinodata.business.service.UserTService;
 import net.sinodata.business.util.DateUtil;
 import net.sinodata.business.util.ExcelReaderDown;
+import net.sinodata.business.util.StringUtil;
 import net.sinodata.security.vo.ShiroUser;
 
 import org.apache.shiro.SecurityUtils;
@@ -147,6 +148,8 @@ public class UploadServeController {
 			                case 9:uBean.setFflb(listStr.get(j));break;
 			                case 10:uBean.setUrl(listStr.get(j));break;
 			                case 11:uBean.setFflx(listStr.get(j));break;
+			                case 12:uBean.setResponseLimit(listStr.get(j));break;
+			                case 13:uBean.setResponsePackage(StringUtil.isEmpty(listStr.get(j))?"5":listStr.get(j));break;
 			             }
 			         }
 			        uBean.setFwtgzYyxtbh(serveManageService.selectByPrimaryKey(uBean.getFwbs()).getFwtgzYyxtbh());

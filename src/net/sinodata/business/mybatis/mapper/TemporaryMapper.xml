@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.sinodata.business.dao.TemporaryDao">
+
+	<select id="getWarnCountListByPage" resultType="map"
+		parameterType="map">
+		select * from (
+		select k.*, rownum rnum from
+		(
+		select c.fwcyf_yyxtbh as
+		yybs,c.fwcyf_yyxtmc as yymc,b.fwbs,b.fwmc,
+		a.ffbs,a.ffmc,a.ffms,t.warn_type,t.warn_name,t.warn_value from
+		(select fwbs,ffbs,warn_type,warn_name,nvl(sum(warn_value),0) as warn_value
+		from config_warn_count where warn_type in ('RISK-RT','RISK-ERR','RISK-MIS')
+		and substr(create_time,0,10) &gt;= #{startTime,jdbcType=VARCHAR}
+		and substr(create_time,0,10) &lt;= #{endTime,jdbcType=VARCHAR}
+		group by fwbs,ffbs,warn_type,warn_name) t
+		left join fwzyffzcb a on
+		t.fwbs=a.fwbs and t.ffbs=a.ffbs
+		left join fwzyzcb b on a.fwbs=b.fwbs
+		left join fwcyfzcb c on b.fwtgz_yyxtbh=c.fwcyf_yyxtbh
+		where 1 = 1
+		<if test="yymc!=null"> and c.fwcyf_yyxtmc like '%${yymc}%'</if>
+		<if test="fwmc!=null"> and b.fwmc like '%${fwmc}%'</if>
+		<if test="ffmc!=null"> and a.ffmc like '%${ffmc}%'</if>
+		<if test="warnType!=null"> and t.warn_type = #{warnType}</if>
+		) k
+		where rownum &lt;= #{end}
+		)
+		where rnum &gt; #{start}
+	</select>
+
+	<select id="getWarnCountNumByPage" resultType="int"
+		parameterType="map">
+		select count(1) from
+		(select fwbs,ffbs,warn_type,warn_name,nvl(sum(warn_value),0) as warn_value
+		from config_warn_count where warn_type in ('RISK-RT','RISK-ERR','RISK-MIS')
+		and substr(create_time,0,10) &gt;= #{startTime,jdbcType=VARCHAR}
+		and substr(create_time,0,10) &lt;= #{endTime,jdbcType=VARCHAR}
+		group by fwbs,ffbs,warn_type,warn_name) t
+		left join fwzyffzcb a on
+		t.fwbs=a.fwbs and t.ffbs=a.ffbs
+		left join fwzyzcb b on a.fwbs=b.fwbs
+		left join fwcyfzcb c on b.fwtgz_yyxtbh=c.fwcyf_yyxtbh
+		where 1 = 1
+		<if test="yymc!=null"> and c.fwcyf_yyxtmc like '%${yymc}%'</if>
+		<if test="fwmc!=null"> and b.fwmc like '%${fwmc}%'</if>
+		<if test="ffmc!=null"> and a.ffmc like '%${ffmc}%'</if>
+		<if test="warnType!=null"> and t.warn_type = #{warnType}</if>
+	</select>
+
+	<select id="queryWarnList" resultType="map">
+		select t.warn_type as type,t.warn_name as
+		name,substr(t.create_time,0,13) as time,
+		nvl(sum(t.warn_value),0) as value,substr(t.create_time,0,13)||'-'||t.warn_type as key from
+		CONFIG_WARN_COUNT t
+		left join fwzyffzcb a on t.fwbs=a.fwbs and
+		t.ffbs=a.ffbs
+		left join fwzyzcb b on a.fwbs=b.fwbs
+		left join fwcyfzcb c
+		on b.fwtgz_yyxtbh=c.fwcyf_yyxtbh
+		where substr(t.create_time,0,10) &gt;= #{startTime,jdbcType=VARCHAR}
+		and substr(t.create_time,0,10) &lt;= #{endTime,jdbcType=VARCHAR}
+		and t.warn_type in ('RISK-RT', 'RISK-ERR', 'RISK-MIS')
+		<if test="yybs!=null and yybs!=''"> and c.fwcyf_yyxtbh = #{yybs}</if>
+		<if test="fwbs!=null and fwbs!=''"> and b.fwbs = #{fwbs}</if>
+		<if test="ffbs!=null and ffbs!=''"> and a.ffbs = #{ffbs}</if>
+		group by t.warn_type,t.warn_name,substr(t.create_time,0,13)
+		order by
+		substr(t.create_time,0,13)
+	</select>
+
+	<select id="getYjxxListByPage" resultType="map"
+		parameterType="map">
+		select * from (
+		select k.*, rownum rnum from
+		(
+		select c.fwcyf_yyxtbh as
+		yybs,c.fwcyf_yyxtmc as yymc,b.fwbs,b.fwmc,
+		a.ffbs,a.ffmc,a.ffms,t.warn_type,t.warn_name,t.warn_value from
+		(select fwbs,ffbs,warn_type,warn_name,nvl(sum(warn_value),0) as warn_value
+		from config_warn_count where warn_type in ('WARN-FRE','WARN-KEY')
+		and substr(create_time,0,10) = #{time,jdbcType=VARCHAR}
+		group by fwbs,ffbs,warn_type,warn_name) t
+		left join fwzyffzcb a on
+		t.fwbs=a.fwbs and t.ffbs=a.ffbs
+		left join fwzyzcb b on a.fwbs=b.fwbs
+		left join fwcyfzcb c on b.fwtgz_yyxtbh=c.fwcyf_yyxtbh
+		where 1 = 1
+		<if test="yymc!=null"> and c.fwcyf_yyxtmc like '%${yymc}%'</if>
+		<if test="fwmc!=null"> and b.fwmc like '%${fwmc}%'</if>
+		<if test="ffmc!=null"> and a.ffmc like '%${ffmc}%'</if>
+		<if test="warnType!=null"> and t.warn_type = #{warnType}</if>
+		) k
+		where rownum &lt;= #{end}
+		)
+		where rnum &gt; #{start}
+	</select>
+
+	<select id="getYjxxCountByPage" resultType="int"
+		parameterType="map">
+		select count(1) from
+		(select fwbs,ffbs,warn_type,warn_name,sum(warn_value) as warn_value
+		from config_warn_count where warn_type in ('WARN-FRE','WARN-KEY')
+		and substr(create_time,0,10) = #{time,jdbcType=VARCHAR}
+		group by fwbs,ffbs,warn_type,warn_name) t
+		left join fwzyffzcb a on
+		t.fwbs=a.fwbs and t.ffbs=a.ffbs
+		left join fwzyzcb b on a.fwbs=b.fwbs
+		left join fwcyfzcb c on b.fwtgz_yyxtbh=c.fwcyf_yyxtbh
+		where 1 = 1
+		<if test="yymc!=null"> and c.fwcyf_yyxtmc like '%${yymc}%'</if>
+		<if test="fwmc!=null"> and b.fwmc like '%${fwmc}%'</if>
+		<if test="ffmc!=null"> and a.ffmc like '%${ffmc}%'</if>
+		<if test="warnType!=null"> and t.warn_type = #{warnType}</if>
+	</select>
+
+	<select id="yjsjcxDetailPage" resultType="map"
+		parameterType="map">
+		select * from (
+		select k.*, rownum rnum from
+		(
+		select
+		a.name,a.KEY_CONTENT,a.FREQUENCY,b.jgmc,t.xxczry_gmsfhm as sfhm,
+		t.num,t.status_00,t.status_01,t.status_02 from warn_fre_msg t
+		left join
+		config_warn_strategy a on t.warn_id=a.id
+		left join JGDMB b on
+		t.xxczry_gajgjgdm=b.jgbs
+		where t.tjrq_date=#{time,jdbcType=VARCHAR}
+		<if test="fwbs!=null"> and t.fwbs = #{fwbs}</if>
+		<if test="ffbs!=null"> and t.ffbs = #{ffbs}</if>
+		<if test="warnType!=null"> and t.warn_type = #{warnType}</if>
+		) k
+		where rownum &lt;= #{end}
+		)
+		where rnum &gt; #{start}
+	</select>
+
+	<select id="yjsjcxDetailCount" resultType="int"
+		parameterType="map">
+		select count(1) from warn_fre_msg t
+		where t.tjrq_date=#{time,jdbcType=VARCHAR}
+		<if test="fwbs!=null"> and t.fwbs = #{fwbs}</if>
+		<if test="ffbs!=null"> and t.ffbs = #{ffbs}</if>
+		<if test="warnType!=null"> and t.warn_type = #{warnType}</if>
+	</select>
+
+	<select id="selectUnReadCount" resultType="int">
+		select count(1) from config_warn_count t where status='0'
+	</select>
+
+	<select id="getUnReadWarnListByPage" resultType="map">
+		select c.fwcyf_yyxtbh as yybs,c.fwcyf_yyxtmc as yymc,b.fwbs,b.fwmc,
+		a.ffbs,a.ffmc,a.ffms,t.warn_type,t.warn_name,t.warn_value,t.create_time
+		from config_warn_count t
+		left join fwzyffzcb a on t.fwbs=a.fwbs and t.ffbs=a.ffbs
+		left join fwzyzcb b on a.fwbs=b.fwbs
+		left join fwcyfzcb c on b.fwtgz_yyxtbh=c.fwcyf_yyxtbh
+		where status = '0' order by t.create_time desc
+	</select>
+
+	<select id="getUnReadWarnNumByPage" resultType="int"
+		parameterType="map">
+		select count(1) from config_warn_count t where status = '0'
+	</select>
+
+	<update id="updateStatusToread">
+		update config_warn_count set status = '1'
+	</update>
+	
+	<select id="fwzlfxSearch" resultType="map">
+		select t.ffqqz,t.tjrq_hour as hour,t.ffqqz||'-'||t.tjrq_hour as key,
+			nvl(sum(t.num),0) as value,f.fwcyf_yyxtmc as name
+		from TJ_FWQQJGRY t
+		left join fwcyfzcb f on t.ffqqz=f.fwcyf_yyxtbh
+		where t.tjrq_date=#{time} 
+		<if test="yybs!=null and yybs!=''"> and t.ffqqz = #{yybs}</if>
+		group by t.tjrq_hour,t.ffqqz,f.fwcyf_yyxtmc
+		order by to_number(t.tjrq_hour)
+	</select>
+	
+	<select id="yhqqpmfxSearch" resultType="map">
+		select t.ffqqz,t.tjrq_hour as hour,t.ffqqz||'-'||t.tjrq_hour as key,
+			sum(t.num) as value,f.fwcyf_yyxtmc as name
+		from TJ_FWQQJGRY t
+		left join fwcyfzcb f on t.ffqqz=f.fwcyf_yyxtbh
+		where t.tjrq_date=#{time} 
+		<if test="yybs!=null and yybs!=''"> and t.ffqqz = #{yybs}</if>
+		group by t.tjrq_hour,t.ffqqz,f.fwcyf_yyxtmc
+		order by to_number(t.tjrq_hour)
+	</select>
+	
+	<select id="getYhqqpmfxListByPage" resultType="map" parameterType="map">
+		select * from (
+		select k.*, rownum rnum from
+		(
+		select t.TJRQ_DATE,t.TJRQ_HOUR,t.NUM,t.FFQQZ,f.fwcyf_yyxtmc as yymc
+		from TJ_FWQQJGRY t
+		left join fwcyfzcb f on t.ffqqz=f.fwcyf_yyxtbh
+		where t.tjrq_date=#{time} 
+		<if test="yybs!=null and yybs!=''"> and t.ffqqz = #{yybs}</if>
+		order by t.TJRQ_DATE desc,t.TJRQ_HOUR desc
+		) k
+		where rownum &lt;= #{end}
+		)
+		where rnum &gt; #{start}
+	</select>
+	
+	<select id="getYhqqpmfxCountByPage" resultType="int" parameterType="map">
+		select count(1) from TJ_FWQQJGRY t
+		where t.tjrq_date=#{time} 
+		<if test="yybs!=null and yybs!=''"> and t.ffqqz = #{yybs}</if>
+	</select>
+	
+	<select id="getFwzlfxListByPage" resultType="map" parameterType="map">
+		select * from (
+		select k.*, rownum rnum from
+		(
+		select t.TJRQ_DATE,t.TJRQ_HOUR,t.NUM,t.FFQQZ,f.fwcyf_yyxtmc as yymc
+		from TJ_FWQQJGRY t
+		left join fwcyfzcb f on t.ffqqz=f.fwcyf_yyxtbh
+		where t.tjrq_date=#{time} 
+		<if test="yybs!=null and yybs!=''"> and t.ffqqz = #{yybs}</if>
+		order by t.TJRQ_DATE desc,t.TJRQ_HOUR desc
+		) k
+		where rownum &lt;= #{end}
+		)
+		where rnum &gt; #{start}
+	</select>
+	
+	<select id="getFwzlfxCountByPage" resultType="int" parameterType="map">
+		select count(1) from TJ_FWQQJGRY t
+		where t.tjrq_date=#{time} 
+		<if test="yybs!=null and yybs!=''"> and t.ffqqz = #{yybs}</if>
+	</select>
+	
+	<select id="fxsjhzCount" resultType="int">
+		select nvl(sum(warn_value),0) from config_warn_count t
+		left join fwzyffzcb a on t.fwbs=a.fwbs and t.ffbs=a.ffbs
+		left join fwzyzcb b on a.fwbs=b.fwbs
+		left join fwcyfzcb c on b.fwtgz_yyxtbh=c.fwcyf_yyxtbh
+		where t.warn_type = #{type,jdbcType=VARCHAR} 
+		and substr(t.create_time,0,10) &gt;= #{startTime,jdbcType=VARCHAR}
+		and substr(t.create_time,0,10) &lt;= #{endTime,jdbcType=VARCHAR}
+		<if test="yybs!=null and yybs!=''"> and c.fwcyf_yyxtbh = #{yybs}</if>
+		<if test="fwbs!=null and fwbs!=''"> and b.fwbs = #{fwbs}</if>
+		<if test="ffbs!=null and ffbs!=''"> and a.ffbs = #{ffbs}</if>
+	</select>
+	
+	<select id="yjsjhzChart" resultType="map">
+		select t.warn_type as type,t.warn_name as
+		name,substr(t.create_time,0,13) as time,
+		nvl(sum(t.warn_value),0) as value,substr(t.create_time,0,13)||'-'||t.warn_type as key
+		from CONFIG_WARN_COUNT t
+		left join fwzyffzcb a on t.fwbs=a.fwbs and t.ffbs=a.ffbs
+		left join fwzyzcb b on a.fwbs=b.fwbs
+		left join fwcyfzcb c on b.fwtgz_yyxtbh=c.fwcyf_yyxtbh
+		where substr(t.create_time,0,10) &gt;= #{startTime,jdbcType=VARCHAR}
+		and substr(t.create_time,0,10) &lt;= #{endTime,jdbcType=VARCHAR}
+		and t.warn_type in ('WARN-FRE','WARN-KEY')
+		<if test="yybs!=null and yybs!=''"> and c.fwcyf_yyxtbh = #{yybs}</if>
+		<if test="fwbs!=null and fwbs!=''"> and b.fwbs = #{fwbs}</if>
+		<if test="ffbs!=null and ffbs!=''"> and a.ffbs = #{ffbs}</if>
+		group by t.warn_type,t.warn_name,substr(t.create_time,0,13)
+		order by substr(t.create_time,0,13)
+	</select>
+	
+	<select id="getYjxxcxListByPage" resultType="map"
+		parameterType="map">
+		select * from (
+		select k.*, rownum rnum from
+		(
+		select c.fwcyf_yyxtbh as
+		yybs,c.fwcyf_yyxtmc as yymc,b.fwbs,b.fwmc,
+		a.ffbs,a.ffmc,a.ffms,t.warn_type,t.warn_name,t.warn_value from
+		(select fwbs,ffbs,warn_type,warn_name,nvl(sum(warn_value),0) as warn_value
+		from config_warn_count where warn_type in ('WARN-FRE','WARN-KEY')
+		and substr(create_time,0,10) &gt;= #{startTime,jdbcType=VARCHAR}
+		and substr(create_time,0,10) &lt;= #{endTime,jdbcType=VARCHAR}
+		group by fwbs,ffbs,warn_type,warn_name) t
+		left join fwzyffzcb a on
+		t.fwbs=a.fwbs and t.ffbs=a.ffbs
+		left join fwzyzcb b on a.fwbs=b.fwbs
+		left join fwcyfzcb c on b.fwtgz_yyxtbh=c.fwcyf_yyxtbh
+		where 1 = 1
+		<if test="yymc!=null"> and c.fwcyf_yyxtmc like '%${yymc}%'</if>
+		<if test="fwmc!=null"> and b.fwmc like '%${fwmc}%'</if>
+		<if test="ffmc!=null"> and a.ffmc like '%${ffmc}%'</if>
+		<if test="warnType!=null"> and t.warn_type = #{warnType}</if>
+		) k
+		where rownum &lt;= #{end}
+		)
+		where rnum &gt; #{start}
+	</select>
+
+	<select id="getYjxxcxNumByPage" resultType="int"
+		parameterType="map">
+		select count(1) from
+		(select fwbs,ffbs,warn_type,warn_name,nvl(sum(warn_value),0) as warn_value
+		from config_warn_count where warn_type in ('WARN-FRE','WARN-KEY')
+		and substr(create_time,0,10) &gt;= #{startTime,jdbcType=VARCHAR}
+		and substr(create_time,0,10) &lt;= #{endTime,jdbcType=VARCHAR}
+		group by fwbs,ffbs,warn_type,warn_name) t
+		left join fwzyffzcb a on
+		t.fwbs=a.fwbs and t.ffbs=a.ffbs
+		left join fwzyzcb b on a.fwbs=b.fwbs
+		left join fwcyfzcb c on b.fwtgz_yyxtbh=c.fwcyf_yyxtbh
+		where 1 = 1
+		<if test="yymc!=null"> and c.fwcyf_yyxtmc like '%${yymc}%'</if>
+		<if test="fwmc!=null"> and b.fwmc like '%${fwmc}%'</if>
+		<if test="ffmc!=null"> and a.ffmc like '%${ffmc}%'</if>
+		<if test="warnType!=null"> and t.warn_type = #{warnType}</if>
+	</select>
+
+</mapper>

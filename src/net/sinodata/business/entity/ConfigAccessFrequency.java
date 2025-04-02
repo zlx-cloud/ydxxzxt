@@ -20,6 +20,7 @@ public class ConfigAccessFrequency {
 	private String enabled;
 	private String createTime;
 	private String updateTime;
+	private String dealStrategy;
 
 	public ConfigAccessFrequency() {
 	}
@@ -142,6 +143,14 @@ public class ConfigAccessFrequency {
 
 	public void setUpdateTime(String updateTime) {
 		this.updateTime = updateTime;
+	}
+
+	public String getDealStrategy() {
+		return dealStrategy;
+	}
+
+	public void setDealStrategy(String dealStrategy) {
+		this.dealStrategy = dealStrategy;
 	}
 
 }

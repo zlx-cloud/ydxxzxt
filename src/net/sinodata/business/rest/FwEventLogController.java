@@ -16,7 +16,6 @@ import net.sinodata.business.entity.Fwzyqqbwcjb;
 import net.sinodata.business.entity.FwzyqqbwcjbDownload;
 import net.sinodata.business.entity.Fwzyqqbwyccjb;
 import net.sinodata.business.entity.FwzyqqbwyccjbDownload;
-import net.sinodata.business.entity.QwLogDownload;
 import net.sinodata.business.service.FwEventLogService;
 import net.sinodata.business.service.FwzyffzcbService;
 import net.sinodata.business.service.FwzyqqbwcjbService;
@@ -167,35 +166,33 @@ public class FwEventLogController {
 		return "business/qwEventLog";
 	}
 
-	@RequestMapping(value = "/qwlist", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public Object qmlist(Page page, HttpServletRequest request,
-					   HttpServletResponse response) {
+	/*
+	 * @RequestMapping(value = "/qwlist", method = RequestMethod.POST, produces =
+	 * MediaType.APPLICATION_JSON_VALUE)
+	 * 
+	 * @ResponseBody public Object qmlist(Page page, HttpServletRequest request,
+	 * HttpServletResponse response) {
+	 * 
+	 * Map<String, Object> condition = new HashMap<String, Object>(); String param =
+	 * request.getParameter("param"); if(StringUtil.isNotEmpty(param)){
+	 * condition.put("param", param); } String operator =
+	 * request.getParameter("operator"); if(StringUtil.isNotEmpty(operator)){
+	 * condition.put("operator", operator); }
+	 * 
+	 * request.getSession().setAttribute("qwLogListMap", condition);
+	 * 
+	 * SearchResult result = fwzyqqbwcjbService.getQwList(page, condition); return
+	 * result; }
+	 */
 
-		Map<String, Object> condition = new HashMap<String, Object>();
-		String param = request.getParameter("param");
-		if(StringUtil.isNotEmpty(param)){
-			condition.put("param", param);
-		}
-		String operator = request.getParameter("operator");
-		if(StringUtil.isNotEmpty(operator)){
-			condition.put("operator", operator);
-		}
-		
-		request.getSession().setAttribute("qwLogListMap", condition);
-		
-		SearchResult result = fwzyqqbwcjbService.getQwList(page, condition);
-		return result;
-	}
-
-	@RequestMapping(value = "/getQw", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public Object getQw(Page page, HttpServletRequest request,
-							HttpServletResponse response) {
-		String id = request.getParameter("id");
-		Map<String,Object> list=fwzyqqbwcjbService.getQw(id);
-		return list;
-	}
+	/*
+	 * @RequestMapping(value = "/getQw", method = RequestMethod.POST, produces =
+	 * MediaType.APPLICATION_JSON_VALUE)
+	 * 
+	 * @ResponseBody public Object getQw(Page page, HttpServletRequest request,
+	 * HttpServletResponse response) { String id = request.getParameter("id");
+	 * Map<String,Object> list=fwzyqqbwcjbService.getQw(id); return list; }
+	 */
 
 	@RequestMapping(value = "/yclist", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
@@ -292,40 +289,31 @@ public class FwEventLogController {
 		return null;
 	}
 	
-	@RequestMapping(value = "qwLogExport")
-	public Object qwLogExport(HttpServletRequest request, HttpServletResponse response) {
-		// 文件字符输出流
-		FileOutputStream toClient = null;
-		try {
-			Map<String, Object> condition = (Map<String, Object>) request.getSession().getAttribute("qwLogListMap");
-			condition.put("start", 0);
-			condition.put("end", 100);
-			List<QwLogDownload> dataset = fwzyqqbwcjbService.getQwList(condition);
-			// 得到项目路径
-			String rootpath = request.getSession().getServletContext().getRealPath("/");
-			// 文件名
-			String fileName = "exportdata.xls";
-			// 创建文件字符输出流（项目路径+路径+文件名）
-			toClient = new FileOutputStream(rootpath + File.separator + "static" + File.separator + fileName);
-			// 创建电子表格
-			ExcelReaderDown<QwLogDownload> export = new ExcelReaderDown<QwLogDownload>();
-
-			String[] headers = { "报文标识", "应用名称", "服务名称", "方法名称", "请求时间", "响应时间",
-					"响应时长", "响应状态" , "请求内容" , "相应内容" };
-			export.setNum(0);
-			export.exportExcel("表格数据", headers, dataset, toClient, null);
-			toClient.close();
-			response.setContentType("text/html;setchar=utf-8");
-			File file = new File(rootpath + File.separator + "static" + File.separator + fileName);
-			HttpHeaders header = new HttpHeaders();
-			header.setContentDispositionFormData("attachment", fileName);
-			header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-			return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), header, HttpStatus.CREATED);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+	/*
+	 * @RequestMapping(value = "qwLogExport") public Object
+	 * qwLogExport(HttpServletRequest request, HttpServletResponse response) { //
+	 * 文件字符输出流 FileOutputStream toClient = null; try { Map<String, Object> condition
+	 * = (Map<String, Object>) request.getSession().getAttribute("qwLogListMap");
+	 * condition.put("start", 0); condition.put("end", 100); List<QwLogDownload>
+	 * dataset = fwzyqqbwcjbService.getQwList(condition); // 得到项目路径 String rootpath
+	 * = request.getSession().getServletContext().getRealPath("/"); // 文件名 String
+	 * fileName = "exportdata.xls"; // 创建文件字符输出流（项目路径+路径+文件名） toClient = new
+	 * FileOutputStream(rootpath + File.separator + "static" + File.separator +
+	 * fileName); // 创建电子表格 ExcelReaderDown<QwLogDownload> export = new
+	 * ExcelReaderDown<QwLogDownload>();
+	 * 
+	 * String[] headers = { "报文标识", "应用名称", "服务名称", "方法名称", "请求时间", "响应时间", "响应时长",
+	 * "响应状态" , "请求内容" , "相应内容" }; export.setNum(0); export.exportExcel("表格数据",
+	 * headers, dataset, toClient, null); toClient.close();
+	 * response.setContentType("text/html;setchar=utf-8"); File file = new
+	 * File(rootpath + File.separator + "static" + File.separator + fileName);
+	 * HttpHeaders header = new HttpHeaders();
+	 * header.setContentDispositionFormData("attachment", fileName);
+	 * header.setContentType(MediaType.APPLICATION_OCTET_STREAM); return new
+	 * ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), header,
+	 * HttpStatus.CREATED); } catch (Exception e) { e.printStackTrace(); } return
+	 * null; }
+	 */
 	
 	@RequestMapping(value = "ycLogExport")
 	public Object ycLogExport(HttpServletRequest request, HttpServletResponse response) {

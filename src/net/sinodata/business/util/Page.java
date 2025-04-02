@@ -9,6 +9,9 @@ public class Page {
 		return str;
 	}
 
+	public int getOriginalRows() {
+		return rows;
+	}
 
 
 	public int getRows() {

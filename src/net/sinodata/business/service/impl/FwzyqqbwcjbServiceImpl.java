@@ -18,12 +18,12 @@ import net.sinodata.business.service.FwzyqqbwcjbService;
 import net.sinodata.business.util.Page;
 import net.sinodata.business.util.SearchResult;
 
-import net.sinodata.business.dao.elasticsearch.EsDao;
-import net.sinodata.business.util.elasticsearch.QueryBuilderUtil;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.sort.SortOrder;
+//import net.sinodata.business.dao.elasticsearch.EsDao;
+//import net.sinodata.business.util.elasticsearch.QueryBuilderUtil;
+//import org.elasticsearch.index.query.BoolQueryBuilder;
+//import org.elasticsearch.index.query.QueryBuilder;
+//import org.elasticsearch.index.query.QueryBuilders;
+//import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,8 +37,8 @@ public class FwzyqqbwcjbServiceImpl implements FwzyqqbwcjbService {
 	
 	@Autowired
 	private FwzyzcbDao fwzyzcbDao;
-	@Autowired
-	private EsDao esDao;
+	//@Autowired
+	//private EsDao esDao;
 	@Autowired(required = false)
 	private ConfigInfo configInfo;
 
@@ -96,100 +96,93 @@ public class FwzyqqbwcjbServiceImpl implements FwzyqqbwcjbService {
 		return fwzyzcbDao.queryAllList(null);
 	}
 
-	@Override
-	public SearchResult getQwList(Page page, Map<String, Object> condition) {
+	/*
+	 * @Override public SearchResult getQwList(Page page, Map<String, Object>
+	 * condition) {
+	 * 
+	 * Integer start=page.getStart(); Integer rows=page.getRows()/page.getPage();
+	 * 
+	 * BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery(); String
+	 * param=condition.get("param")==null?"":condition.get("param").toString();
+	 * if(param!=null&&!"".equals(param)){ String[]
+	 * columnArr={"fwqqNr","fwtgNr","xxczryGmsfhm","xxczryXm","fwbs","fwqqzZcxx",
+	 * "ffbs","fwqqsbBh","xxczryGajgjgdm","fwqqSjsjlx"};
+	 * queryBuilder.must(QueryBuilderUtil.getQueryStringWialdBuilder(columnArr,param
+	 * )); // BoolQueryBuilder paramQueryBuilder = QueryBuilders.boolQuery(); //
+	 * paramQueryBuilder.should(QueryBuilderUtil.build("fwqqNr", param,
+	 * QueryBuilderUtil.LIKE)); //
+	 * paramQueryBuilder.should(QueryBuilderUtil.build("fwtgNr", param,
+	 * QueryBuilderUtil.LIKE)); //
+	 * paramQueryBuilder.should(QueryBuilderUtil.build("xxczryXm", param,
+	 * QueryBuilderUtil.LIKE)); //
+	 * paramQueryBuilder.should(QueryBuilderUtil.build("xxczryGmsfhm", param,
+	 * QueryBuilderUtil.LIKE)); // queryBuilder.must(paramQueryBuilder); } String
+	 * operator=condition.get("operator")==null?"":condition.get("operator").
+	 * toString(); if(operator!=null&&!"".equals(operator)){ String[]
+	 * columnArr={"xxczryGmsfhm","xxczryXm"};
+	 * queryBuilder.must(QueryBuilderUtil.getQueryStringWialdBuilder(columnArr,
+	 * operator)); // queryBuilder.must(QueryBuilders.queryStringQuery(queryStr));
+	 * // BoolQueryBuilder operatorQueryBuilder = QueryBuilders.boolQuery(); //
+	 * operatorQueryBuilder.should(QueryBuilderUtil.build("xxczryXm", operator,
+	 * QueryBuilderUtil.LIKE)); //
+	 * operatorQueryBuilder.should(QueryBuilderUtil.build("xxczryGmsfhm", operator,
+	 * QueryBuilderUtil.LIKE)); // queryBuilder.must(operatorQueryBuilder); }
+	 * SearchResult searchResult = esDao.searchDataPage(start, rows, queryBuilder,
+	 * configInfo.getEsFwbw()+"*", "startTime.keyword", SortOrder.DESC, false);
+	 * return searchResult; }
+	 */
 
-		Integer start=page.getStart();
-		Integer rows=page.getRows()/page.getPage();
 
-		BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
-		String param=condition.get("param")==null?"":condition.get("param").toString();
-		if(param!=null&&!"".equals(param)){
-			String[] columnArr={"fwqqNr","fwtgNr","xxczryGmsfhm","xxczryXm","fwbs","fwqqzZcxx","ffbs","fwqqsbBh","xxczryGajgjgdm","fwqqSjsjlx"};
-			queryBuilder.must(QueryBuilderUtil.getQueryStringWialdBuilder(columnArr,param));
-//			BoolQueryBuilder paramQueryBuilder = QueryBuilders.boolQuery();
-//			paramQueryBuilder.should(QueryBuilderUtil.build("fwqqNr", param, QueryBuilderUtil.LIKE));
-//			paramQueryBuilder.should(QueryBuilderUtil.build("fwtgNr", param, QueryBuilderUtil.LIKE));
-//			paramQueryBuilder.should(QueryBuilderUtil.build("xxczryXm", param, QueryBuilderUtil.LIKE));
-//			paramQueryBuilder.should(QueryBuilderUtil.build("xxczryGmsfhm", param, QueryBuilderUtil.LIKE));
-//			queryBuilder.must(paramQueryBuilder);
-		}
-		String operator=condition.get("operator")==null?"":condition.get("operator").toString();
-		if(operator!=null&&!"".equals(operator)){
-			String[] columnArr={"xxczryGmsfhm","xxczryXm"};
-			queryBuilder.must(QueryBuilderUtil.getQueryStringWialdBuilder(columnArr,operator));
-//			queryBuilder.must(QueryBuilders.queryStringQuery(queryStr));
-//			BoolQueryBuilder operatorQueryBuilder = QueryBuilders.boolQuery();
-//			operatorQueryBuilder.should(QueryBuilderUtil.build("xxczryXm", operator, QueryBuilderUtil.LIKE));
-//			operatorQueryBuilder.should(QueryBuilderUtil.build("xxczryGmsfhm", operator, QueryBuilderUtil.LIKE));
-//			queryBuilder.must(operatorQueryBuilder);
-		}
-		SearchResult searchResult = esDao.searchDataPage(start, rows, queryBuilder, configInfo.getEsFwbw()+"*", "startTime.keyword", SortOrder.DESC, false);
-		return searchResult;
-	}
-
-
-	@Override
-	public Map<String, Object> getQw(String id) {
-		QueryBuilder queryBuilder = QueryBuilders.termQuery("id.keyword",id);
-		List<Map<String, Object>> search = esDao.search(queryBuilder, configInfo.getEsFwbw());
-		Map<String, Object> map = new HashMap<>();
-		if(search!=null&&search.size()>0){
-			map = search.get(0);
-		}
-		return map;
-	}
+	/*
+	 * @Override public Map<String, Object> getQw(String id) { QueryBuilder
+	 * queryBuilder = QueryBuilders.termQuery("id.keyword",id); List<Map<String,
+	 * Object>> search = esDao.search(queryBuilder, configInfo.getEsFwbw());
+	 * Map<String, Object> map = new HashMap<>(); if(search!=null&&search.size()>0){
+	 * map = search.get(0); } return map; }
+	 */
 
 	@Override
 	public List<FwzyqqbwcjbDownload> getLogList(Map<String, Object> condition) {
 		return fwzyqqbwcjbDao.getLogList(condition);
 	}
 
-	@Override
-	public List<QwLogDownload> getQwList(Map<String, Object> condition) {
-		Integer start=(Integer) condition.get("start");
-		Integer rows=(Integer) condition.get("end");
-
-		BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
-		String param=condition.get("param")==null?"":condition.get("param").toString();
-		if(param!=null&&!"".equals(param)){
-			String[] columnArr={"fwqqNr","fwtgNr","xxczryGmsfhm","xxczryXm","fwbs","fwqqzZcxx","ffbs","fwqqsbBh","xxczryGajgjgdm","fwqqSjsjlx"};
-			queryBuilder.must(QueryBuilderUtil.getQueryStringWialdBuilder(columnArr,param));
-		}
-		String operator=condition.get("operator")==null?"":condition.get("operator").toString();
-		if(operator!=null&&!"".equals(operator)){
-			String[] columnArr={"xxczryGmsfhm","xxczryXm"};
-			queryBuilder.must(QueryBuilderUtil.getQueryStringWialdBuilder(columnArr,operator));
-		}
-		List<Map<String,Object>> searchResult = esDao.searchDataList(start, rows, queryBuilder, configInfo.getEsFwbw()+"*", "startTime.keyword", SortOrder.DESC, false);
-		
-		List<QwLogDownload> result = new ArrayList<QwLogDownload>();
-		for(Map<String,Object> option : searchResult) {
-			QwLogDownload i = new QwLogDownload();
-			i.setQqbwbs(option.get("qqbwbs").toString());
-			i.setFwqqzZcxx(option.get("fwqqzZcxx").toString());
-			i.setFwbs(option.get("fwbs").toString());
-			i.setFfbs(option.get("ffbs").toString());
-			i.setStartTime(option.get("startTime").toString());
-			i.setEndTime(option.get("endTime").toString());
-			i.setTimeConsuming(option.get("timeConsuming").toString());
-			i.setFwtgztdm(option.get("fwtgztdm").toString());
-			String fwqqNr = option.get("fwqqNr").toString();
-			if(fwqqNr.length()>2000) {
-				i.setFwqqNr(option.get("fwqqNr").toString().substring(0,2000));
-			}else {
-				i.setFwqqNr(fwqqNr);
-			}
-			String fwtgNr = option.get("fwtgNr").toString();
-			if(fwtgNr.length()>2000) {
-				i.setFwtgNr(option.get("fwtgNr").toString().substring(0,2000));
-			}else {
-				i.setFwtgNr(fwtgNr);
-			}
-			result.add(i);
-		}
-		return result;
-	}
+	/*
+	 * @Override public List<QwLogDownload> getQwList(Map<String, Object> condition)
+	 * { Integer start=(Integer) condition.get("start"); Integer rows=(Integer)
+	 * condition.get("end");
+	 * 
+	 * BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery(); String
+	 * param=condition.get("param")==null?"":condition.get("param").toString();
+	 * if(param!=null&&!"".equals(param)){ String[]
+	 * columnArr={"fwqqNr","fwtgNr","xxczryGmsfhm","xxczryXm","fwbs","fwqqzZcxx",
+	 * "ffbs","fwqqsbBh","xxczryGajgjgdm","fwqqSjsjlx"};
+	 * queryBuilder.must(QueryBuilderUtil.getQueryStringWialdBuilder(columnArr,param
+	 * )); } String
+	 * operator=condition.get("operator")==null?"":condition.get("operator").
+	 * toString(); if(operator!=null&&!"".equals(operator)){ String[]
+	 * columnArr={"xxczryGmsfhm","xxczryXm"};
+	 * queryBuilder.must(QueryBuilderUtil.getQueryStringWialdBuilder(columnArr,
+	 * operator)); } List<Map<String,Object>> searchResult =
+	 * esDao.searchDataList(start, rows, queryBuilder, configInfo.getEsFwbw()+"*",
+	 * "startTime.keyword", SortOrder.DESC, false);
+	 * 
+	 * List<QwLogDownload> result = new ArrayList<QwLogDownload>();
+	 * for(Map<String,Object> option : searchResult) { QwLogDownload i = new
+	 * QwLogDownload(); i.setQqbwbs(option.get("qqbwbs").toString());
+	 * i.setFwqqzZcxx(option.get("fwqqzZcxx").toString());
+	 * i.setFwbs(option.get("fwbs").toString());
+	 * i.setFfbs(option.get("ffbs").toString());
+	 * i.setStartTime(option.get("startTime").toString());
+	 * i.setEndTime(option.get("endTime").toString());
+	 * i.setTimeConsuming(option.get("timeConsuming").toString());
+	 * i.setFwtgztdm(option.get("fwtgztdm").toString()); String fwqqNr =
+	 * option.get("fwqqNr").toString(); if(fwqqNr.length()>2000) {
+	 * i.setFwqqNr(option.get("fwqqNr").toString().substring(0,2000)); }else {
+	 * i.setFwqqNr(fwqqNr); } String fwtgNr = option.get("fwtgNr").toString();
+	 * if(fwtgNr.length()>2000) {
+	 * i.setFwtgNr(option.get("fwtgNr").toString().substring(0,2000)); }else {
+	 * i.setFwtgNr(fwtgNr); } result.add(i); } return result; }
+	 */
 
 
 }

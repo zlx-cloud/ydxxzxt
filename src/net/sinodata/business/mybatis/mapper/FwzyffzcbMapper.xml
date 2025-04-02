@@ -17,7 +17,8 @@
     <result column="FFLB" property="fflb" jdbcType="VARCHAR" />
     <result column="URL" property="url" jdbcType="VARCHAR" />
     <result column="FFLX" property="fflx" jdbcType="VARCHAR" />
-    <result column="FWTGZ_YYXTBH" property="fwtgzYyxtbh" jdbcType="VARCHAR" />
+    <result column="RESPONSE_LIMIT" property="responseLimit" jdbcType="VARCHAR" />
+    <result column="RESPONSE_PACKAGE" property="responsePackage" jdbcType="VARCHAR" />
   </resultMap>
   
   <resultMap id="YyFwFfMap" type="net.sinodata.business.entity.YyFwFfInfo" >
@@ -71,7 +72,7 @@
 	</select>
   
   <sql id="Base_Column_List" >
-    FFBS, FWBS, FFMC, FFL, FFMS, JZFL, CZFL, SFHCSJ, SJYXSJ,FWTGZ_YYXTBH,WLFL,FFLB,URL,FFLX
+    FFBS, FWBS, FFMC, FFL, FFMS, JZFL, CZFL, SFHCSJ, SJYXSJ,FWTGZ_YYXTBH,WLFL,FFLB,URL,FFLX,RESPONSE_LIMIT,RESPONSE_PACKAGE
   </sql>
    <select id="queryListByFwbs" parameterType="java.lang.String" resultMap="BaseResultMap" >
        SELECT   <include refid="Base_Column_List" /> from fwzyffzcb WHERE FWBS = #{fwbs,jdbcType=VARCHAR}
@@ -127,11 +128,12 @@ select count(1) 　 from fwzyffzcb u left join FWZYZCB r on u.FWBS=r.FWBS left j
   <insert id="insert" parameterType="net.sinodata.business.entity.Fwzyffzcb" >
   insert into FWZYFFZCB (FFBS, FWBS, FFMC, 
       FFL, FFMS, JZFL, CZFL, 
-      SFHCSJ, SJYXSJ,FWTGZ_YYXTBH,WLFL,FFLB,URL,FFLX)
+      SFHCSJ, SJYXSJ,FWTGZ_YYXTBH,WLFL,FFLB,URL,FFLX,RESPONSE_LIMIT,RESPONSE_PACKAGE)
     values (#{ffbs,jdbcType=VARCHAR}, #{fwbs,jdbcType=VARCHAR}, #{ffmc,jdbcType=VARCHAR}, 
       #{ffl,jdbcType=VARCHAR}, #{ffms,jdbcType=VARCHAR}, #{jzfl,jdbcType=VARCHAR}, #{czfl,jdbcType=VARCHAR}, 
       #{sfhcsj,jdbcType=VARCHAR}, #{sjyxsj,jdbcType=DECIMAL},#{fwtgzYyxtbh,jdbcType=VARCHAR},
-      #{wlfl,jdbcType=VARCHAR},#{fflb,jdbcType=VARCHAR},#{url,jdbcType=VARCHAR},#{fflx,jdbcType=VARCHAR})
+      #{wlfl,jdbcType=VARCHAR},#{fflb,jdbcType=VARCHAR},#{url,jdbcType=VARCHAR},#{fflx,jdbcType=VARCHAR},
+      #{responseLimit,jdbcType=VARCHAR},#{responsePackage,jdbcType=VARCHAR})
   </insert>
   
     <select id="queryFFBSbyFwbs" resultType="java.lang.String" parameterType="java.lang.String" >
@@ -209,6 +211,12 @@ select count(1) 　 from fwzyffzcb u left join FWZYZCB r on u.FWBS=r.FWBS left j
    	  <if test="fflx != null" >
         FFLX,
       </if>
+      <if test="responseLimit != null" >
+        RESPONSE_LIMIT,
+      </if>
+      <if test="responsePackage != null" >
+        RESPONSE_PACKAGE,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="fwbs != null" >
@@ -254,6 +262,12 @@ select count(1) 　 from fwzyffzcb u left join FWZYZCB r on u.FWBS=r.FWBS left j
       <if test="fflx != null" >
          #{fflx,jdbcType=VARCHAR},
       </if>
+      <if test="responseLimit != null" >
+         #{responseLimit,jdbcType=VARCHAR},
+      </if>
+      <if test="responsePackage != null" >
+         #{responsePackage,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="net.sinodata.business.entity.Fwzyffzcb" >
@@ -297,6 +311,12 @@ select count(1) 　 from fwzyffzcb u left join FWZYZCB r on u.FWBS=r.FWBS left j
       <if test="fflx != null" >
         FFLX = #{fflx,jdbcType=VARCHAR},
       </if>
+      <if test="responseLimit != null" >
+        RESPONSE_LIMIT = #{responseLimit,jdbcType=VARCHAR},
+      </if>
+      <if test="responsePackage != null" >
+        RESPONSE_PACKAGE = #{responsePackage,jdbcType=VARCHAR},
+      </if>
     </set>
     where FFBS = #{ffbs,jdbcType=VARCHAR}
       and FWBS = #{fwbs,jdbcType=VARCHAR}
@@ -314,7 +334,9 @@ select count(1) 　 from fwzyffzcb u left join FWZYZCB r on u.FWBS=r.FWBS left j
       WLFL = #{wlfl,jdbcType=VARCHAR},
       FFLB = #{fflb,jdbcType=VARCHAR},
       URL = #{url,jdbcType=VARCHAR},
-      FFLX = #{fflX,jdbcType=VARCHAR}
+      FFLX = #{fflX,jdbcType=VARCHAR},
+      RESPONSE_LIMIT = #{responseLimit,jdbcType=VARCHAR},
+      RESPONSE_PACKAGE = #{responsePackage,jdbcType=VARCHAR}
     where FFBS = #{ffbs,jdbcType=VARCHAR}
       and FWBS = #{fwbs,jdbcType=VARCHAR}
   </update>

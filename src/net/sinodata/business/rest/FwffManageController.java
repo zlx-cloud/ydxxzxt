@@ -201,6 +201,10 @@ public class FwffManageController {
 	@ResponseBody
 	public void addUpdate(Fwzyffzcb Fwzyffzcb,HttpServletRequest request,
 			HttpServletResponse response) {
+		if(StringUtil.isEmpty(Fwzyffzcb.getResponseLimit())) {
+			Fwzyffzcb.setResponseLimit("5");
+		}
+		
 		JSONObject result=new JSONObject();
 		String flag=request.getParameter("flag");
 		
@@ -351,7 +355,7 @@ public class FwffManageController {
 				ExcelReaderDown<Fwzyffzcb> export=new ExcelReaderDown<Fwzyffzcb>();
 				
 				String[] headers =  
-			        { "服务标识", "方法标识", "服务名称","方法名","方法类","方法描述","警种分类","操作分类","是否缓存数据","缓存数据有效时间（秒）","网络分类","方法类别"};  
+			        { "服务标识", "方法标识", "服务名称","方法名","方法类","方法描述","警种分类","操作分类","是否存储响应日志","超时时间（秒）","网络分类","方法类别","响应结果限制","响应结果是否封装"};  
 				//输出表格（电子表格标题，电子表格数据，文件输出流，日期类型转格式，表格存放规则）
 				export.setNum(6);
 				export.exportExcel("表格数据", headers,dataset, toClient,null);

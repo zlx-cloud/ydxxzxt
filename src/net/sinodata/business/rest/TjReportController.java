@@ -26,6 +26,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.ElasticsearchException;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.Version;
@@ -37,6 +40,9 @@ public class TjReportController {
 
 	@Autowired
 	TjReportService service;
+	@Autowired
+	private ElasticsearchClient restClient;
+	private final static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
 	@RequestMapping(value = "/page", method = RequestMethod.GET)
 	public String page(HttpServletRequest request) {
@@ -174,7 +180,25 @@ public class TjReportController {
 	@ResponseBody
 	public Object tjsz() {
 		List<Map<String, Object>> result = service.tjsz();
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("COUNT", queryTodayErrorCount() + "次");
+		map.put("NAME", "drfwqqycsl");
+		result.add(map);
 		return result;
+	}
+
+	private int queryTodayErrorCount() {
+		try {
+			String index = "userlog_" + sdf.format(new Date());
+			SearchResponse<HashMap> search = restClient.search(s -> s.index(index).query(query -> query.bool(bool -> {
+				bool.must(m -> m.exists(e -> e.field("bj_logs_json.errorTime")));
+				return bool;
+			})).trackTotalHits(t -> t.enabled(true)), HashMap.class);
+			return (int) search.hits().total().value();
+		} catch (ElasticsearchException e) {
+		} catch (IOException e) {
+		}
+		return 0;
 	}
 
 	@RequestMapping(value = "/zcyhlRankByTimeAndJg", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -218,14 +242,14 @@ public class TjReportController {
 		List<Map<String, Object>> result = service.bwcjlRankByJg();
 		return result;
 	}
-	
+
 	@RequestMapping(value = "/fwzyRankByJzfl", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public Object fwzyRankByJzfl() {
 		List<Map<String, Object>> result = service.fwzyRankByJzfl();
 		return result;
 	}
-	
+
 	@RequestMapping(value = "/qqlRankBySjAndJg", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public Object qqlRankBySjAndJg() {
@@ -239,40 +263,40 @@ public class TjReportController {
 		List<Map<String, Object>> result = service.fwzydylRank();
 		return result;
 	}
-	
+
 	@RequestMapping(value = "/yyxtdylRank", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public Object yyxtdylRank() {
 		List<Map<String, Object>> result = service.yyxtdylRank();
 		return result;
 	}
-	
+
 	@RequestMapping(value = "/zdyyqqlRank", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public Object zdyyqqlRank() {
 		List<Map<String, Object>> result = service.zdyyqqlRank();
 		return result;
 	}
-	
+
 	@RequestMapping(value = "/fwzyyclRank", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public Object fwzyyclRank() {
 		List<Map<String, Object>> result = service.fwzyyclRank();
 		return result;
 	}
-	
+
 	@RequestMapping(value = "/fwzysygfsdRank", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public Object fwzysygfsdRank() {
 		List<Map<String, Object>> result = service.fwzysygfsdRank();
 		return result;
 	}
-	
+
 	@RequestMapping(value = "/fwzyxysjRank", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public Object fwzyxysjRank() {
 		List<Map<String, Object>> result = service.fwzyxysjRank();
 		return result;
 	}
-	
+
 }

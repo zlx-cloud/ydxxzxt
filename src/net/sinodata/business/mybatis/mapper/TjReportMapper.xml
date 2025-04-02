@@ -161,7 +161,7 @@
 	</select>
 	
 	<select id="bwcjlRankByJg" resultType="map">
-		select * from
+		<!-- select * from
 			(
 				select substr(t.fwqqz_jgdm,1,6)||'000000' as jgdm,a.jgmc,sum(t.num) as count 
 				from fwzybwtjb_day t
@@ -170,7 +170,18 @@
 				group by substr(t.fwqqz_jgdm,1,6)||'000000',a.jgmc
 				order by count desc
 			)
-		where rownum &lt;= 5
+		where rownum &lt;= 5 -->
+		select * from
+      	(
+        select substr(t.XXCZRY_GAJGJGDM,1,6)||'000000' as jgdm,a.jgmc,sum(t.num) as count 
+        from tj_fwqqjgry t
+        left join JGDMB a on a.jgbs = substr(t.XXCZRY_GAJGJGDM,1,6)||'000000'
+        where t.TJRQ_DATE &gt;= to_char(add_months(trunc(sysdate),-1),'yyyyMMdd')
+        group by substr(t.XXCZRY_GAJGJGDM,1,6)||'000000',a.jgmc
+        order by count desc
+      	)
+    	where rownum &lt;= 5
+		
 	</select>
 	
 	<select id="fwzyRankByJzfl" resultType="map">
@@ -214,7 +225,7 @@
 	</select>
 	
 	<select id="fwzydylRank" resultType="map">
-		select * from
+		<!-- select * from
 			(
 				select t.fwbs,t.ffbs,a.ffms,sum(t.num) as count from fwzybwtjb_day t
 				left join fwzyffzcb a on t.fwbs = a.fwbs and t.ffbs = a.ffbs
@@ -222,7 +233,16 @@
 				group by t.fwbs,t.ffbs,a.ffms
 				order by count desc
 			)
-		where rownum &lt;= 10
+		where rownum &lt;= 10 -->
+		select * from
+      	(
+        select t.fwbs,t.ffbs,a.ffms,sum(t.num) as count from tj_fwqqjgry t
+        left join fwzyffzcb a on t.fwbs = a.fwbs and t.ffbs = a.ffbs
+        where t.tjrq_date &gt;= to_char(add_months(trunc(sysdate),-1),'yyyyMMdd')
+        group by t.fwbs,t.ffbs,a.ffms
+        order by count desc
+      	)
+    	where rownum &lt;= 10
 	</select>
 	
 	<select id="yyxtdylRank" resultType="map">
@@ -267,13 +287,20 @@
 	</select>
 	
 	<select id="fwzysygfsdRank" resultType="map">
-		select * from
+		<!-- select * from
 			(
 				select t.tjrq,sum(t.num) as count from fwzybwtjb_hour t
 				where substr(t.tjrq,1,8) &gt;= to_char(add_months(trunc(sysdate),-1),'yyyyMMdd')
 				group by t.tjrq order by count desc
 			)
-		where rownum &lt;= 10
+		where rownum &lt;= 10 -->
+		select * from
+      	(
+        select t.TJRQ_DATE,sum(t.num) as count from tj_fwqqjgry t
+        where  t.TJRQ_DATE &gt;= to_char(add_months(trunc(sysdate),-1),'yyyyMMdd')
+        group by t.TJRQ_DATE order by count desc
+      	)
+   	 	where rownum &lt;= 10
 	</select>
 	
 	<select id="fwzyxysjRank" resultType="map">

@@ -20,11 +20,12 @@ public class Fwzyffzcb extends FwzyffzcbKey {
     private BigDecimal sjyxsj;
     private String wlfl;
     private String fflb;
+    private String responseLimit;
+    private String responsePackage;
     private String jzfl;
     private String url;
     private String fflx;
     private String fwtgzYyxtbh;
-
     
     private List<Fwzyffqqcsb> fwzyffqqcsbList;//方法下面的请求参数
     
@@ -155,6 +156,22 @@ public class Fwzyffzcb extends FwzyffzcbKey {
 
 	public void setFflx(String fflx) {
 		this.fflx = fflx;
+	}
+
+	public String getResponseLimit() {
+		return responseLimit;
+	}
+
+	public void setResponseLimit(String responseLimit) {
+		this.responseLimit = responseLimit;
+	}
+
+	public String getResponsePackage() {
+		return responsePackage;
+	}
+
+	public void setResponsePackage(String responsePackage) {
+		this.responsePackage = responsePackage;
 	}
 	
 }

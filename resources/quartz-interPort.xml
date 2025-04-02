@@ -117,7 +117,7 @@ http://www.springframework.org/schema/batch/spring-batch-3.0.xsd">
 		<property name="jobDetail" ref="writeExceptionLogBean" />
 		<property name="cronExpression" value= "0 0/2 * * * ?"  />
 	</bean>
-
+	
 	<!-- 异常日志定时写库 -->
 	<!--  
 	<bean id="fwBwWrite" class="net.sinodata.business.util.elasticsearch.FwBwWriteThread"/>

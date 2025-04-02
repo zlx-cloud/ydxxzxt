@@ -32,7 +32,8 @@
         <property name="port" value="${redis.port}"/>
         <property name="hostName" value="${redis.host}"/>
         <property name="password" value="${redis.password}"/>
-        <property name="timeout" value="${redis.timeout}"></property>
+        <property name="timeout" value="${redis.timeout}" />
+        <property name="database" value="${redis.database0}" />
     </bean>
      <!-- Jedis模板配置  -->
     <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
@@ -43,12 +44,40 @@
         </property>
           <!-- 采用json序列化 -->  
         <property name="valueSerializer">
-            <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer"/>
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
         </property>
      <!-- 开启REIDS事务支持 -->
         <property name="enableTransactionSupport" value="true"/> 
     </bean>
-	<bean id="redisUtil" class="net.sinodata.business.util.RedisUtil">
+    <bean id="redisUtil" class="net.sinodata.business.util.RedisUtil">
         <property name="redisTemplate" ref="redisTemplate"/>
-    </bean> 
+    </bean>
+    
+    <!-- redis连接工厂 -->
+    <bean id="connectionFactory3" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <property name="poolConfig" ref="poolConfig"/>
+        <property name="port" value="${redis.port}"/>
+        <property name="hostName" value="${redis.host}"/>
+        <property name="password" value="${redis.password}"/>
+        <property name="timeout" value="${redis.timeout}" />
+        <property name="database" value="${redis.database3}" />
+    </bean>
+     <!-- Jedis模板配置  -->
+    <bean id="redisTemplate3" class="org.springframework.data.redis.core.RedisTemplate">
+        <property name="connectionFactory" ref="connectionFactory3"/>
+         <!--     如果不配置Serializer，那么存储的时候只能使用String，如果用对象类型存储，那么会提示错误 can't cast to String！！！-->
+        <property name="keySerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+        </property>
+          <!-- 采用json序列化 -->  
+        <property name="valueSerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+        </property>
+     <!-- 开启REIDS事务支持 -->
+        <property name="enableTransactionSupport" value="true"/> 
+    </bean>
+    <bean id="redisUtil3" class="net.sinodata.business.util.RedisUtil3">
+        <property name="redisTemplate" ref="redisTemplate3"/>
+    </bean>
+    
 </beans>

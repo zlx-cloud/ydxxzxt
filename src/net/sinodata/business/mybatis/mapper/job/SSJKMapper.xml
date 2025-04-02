@@ -97,9 +97,12 @@
 	</select>
 	
 	<select id="selectQqfwCount" resultType="java.lang.Integer" parameterType="java.lang.String">
-		select count(1) from FWZYQQBWCJB t
+		<!-- select count(1) from FWZYQQBWCJB t
 		where t.start_time &gt; #{startTime,jdbcType=VARCHAR}
-		and t.start_time &lt;= #{endTime,jdbcType=VARCHAR}
+		and t.start_time &lt;= #{endTime,jdbcType=VARCHAR} -->
+		select nvl(sum(num),0) from WARN_FRE_MSG t
+		where tjrq_date||tjrq_hour &gt; #{startTime,jdbcType=VARCHAR}
+		and tjrq_date||tjrq_hour &lt;= #{endTime,jdbcType=VARCHAR}
 	</select>
 	
 	<select id="selectYcCount" resultType="java.lang.Integer" parameterType="java.lang.String">
