@@ -19,7 +19,10 @@
 	<div data-options="region:'center'">
 		<div id="tb">
 			<div>
-				请求日期：<input type="text" id="time" class="easyui-datebox" size="20" value="${time}" />
+				&nbsp;&nbsp; 
+				请求开始日期：<input type="text" id="startTime" class="easyui-datebox" size="20" value="${time}" />
+				&nbsp;&nbsp; 
+				请求结束日期：<input type="text" id="endTime" class="easyui-datebox" size="20" value="${time}" />
 				&nbsp;&nbsp; 
 				应用名称：
 				<select name="fwqqzZcxxSearch" id="fwqqzZcxxSearch" class="easyui-combobox">
@@ -73,6 +76,10 @@
 				data : [],
 				axisPointer : {
 					type : 'shadow'
+				},
+				axisLabel: {
+					interval: 0,
+					rotate: 40
 				}
 			} ],
 			yAxis : {
@@ -84,24 +91,31 @@
 		myChart.setOption(option);
 
 		function searchData() {
-			var timeVal =$("#time").val();
-			if(timeVal == '' || timeVal == null){
-				$.messager.alert('系统提示','请选择日期');
+			var startTimeVal =$("#startTime").val();
+			if(startTimeVal == '' || startTimeVal == null){
+				$.messager.alert('系统提示','请选择请求开始日期');
+				return;
+			}
+			var endTimeVal =$("#endTime").val();
+			if(endTimeVal == '' || endTimeVal == null){
+				$.messager.alert('系统提示','请选择请求结束日期');
 				return;
 			}
 			
 			$('#dg').datagrid('options').url = '${ctx}/temporary/yhqqpmfxList';
 			$('#dg').datagrid('load', {
 				yybs : $("#fwqqzZcxxSearch").val(),
-				time : $("#time").val()
+				startTime : $("#startTime").val(),
+				endTime : $("#endTime").val()
 			});
 			
 			myChart.clear();
 			$.ajax({
 				type : "post",
 				url : "${ctx}/temporary/yhqqpmfxSearch?yybs="
-						+ $("#fwqqzZcxxSearch").val() + "&time="
-						+ $("#time").val(),
+						+ $("#fwqqzZcxxSearch").val() + "&startTime="
+						+ $("#startTime").val() + "&endTime="
+						+ $("#endTime").val(),
 				dataType : "json",
 				async : false,
 				success : function(data) {

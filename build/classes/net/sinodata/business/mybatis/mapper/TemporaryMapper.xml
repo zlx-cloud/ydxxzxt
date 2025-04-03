@@ -170,25 +170,15 @@
 	</update>
 	
 	<select id="fwzlfxSearch" resultType="map">
-		select t.ffqqz,t.tjrq_hour as hour,t.ffqqz||'-'||t.tjrq_hour as key,
-			nvl(sum(t.num),0) as value,f.fwcyf_yyxtmc as name
-		from TJ_FWQQJGRY t
+		select t.ffqqz,t.tjrq_date||' '||t.tjrq_hour as hour,t.ffqqz||'-'||t.tjrq_date||' '||t.tjrq_hour as key,
+      	nvl(sum(t.num),0) as value,f.fwcyf_yyxtmc as name
+    	from TJ_FWQQJGRY t
 		left join fwcyfzcb f on t.ffqqz=f.fwcyf_yyxtbh
-		where t.tjrq_date=#{time} 
+		where t.tjrq_date &gt;= #{startTime,jdbcType=VARCHAR}
+		and t.tjrq_date &lt;= #{endTime,jdbcType=VARCHAR}
 		<if test="yybs!=null and yybs!=''"> and t.ffqqz = #{yybs}</if>
-		group by t.tjrq_hour,t.ffqqz,f.fwcyf_yyxtmc
-		order by to_number(t.tjrq_hour)
-	</select>
-	
-	<select id="yhqqpmfxSearch" resultType="map">
-		select t.ffqqz,t.tjrq_hour as hour,t.ffqqz||'-'||t.tjrq_hour as key,
-			sum(t.num) as value,f.fwcyf_yyxtmc as name
-		from TJ_FWQQJGRY t
-		left join fwcyfzcb f on t.ffqqz=f.fwcyf_yyxtbh
-		where t.tjrq_date=#{time} 
-		<if test="yybs!=null and yybs!=''"> and t.ffqqz = #{yybs}</if>
-		group by t.tjrq_hour,t.ffqqz,f.fwcyf_yyxtmc
-		order by to_number(t.tjrq_hour)
+		group by t.tjrq_date,t.tjrq_hour,t.ffqqz,f.fwcyf_yyxtmc
+   		order by hour
 	</select>
 	
 	<select id="getYhqqpmfxListByPage" resultType="map" parameterType="map">
@@ -198,7 +188,8 @@
 		select t.TJRQ_DATE,t.TJRQ_HOUR,t.NUM,t.FFQQZ,f.fwcyf_yyxtmc as yymc
 		from TJ_FWQQJGRY t
 		left join fwcyfzcb f on t.ffqqz=f.fwcyf_yyxtbh
-		where t.tjrq_date=#{time} 
+		where t.tjrq_date &gt;= #{startTime,jdbcType=VARCHAR}
+		and t.tjrq_date &lt;= #{endTime,jdbcType=VARCHAR}
 		<if test="yybs!=null and yybs!=''"> and t.ffqqz = #{yybs}</if>
 		order by t.TJRQ_DATE desc,t.TJRQ_HOUR desc
 		) k
@@ -209,7 +200,8 @@
 	
 	<select id="getYhqqpmfxCountByPage" resultType="int" parameterType="map">
 		select count(1) from TJ_FWQQJGRY t
-		where t.tjrq_date=#{time} 
+		where t.tjrq_date &gt;= #{startTime,jdbcType=VARCHAR}
+		and t.tjrq_date &lt;= #{endTime,jdbcType=VARCHAR}
 		<if test="yybs!=null and yybs!=''"> and t.ffqqz = #{yybs}</if>
 	</select>
 	
@@ -220,7 +212,8 @@
 		select t.TJRQ_DATE,t.TJRQ_HOUR,t.NUM,t.FFQQZ,f.fwcyf_yyxtmc as yymc
 		from TJ_FWQQJGRY t
 		left join fwcyfzcb f on t.ffqqz=f.fwcyf_yyxtbh
-		where t.tjrq_date=#{time} 
+		where t.tjrq_date &gt;= #{startTime,jdbcType=VARCHAR}
+		and t.tjrq_date &lt;= #{endTime,jdbcType=VARCHAR}
 		<if test="yybs!=null and yybs!=''"> and t.ffqqz = #{yybs}</if>
 		order by t.TJRQ_DATE desc,t.TJRQ_HOUR desc
 		) k
@@ -231,7 +224,8 @@
 	
 	<select id="getFwzlfxCountByPage" resultType="int" parameterType="map">
 		select count(1) from TJ_FWQQJGRY t
-		where t.tjrq_date=#{time} 
+		where t.tjrq_date &gt;= #{startTime,jdbcType=VARCHAR}
+		and t.tjrq_date &lt;= #{endTime,jdbcType=VARCHAR}
 		<if test="yybs!=null and yybs!=''"> and t.ffqqz = #{yybs}</if>
 	</select>
 	
@@ -311,6 +305,54 @@
 		<if test="fwmc!=null"> and b.fwmc like '%${fwmc}%'</if>
 		<if test="ffmc!=null"> and a.ffmc like '%${ffmc}%'</if>
 		<if test="warnType!=null"> and t.warn_type = #{warnType}</if>
+	</select>
+	
+	<select id="jyqqpmfxSearch" resultType="map">
+		select * from 
+		(select j.police_name||'('||j.police_no||')' as key,nvl(sum(t.num),0) as value
+		from TJ_FWQQJGRY t
+		left join JYJBXX j on t.xxczry_gmsfhm = j.police_sfzh
+   		where t.tjrq_date &gt;= #{startTime,jdbcType=VARCHAR}
+		and t.tjrq_date &lt;= #{endTime,jdbcType=VARCHAR}
+		<if test="yybs!=null and yybs!=''"> and t.ffqqz = #{yybs}</if>
+		<if test="fwbs!=null and fwbs!=''"> and t.fwbs = #{fwbs}</if>
+		<if test="ffbs!=null and ffbs!=''"> and t.ffbs = #{ffbs}</if>
+    	group by j.police_name,j.police_no
+    	order by value desc) a where rownum &lt;= 10
+	</select>
+	
+	<select id="getJyqqpmfxListByPage" resultType="map" parameterType="map">
+		select * from (
+		select k.*, rownum rnum from
+		(
+		select t.tjrq_date,t.tjrq_hour,c.fwcyf_yyxtmc as yymc,b.fwmc,a.ffmc,t.xxczry_gmsfhm,t.num,
+		j.police_name,j.phone,j.org_code
+		from TJ_FWQQJGRY t
+		left join JYJBXX j on t.xxczry_gmsfhm = j.police_sfzh
+		left join fwzyffzcb a on t.fwbs=a.fwbs and t.ffbs=a.ffbs
+		left join fwzyzcb b on b.fwbs=t.fwbs
+		left join fwcyfzcb c on t.ffqqz=c.fwcyf_yyxtbh
+		where t.tjrq_date &gt;= #{startTime,jdbcType=VARCHAR}
+		and t.tjrq_date &lt;= #{endTime,jdbcType=VARCHAR}
+		<if test="yybs!=null"> and t.ffqqz = #{yybs}</if>
+		<if test="fwbs!=null"> and t.fwbs = #{fwbs}</if>
+		<if test="ffbs!=null"> and t.ffbs = #{ffbs}</if>
+		) k
+		where rownum &lt;= #{end}
+		)
+		where rnum &gt; #{start}
+	</select>
+	
+	<select id="getJyqqpmfxNumByPage" resultType="int" parameterType="map">
+		select count(1) from TJ_FWQQJGRY t
+		left join fwzyffzcb a on t.fwbs=a.fwbs and t.ffbs=a.ffbs
+		left join fwzyzcb b on b.fwbs=t.fwbs
+		left join fwcyfzcb c on t.ffqqz=c.fwcyf_yyxtbh
+		where t.tjrq_date &gt;= #{startTime,jdbcType=VARCHAR}
+		and t.tjrq_date &lt;= #{endTime,jdbcType=VARCHAR}
+		<if test="yybs!=null"> and t.ffqqz = #{yybs}</if>
+		<if test="fwbs!=null"> and t.fwbs = #{fwbs}</if>
+		<if test="ffbs!=null"> and t.ffbs = #{ffbs}</if>
 	</select>
 
 </mapper>

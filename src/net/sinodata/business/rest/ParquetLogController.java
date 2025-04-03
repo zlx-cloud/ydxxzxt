@@ -104,6 +104,9 @@ public class ParquetLogController {
 					bjLogsJson.put("FWBS", requestData.get("FWBS"));
 					bjLogsJson.put("FFBS", requestData.get("FFBS"));
 					bjLogsJson.put("FWQQZ_ZCXX", requestData.get("FWQQZ_ZCXX"));
+					bjLogsJson.put("FWQQSB_BH", requestData.get("FWQQSB_BH"));
+					bjLogsJson.put("XXCZRY_XM", requestData.get("XXCZRY_XM"));
+					bjLogsJson.put("XXCZRY_GMSFHM", requestData.get("XXCZRY_GMSFHM"));
 					bjLogsJson.put("requestDataJson", requestData.toJSONString());
 					Object statusStr = bjLogsJson.get("status");
 					Object errorTime = bjLogsJson.get("errorTime");
@@ -192,6 +195,18 @@ public class ParquetLogController {
 					}
 					JSONObject requestData = bjLogsJson.getJSONObject("requestData");
 					if (null != requestData) {
+						Object qqsbbhObj = requestData.get("FWQQSB_BH");
+						if (null != qqsbbhObj) {
+							esLogDownload.setQqsbbh(qqsbbhObj.toString());
+						}
+						Object czryxmObj = requestData.get("XXCZRY_XM");
+						if (null != czryxmObj) {
+							esLogDownload.setCzryxm(czryxmObj.toString());
+						}
+						Object czryzjhObj = requestData.get("XXCZRY_GMSFHM");
+						if (null != czryzjhObj) {
+							esLogDownload.setCzryzjh(czryzjhObj.toString());
+						}
 						esLogDownload.setRequestData(requestData.toJSONString());
 					}
 					Object responseData = bjLogsJson.get("responseData");
@@ -213,7 +228,7 @@ public class ParquetLogController {
 			ExcelReaderDown<EsLogDownload> export = new ExcelReaderDown<EsLogDownload>();
 
 			String[] headers = { "报文标识", "备注", "接收请求时间", "响应请求时间", "进入防火墙时间", "离开防火墙时间", "服务请求时间", "服务响应时间", "响应状态",
-					"请求内容", "响应内容" };
+					"请求设备编号", "操作人员姓名", "操作人员证件号", "请求内容", "响应内容" };
 			export.setNum(0);
 			export.exportExcel("表格数据", headers, list, toClient, null);
 			toClient.close();
@@ -259,7 +274,7 @@ public class ParquetLogController {
 
 		if (StringUtils.isNotEmpty(diff3Time)) {
 			map.put("time3", new BigDecimal(diff3Time));
-		}else {
+		} else {
 			map.put("time3", 0);
 		}
 

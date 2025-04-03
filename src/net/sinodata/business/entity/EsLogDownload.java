@@ -11,6 +11,9 @@ public class EsLogDownload {
 	private String begin3Time;
 	private String finish3Time;
 	private String status;
+	private String qqsbbh;
+	private String czryxm;
+	private String czryzjh;
 	private String requestData;
 	private String responseData;
 
@@ -106,4 +109,28 @@ public class EsLogDownload {
 		this.status = status;
 	}
 
+	public String getQqsbbh() {
+		return qqsbbh;
+	}
+
+	public void setQqsbbh(String qqsbbh) {
+		this.qqsbbh = qqsbbh;
+	}
+
+	public String getCzryxm() {
+		return czryxm;
+	}
+
+	public void setCzryxm(String czryxm) {
+		this.czryxm = czryxm;
+	}
+
+	public String getCzryzjh() {
+		return czryzjh;
+	}
+
+	public void setCzryzjh(String czryzjh) {
+		this.czryzjh = czryzjh;
+	}
+	
 }

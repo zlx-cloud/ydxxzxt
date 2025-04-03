@@ -48,7 +48,11 @@
 			endTimeSearch : endTimeVal,
 			keyWordRequestSearch : $("#keyWordRequestSearch").val(),
 			keyWordResponseSearch : $("#keyWordResponseSearch").val(),
-			statusSearch : $("#statusSearch").val()
+			statusSearch : $("#statusSearch").val(),
+			qqsbbhSearch : $("#qqsbbhSearch").val(),
+			czryxmSearch : $("#czryxmSearch").val(),
+			czryzjhSearch : $("#czryzjhSearch").val()
+			
 		});
 	}
 	
@@ -205,15 +209,18 @@
 		url="${ctx}/esLog/list?startTimeSearch=${startTime}&endTimeSearch=${endTime}" fit="true" toolbar="#tb">
 		<thead>
 			<tr>
-				<th field="uuid" width="65" align="center" formatter="detail">报文标识</th>
-				<th field="notes" width="30" align="center">消息</th>
-				<th field="FWQQZ_ZCXX" width="45" align="center">应用标识</th>
-				<th field="FWBS" width="45" align="center">服务标识</th>
-				<th field="FFBS" width="20" align="center">方法标识</th>
-				<th field="requestTime" width="40" align="center">请求时间</th>
-				<th field="responseTime" width="40" align="center">响应时间</th>
-				<th field="statusStr" width="20" align="center">响应状态</th>
-				<th field="x" width="20" align="center" formatter="timeConsuming">耗时情况</th>
+				<th field="uuid" align="center" formatter="detail">报文标识</th>
+				<th field="notes" align="center">消息</th>
+				<th field="FWQQZ_ZCXX" align="center">应用标识</th>
+				<th field="FWBS" align="center">服务标识</th>
+				<th field="FFBS" align="center">方法标识</th>
+				<th field="requestTime" align="center">请求时间</th>
+				<th field="responseTime" align="center">响应时间</th>
+				<th field="statusStr" align="center">响应状态</th>
+				<th field="FWQQSB_BH" align="center">请求设备编号</th>
+				<th field="XXCZRY_XM" align="center">操作人员姓名</th>
+				<th field="XXCZRY_GMSFHM" align="center">操作人员证件号</th>
+				<th field="x" align="center" formatter="timeConsuming">耗时情况</th>
 			</tr>
 		</thead>
 	</table>
@@ -259,6 +266,13 @@
 				<option value="01">异常</option>
 				<option value="02">校验错误</option>
 			</select>
+			</br>
+			&nbsp;请求设备编号：&nbsp;
+			<input type="text" class="easyui-textbox" name="qqsbbhSearch" id="qqsbbhSearch" size="20" />
+			&nbsp;操作人员姓名：&nbsp;
+			<input type="text" class="easyui-textbox" name="czryxmSearch" id=czryxmSearch size="20" />
+			&nbsp;操作人员证件号：&nbsp;
+			<input type="text" class="easyui-textbox" name="czryzjhSearch" id="czryzjhSearch" size="20" />
 			<a href="javascript:searchEsLog()" class="easyui-linkbutton" 
 				iconCls="icon-search" plain="true">查询</a>
 			<a href="${ctx}/esLog/esLogExport" class="easyui-linkbutton"
@@ -266,7 +280,7 @@
 		</div>
 	</div>
 
-	<div id="dlg" class="easyui-dialog" style="width: 800px; height: 470px; padding: 10px 20px"
+	<div id="dlg" class="easyui-dialog" style="width: 800px; height: 490px; padding: 10px 20px"
 		closed="true" buttons="#dlg-buttons">
 		<form id="fm" method="post">
 			<table cellspacing="5px;">
@@ -313,6 +327,17 @@
 				<tr>
 					<td>响应状态：</td>
 					<td><input type="text" id="statusStr" name="statusStr"
+						class="easyui-validatebox es-detail-width" readonly /></td>
+					<td>请求设备编号：</td>
+					<td><input type="text" id="FWQQSB_BH" name="FWQQSB_BH"
+						class="easyui-validatebox es-detail-width" readonly /></td>
+				</tr>
+				<tr>
+					<td>操作人员姓名：</td>
+					<td><input type="text" id="XXCZRY_XM" name="XXCZRY_XM"
+						class="easyui-validatebox es-detail-width" readonly /></td>
+					<td>操作人员证件号：</td>
+					<td><input type="text" id="XXCZRY_GMSFHM" name="XXCZRY_GMSFHM"
 						class="easyui-validatebox es-detail-width" readonly /></td>
 				</tr>
 				<tr>

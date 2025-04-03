@@ -119,29 +119,29 @@
 	</table>
 	<div id="tb">
 		<div>
-			&nbsp;应用名称：&nbsp; 
+			&nbsp;&nbsp;应用名称：
 			<select name="fwqqzZcxxSearch" id="fwqqzZcxxSearch" class="easyui-combobox">
 				<option value="">请选择</option>
 				<c:forEach items="${fwcyf}" var="zcxx" varStatus="index">
 					<option value="${zcxx.fwcyfYyxtbh}">${zcxx.fwcyfYyxtmc}</option>
 				</c:forEach>
 			</select> 
-			&nbsp;服务名称：&nbsp;
+			&nbsp;&nbsp;服务名称：
 			<select name="fwbsSearch" id="fwbsSearch" class="easyui-combobox">
 				<option value="">请选择</option>
 				<c:forEach items="${fwzy}" var="zyxx" varStatus="index">
 					<option value="${zyxx.fwbs}">${zyxx.fwmc}</option>
 				</c:forEach>
 			</select>
-			&nbsp;方法名称：&nbsp;
+			&nbsp;&nbsp;方法名称：
 			<select name="ffbsSearch" id="ffbsSearch"
 				class="easyui-combobox" style="width: 230px;">
 				<option value="">请先选择服务名称</option>
 			</select>
 			</br>
-			&nbsp; 请求开始日期：&nbsp; 
+			&nbsp;&nbsp;请求开始日期：
 			<input type="text" id="startTime" class="easyui-datebox" size="20" value="${time}" />
-			&nbsp; 请求结束日期：&nbsp; 
+			&nbsp;&nbsp;请求结束日期：
 			<input type="text" id="endTime" class="easyui-datebox" size="20" value="${time}" />
 			<a href="javascript:searchEsWarn()" class="easyui-linkbutton" 
 				iconCls="icon-search" plain="true">查询</a>

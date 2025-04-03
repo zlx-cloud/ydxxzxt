@@ -52,7 +52,7 @@ public class TemporaryServiceImpl implements TemporaryService {
 		int count = temporaryDao.getYhqqpmfxCountByPage(condition);
 		return new SearchResult(data, count);
 	}
-	
+
 	@Override
 	public SearchResult fwzlfxList(Page page, Map<String, Object> condition) {
 		condition.put("start", page.getStart());
@@ -68,6 +68,15 @@ public class TemporaryServiceImpl implements TemporaryService {
 		condition.put("end", page.getRows());
 		List<Map<String, Object>> data = temporaryDao.getYjxxcxListByPage(condition);
 		int count = temporaryDao.getYjxxcxNumByPage(condition);
+		return new SearchResult(data, count);
+	}
+
+	@Override
+	public SearchResult jyqqpmfxList(Page page, Map<String, Object> condition) {
+		condition.put("start", page.getStart());
+		condition.put("end", page.getRows());
+		List<Map<String, Object>> data = temporaryDao.getJyqqpmfxListByPage(condition);
+		int count = temporaryDao.getJyqqpmfxNumByPage(condition);
 		return new SearchResult(data, count);
 	}
 

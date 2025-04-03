@@ -28,9 +28,8 @@ public interface TemporaryDao {
 
 	int updateStatusToread();
 
-	List<Map<String, Object>> fwzlfxSearch(@Param("yybs") String yybs, @Param("time") String time);
-
-	List<Map<String, Object>> yhqqpmfxSearch(@Param("yybs") String yybs, @Param("time") String time);
+	List<Map<String, Object>> fwzlfxSearch(@Param("yybs") String yybs, @Param("startTime") String startTime,
+			@Param("endTime") String endTime);
 
 	List<Map<String, Object>> getYhqqpmfxListByPage(Map<String, Object> condition);
 
@@ -39,17 +38,22 @@ public interface TemporaryDao {
 	List<Map<String, Object>> getFwzlfxListByPage(Map<String, Object> condition);
 
 	int getFwzlfxCountByPage(Map<String, Object> condition);
-	
-	int fxsjhzCount(@Param("yybs") String yybs, @Param("fwbs") String fwbs,
-			@Param("ffbs") String ffbs, @Param("startTime") String startTime, 
-			@Param("endTime") String endTime,@Param("type") String type);
-	
+
+	int fxsjhzCount(@Param("yybs") String yybs, @Param("fwbs") String fwbs, @Param("ffbs") String ffbs,
+			@Param("startTime") String startTime, @Param("endTime") String endTime, @Param("type") String type);
+
 	List<Map<String, Object>> yjsjhzChart(@Param("yybs") String yybs, @Param("fwbs") String fwbs,
-			@Param("ffbs") String ffbs, @Param("startTime") String startTime,
-			@Param("endTime") String endTime);
-	
+			@Param("ffbs") String ffbs, @Param("startTime") String startTime, @Param("endTime") String endTime);
+
 	List<Map<String, Object>> getYjxxcxListByPage(Map<String, Object> condition);
 
 	int getYjxxcxNumByPage(Map<String, Object> condition);
+
+	List<Map<String, Object>> jyqqpmfxSearch(@Param("yybs") String yybs, @Param("fwbs") String fwbs,
+			@Param("ffbs") String ffbs, @Param("startTime") String startTime, @Param("endTime") String endTime);
+
+	List<Map<String, Object>> getJyqqpmfxListByPage(Map<String, Object> condition);
+
+	int getJyqqpmfxNumByPage(Map<String, Object> condition);
 
 }

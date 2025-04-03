@@ -368,7 +368,8 @@ public class TemporaryController {
 	public Object[] fwzlfxSearch(HttpServletRequest request) {
 		// 查询条件
 		String yybsSearch = request.getParameter("yybs");
-		String timeSearch = request.getParameter("time").replaceAll("-", "");
+		String startTime = request.getParameter("startTime").replaceAll("-", "");
+		String endTime = request.getParameter("endTime").replaceAll("-", "");
 
 		// 数据集合
 		List<String> yybsList = new ArrayList<String>();
@@ -379,7 +380,7 @@ public class TemporaryController {
 		List<Map<String, Object>> chartList = new ArrayList<>();
 
 		// 查询数据
-		List<Map<String, Object>> dataList = temporaryDao.fwzlfxSearch(yybsSearch, timeSearch);
+		List<Map<String, Object>> dataList = temporaryDao.fwzlfxSearch(yybsSearch, startTime, endTime);
 		if (CollectionUtils.isNotEmpty(dataList)) {
 			for (Map<String, Object> map : dataList) {
 				yybsList.add((String) map.get("FFQQZ"));
@@ -426,13 +427,17 @@ public class TemporaryController {
 	public Object fwzlfxList(Page page, HttpServletRequest request) {
 		Map<String, Object> condition = new HashMap<String, Object>();
 		String yybsSearch = request.getParameter("yybs");
-		String timeSearch = request.getParameter("time").replaceAll("-", "");
+		String startTime = request.getParameter("startTime").replaceAll("-", "");
+		String endTime = request.getParameter("endTime").replaceAll("-", "");
 
 		if (StringUtil.isNotEmpty(yybsSearch)) {
 			condition.put("yybs", yybsSearch);
 		}
-		if (StringUtil.isNotEmpty(timeSearch)) {
-			condition.put("time", timeSearch);
+		if (StringUtil.isNotEmpty(startTime)) {
+			condition.put("startTime", startTime);
+		}
+		if (StringUtil.isNotEmpty(endTime)) {
+			condition.put("endTime", endTime);
 		}
 		SearchResult result = temporaryService.fwzlfxList(page, condition);
 		return result;
@@ -453,7 +458,8 @@ public class TemporaryController {
 	public Object[] yhqqpmfxSearch(HttpServletRequest request) {
 		// 查询条件
 		String yybsSearch = request.getParameter("yybs");
-		String timeSearch = request.getParameter("time").replaceAll("-", "");
+		String startTime = request.getParameter("startTime").replaceAll("-", "");
+		String endTime = request.getParameter("endTime").replaceAll("-", "");
 
 		// 数据集合
 		List<String> yybsList = new ArrayList<String>();
@@ -464,7 +470,7 @@ public class TemporaryController {
 		List<Map<String, Object>> chartList = new ArrayList<>();
 
 		// 查询数据
-		List<Map<String, Object>> dataList = temporaryDao.fwzlfxSearch(yybsSearch, timeSearch);
+		List<Map<String, Object>> dataList = temporaryDao.fwzlfxSearch(yybsSearch, startTime, endTime);
 		if (CollectionUtils.isNotEmpty(dataList)) {
 			for (Map<String, Object> map : dataList) {
 				yybsList.add((String) map.get("FFQQZ"));
@@ -510,18 +516,21 @@ public class TemporaryController {
 	public Object yhqqpmfxList(Page page, HttpServletRequest request) {
 		Map<String, Object> condition = new HashMap<String, Object>();
 		String yybsSearch = request.getParameter("yybs");
-		String timeSearch = request.getParameter("time").replaceAll("-", "");
+		String startTime = request.getParameter("startTime").replaceAll("-", "");
+		String endTime = request.getParameter("endTime").replaceAll("-", "");
 
 		if (StringUtil.isNotEmpty(yybsSearch)) {
 			condition.put("yybs", yybsSearch);
 		}
-		if (StringUtil.isNotEmpty(timeSearch)) {
-			condition.put("time", timeSearch);
+		if (StringUtil.isNotEmpty(startTime)) {
+			condition.put("startTime", startTime);
+		}
+		if (StringUtil.isNotEmpty(endTime)) {
+			condition.put("endTime", endTime);
 		}
 		SearchResult result = temporaryService.yhqqpmfxList(page, condition);
 		return result;
 	}
-	
 	
 	@RequestMapping(value = "/yjsjhzChart", method = RequestMethod.GET)
 	public String yjsjhzChart(HttpServletRequest request) {
@@ -727,6 +736,73 @@ public class TemporaryController {
 			list.add(bjLogsJson);
 		}
 		return new SearchResult(list, (int) search.hits().total().value());
+	}
+	
+	@RequestMapping(value = "/jyqqpmfxPage", method = RequestMethod.GET)
+	public String jyqqpmfxPage(HttpServletRequest request) {
+		request.setAttribute("fwcyf", fwzyqqbwcjbService.selectAllFwcyfzcb());
+		request.setAttribute("fwzy", fwzyqqbwcjbService.selectAllFwzyzcb());
+		request.setAttribute("time", DateUtil.formatDate(new Date(), "yyyy-MM-dd"));
+		return "business/temp/jyqqpmfx";
+	}
+	
+	@RequestMapping(value = "/jyqqpmfxSearch", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Object[] jyqqpmfxSearch(HttpServletRequest request) {
+		// 查询条件
+		String yybs = request.getParameter("yybs");
+		String fwbs = request.getParameter("fwbs");
+		String ffbs = request.getParameter("ffbs");
+		String startTime = request.getParameter("startTime").replaceAll("-", "");
+		String endTime = request.getParameter("endTime").replaceAll("-", "");
+
+		// 数据集合
+		List<String> keyList = new ArrayList<>();
+		List<Object> valueList = new ArrayList<>();
+
+		// 查询数据
+		List<Map<String, Object>> dataList = temporaryDao.jyqqpmfxSearch(yybs, 
+				fwbs, ffbs, startTime, endTime);
+		if (CollectionUtils.isNotEmpty(dataList)) {
+			for (Map<String, Object> map : dataList) {
+				keyList.add((String) map.get("KEY"));
+				valueList.add(map.get("VALUE"));
+			}
+		}
+
+		Object result[] = new Object[2];
+		result[0] = keyList;
+		result[1] = valueList;
+		return result;
+	}
+	
+	@RequestMapping(value = "/jyqqpmfxList", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Object jyqqpmfxList(Page page, HttpServletRequest request) {
+		Map<String, Object> condition = new HashMap<String, Object>();
+		String yybs = request.getParameter("yybs");
+		String fwbs = request.getParameter("fwbs");
+		String ffbs = request.getParameter("ffbs");
+		String startTime = request.getParameter("startTime").replaceAll("-", "");
+		String endTime = request.getParameter("endTime").replaceAll("-", "");
+
+		if (StringUtil.isNotEmpty(yybs)) {
+			condition.put("yybs", yybs);
+		}
+		if (StringUtil.isNotEmpty(fwbs)) {
+			condition.put("fwbs", fwbs);
+		}
+		if (StringUtil.isNotEmpty(ffbs)) {
+			condition.put("ffbs", ffbs);
+		}
+		if (StringUtil.isNotEmpty(startTime)) {
+			condition.put("startTime", startTime);
+		}
+		if (StringUtil.isNotEmpty(endTime)) {
+			condition.put("endTime", endTime);
+		}
+		SearchResult result = temporaryService.jyqqpmfxList(page, condition);
+		return result;
 	}
 
 }

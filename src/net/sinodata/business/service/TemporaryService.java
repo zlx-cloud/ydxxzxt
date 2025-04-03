@@ -18,5 +18,7 @@ public interface TemporaryService {
 	SearchResult fwzlfxList(Page page, Map<String, Object> condition);
 	
 	SearchResult yjxxcxList(Page page, Map<String, Object> condition);
+	
+	SearchResult jyqqpmfxList(Page page, Map<String, Object> condition);
 
 }

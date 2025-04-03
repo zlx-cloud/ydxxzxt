@@ -124,6 +124,18 @@ public class DbLogController {
 		if (StringUtil.isNotEmpty(keyWordResponseSearch)) {
 			condition.put("keyWordResponseSearch", keyWordResponseSearch);
 		}
+		String qqsbbh = request.getParameter("qqsbbhSearch");
+		if (StringUtil.isNotEmpty(qqsbbh)) {
+			condition.put("qqsbbhSearch", qqsbbh);
+		}
+		String czryxm = request.getParameter("czryxmSearch");
+		if (StringUtil.isNotEmpty(czryxm)) {
+			condition.put("czryxmSearch", czryxm);
+		}
+		String czryzjh = request.getParameter("czryzjhSearch");
+		if (StringUtil.isNotEmpty(czryzjh)) {
+			condition.put("czryzjhSearch", czryzjh);
+		}
 
 		SearchResponse<HashMap> search = restClient
 				.search(s -> s.index(configInfo.getLogTable()).query(query -> query.bool(bool -> {
@@ -151,6 +163,16 @@ public class DbLogController {
 						bool.must(q -> q
 								.matchPhrase(t -> t.field("bj_logs_json.responseData").query(keyWordResponseSearch)));
 					}
+					if (StringUtil.isNotEmpty(qqsbbh)) {
+						bool.must(q -> q.matchPhrase(t -> t.field("bj_logs_json.requestData.FWQQSB_BH").query(qqsbbh)));
+					}
+					if (StringUtil.isNotEmpty(czryxm)) {
+						bool.must(q -> q.matchPhrase(t -> t.field("bj_logs_json.requestData.XXCZRY_XM").query(czryxm)));
+					}
+					if (StringUtil.isNotEmpty(czryzjh)) {
+						bool.must(q -> q
+								.matchPhrase(t -> t.field("bj_logs_json.requestData.XXCZRY_GMSFHM").query(czryzjh)));
+					}
 					if (StringUtil.isNotEmpty(startTime)) {
 						Date startDate = null;
 						Date endDate = null;
@@ -164,7 +186,8 @@ public class DbLogController {
 						String esEndTime = sdf2.format(endDate) + "999";
 						bool.must(r -> r.range(
 								t -> t.term(f -> f.field("bj_logs_json.requestTime").gte(esStartTime).lte(esEndTime))));
-								//f -> f.field("bj_logs_json.requestTime").gte(JsonData.fromJson(esStartTime)).lte(JsonData.fromJson(esEndTime))));
+						// f ->
+						// f.field("bj_logs_json.requestTime").gte(JsonData.fromJson(esStartTime)).lte(JsonData.fromJson(esEndTime))));
 					}
 					return bool;
 				})).from(page.getStart()).size(page.getOriginalRows())
@@ -184,6 +207,9 @@ public class DbLogController {
 			bjLogsJson.put("FWBS", requestData.get("FWBS"));
 			bjLogsJson.put("FFBS", requestData.get("FFBS"));
 			bjLogsJson.put("FWQQZ_ZCXX", requestData.get("FWQQZ_ZCXX"));
+			bjLogsJson.put("FWQQSB_BH", requestData.get("FWQQSB_BH"));
+			bjLogsJson.put("XXCZRY_XM", requestData.get("XXCZRY_XM"));
+			bjLogsJson.put("XXCZRY_GMSFHM", requestData.get("XXCZRY_GMSFHM"));
 			bjLogsJson.put("requestDataJson", requestData.toJSONString());
 			Object statusStr = bjLogsJson.get("status");
 			Object errorTime = bjLogsJson.get("errorTime");
@@ -221,6 +247,9 @@ public class DbLogController {
 			Object status = condition.get("statusSearch");
 			Object keyWordRequestSearch = condition.get("keyWordRequestSearch");
 			Object keyWordResponseSearch = condition.get("keyWordResponseSearch");
+			Object qqsbbh = condition.get("qqsbbhSearch");
+			Object czryxm = condition.get("czryxmSearch");
+			Object czryzjh = condition.get("czryzjhSearch");
 
 			SearchResponse<HashMap> search = restClient
 					.search(s -> s.index(configInfo.getLogTable()).query(query -> query.bool(bool -> {
@@ -243,12 +272,24 @@ public class DbLogController {
 							bool.must(q -> q.matchPhrase(t -> t.field("bj_logs_json.status").query(status.toString())));
 						}
 						if (null != keyWordRequestSearch) {
-							bool.must(q -> q.matchPhrase(
-									t -> t.field("bj_logs_json.requestData.FWQQ_NR.params").query(keyWordRequestSearch.toString())));
+							bool.must(q -> q.matchPhrase(t -> t.field("bj_logs_json.requestData.FWQQ_NR.params")
+									.query(keyWordRequestSearch.toString())));
 						}
 						if (null != keyWordResponseSearch) {
 							bool.must(q -> q.matchPhrase(
 									t -> t.field("bj_logs_json.responseData").query(keyWordResponseSearch.toString())));
+						}
+						if (null != qqsbbh) {
+							bool.must(q -> q.matchPhrase(
+									t -> t.field("bj_logs_json.requestData.FWQQSB_BH").query(qqsbbh.toString())));
+						}
+						if (null != czryxm) {
+							bool.must(q -> q.matchPhrase(
+									t -> t.field("bj_logs_json.requestData.XXCZRY_XM").query(czryxm.toString())));
+						}
+						if (null != czryzjh) {
+							bool.must(q -> q.matchPhrase(
+									t -> t.field("bj_logs_json.requestData.XXCZRY_GMSFHM").query(czryzjh.toString())));
 						}
 						if (null != startTime) {
 							Date startDate = null;
@@ -261,9 +302,10 @@ public class DbLogController {
 							}
 							String esStartTime = sdf2.format(startDate) + "000";
 							String esEndTime = sdf2.format(endDate) + "999";
-							bool.must(r -> r.range(
-									t -> t.term(f -> f.field("bj_logs_json.requestTime").gte(esStartTime).lte(esEndTime))));
-									//f -> f.field("bj_logs_json.requestTime").gte(JsonData.fromJson(esStartTime)).lte(JsonData.fromJson(esEndTime))));
+							bool.must(r -> r.range(t -> t
+									.term(f -> f.field("bj_logs_json.requestTime").gte(esStartTime).lte(esEndTime))));
+							// f ->
+							// f.field("bj_logs_json.requestTime").gte(JsonData.fromJson(esStartTime)).lte(JsonData.fromJson(esEndTime))));
 						}
 						return bool;
 					})).from(0).size(1000)
@@ -318,12 +360,12 @@ public class DbLogController {
 					esLogDownload.setStatus("正常");
 				} else if ("01".equals(statusObj)) {
 					esLogDownload.setStatus("异常");
-					if(null != errorTime) {
+					if (null != errorTime) {
 						esLogDownload.setResponseTime(errorTime.toString());
 					}
 				} else if ("02".equals(statusObj)) {
 					esLogDownload.setStatus("校验错误");
-					if(null != errorTime) {
+					if (null != errorTime) {
 						esLogDownload.setResponseTime(errorTime.toString());
 					}
 				} else {
@@ -331,6 +373,18 @@ public class DbLogController {
 				}
 				JSONObject requestData = bjLogsJson.getJSONObject("requestData");
 				if (null != requestData) {
+					Object qqsbbhObj = requestData.get("FWQQSB_BH");
+					if (null != qqsbbhObj) {
+						esLogDownload.setQqsbbh(qqsbbhObj.toString());
+					}
+					Object czryxmObj = requestData.get("XXCZRY_XM");
+					if (null != czryxmObj) {
+						esLogDownload.setCzryxm(czryxmObj.toString());
+					}
+					Object czryzjhObj = requestData.get("XXCZRY_GMSFHM");
+					if (null != czryzjhObj) {
+						esLogDownload.setCzryzjh(czryzjhObj.toString());
+					}
 					esLogDownload.setRequestData(requestData.toJSONString());
 				}
 				Object responseData = bjLogsJson.get("responseData");
@@ -351,7 +405,7 @@ public class DbLogController {
 			ExcelReaderDown<EsLogDownload> export = new ExcelReaderDown<EsLogDownload>();
 
 			String[] headers = { "报文标识", "备注", "接收请求时间", "响应请求时间", "进入防火墙时间", "离开防火墙时间", "服务请求时间", "服务响应时间", "响应状态",
-					"请求内容", "响应内容" };
+					"请求设备编号", "操作人员姓名", "操作人员证件号", "请求内容", "响应内容" };
 			export.setNum(0);
 			export.exportExcel("表格数据", headers, list, toClient, null);
 			toClient.close();
@@ -397,7 +451,7 @@ public class DbLogController {
 
 		if (StringUtils.isNotEmpty(diff3Time)) {
 			map.put("time3", new BigDecimal(diff3Time));
-		}else {
+		} else {
 			map.put("time3", 0);
 		}
 
